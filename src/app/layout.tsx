@@ -1,0 +1,46 @@
+import type { Metadata } from "next";
+import "./globals.css";
+import { ShopProvider } from "@/context/ShopContext";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import QuoteDrawer from "@/components/QuoteDrawer";
+import { BUSINESS_INFO } from "@/data/siteData";
+
+export const metadata: Metadata = {
+  title: `${BUSINESS_INFO.fullName} | ${BUSINESS_INFO.tagline}`,
+  description: `${BUSINESS_INFO.tagline} — ${BUSINESS_INFO.subLine}. Authorized Dealer of RAK Ceramics, Akij, DBL, Fu-Wang & Abul Khair Tiles, Basin, Commode, Sanitary & Bathroom Accessories at ${BUSINESS_INFO.addressExact}.`,
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  keywords: [
+    "Brother's Tiles & Sanitary Mart",
+    "ব্রাদার্স টাইলস এন্ড স্যানিটারি মার্ট",
+    "Gazipur Tiles Showroom",
+    "RAK Ceramics Gazipur",
+    "Bhabanipur Tiles Showroom",
+    "Tiles Basin Commode Sanitary Gazipur",
+  ],
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="bn">
+      <body className="min-h-screen flex flex-col bg-white text-obsidian selection:bg-gold selection:text-obsidian">
+        <ShopProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <QuoteDrawer />
+          <Footer />
+        </ShopProvider>
+      </body>
+    </html>
+  );
+}
