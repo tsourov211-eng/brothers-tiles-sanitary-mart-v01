@@ -468,8 +468,11 @@ function CatalogContent() {
             <span className="text-[10px] font-bold tracking-widest uppercase text-gold">
               {BUSINESS_INFO.tagline}
             </span>
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white mt-1">
-              Complete Tiles &amp; Sanitary Catalog ({BUSINESS_INFO.subLine})
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white mt-1 leading-snug">
+              <span>Complete Tiles &amp; Sanitary Catalog</span>
+              <span className="block text-lg sm:text-xl font-normal text-gold-light mt-1">
+                ({BUSINESS_INFO.subLine})
+              </span>
             </h1>
             <p className="text-xs text-neutral-300 mt-1">
               Tiles • Basin • Commode • Sanitary • Bathroom Accessories — RAK Ceramics, Akij, DBL, Fu-Wang &amp; Abul Khair

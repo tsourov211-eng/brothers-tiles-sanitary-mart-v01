@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { BUSINESS_INFO, ANNOUNCEMENT_MESSAGES } from "@/data/siteData";
 import { MEGA_MENU_DATA } from "@/data/megaMenuData";
 import { useShop } from "@/context/ShopContext";
 import {
   IconSearch,
-  IconPhoneCall,
   IconHeart,
   IconHeartFilled,
   IconShoppingBag,
-  IconLock,
+  IconUserShield,
   IconMenu2,
   IconX,
   IconChevronLeft,
@@ -25,6 +24,198 @@ import {
   IconMapPin,
   IconBuildingStore,
 } from "@tabler/icons-react";
+
+const CATEGORY_NAV_ITEMS = [
+  { id: "new", label: "NEW ARRIVALS", href: "/catalog?filter=new" },
+  { id: "tiles", label: "WALL & FLOOR TILES", href: "/catalog?category=Tiles" },
+  { id: "basin", label: "BASIN", href: "/catalog?category=Basin" },
+  { id: "commode", label: "COMMODE", href: "/catalog?category=Commode" },
+  { id: "sanitary", label: "SANITARY", href: "/catalog?category=Sanitary" },
+  { id: "accessories", label: "BATHROOM ACCESSORIES", href: "/catalog?category=Bathroom+Accessories" },
+];
+
+function isItemActive(
+  itemId: string,
+  pathname: string,
+  currentCategory: string | null,
+  currentFilter: string | null
+): boolean {
+  if (pathname !== "/catalog") return false;
+
+  switch (itemId) {
+    case "new":
+      return currentFilter === "new";
+    case "tiles":
+      return (
+        currentCategory === "Tiles" ||
+        currentCategory === "Floor Tiles" ||
+        currentCategory === "Wall Tiles"
+      );
+    case "basin":
+      return currentCategory === "Basin";
+    case "commode":
+      return currentCategory === "Commode";
+    case "sanitary":
+      return currentCategory === "Sanitary";
+    case "accessories":
+      return (
+        currentCategory === "Bathroom Accessories" ||
+        currentCategory === "Bathroom+Accessories"
+      );
+    default:
+      return false;
+  }
+}
+
+interface CategoryNavLinksProps {
+  activeMegaMenu: string | null;
+  handleMenuEnter: (menuId: string) => void;
+  handleCloseMegaMenu: () => void;
+  pathname: string;
+}
+
+function CategoryNavLinks({
+  activeMegaMenu,
+  handleMenuEnter,
+  handleCloseMegaMenu,
+  pathname,
+}: CategoryNavLinksProps) {
+  return (
+    <Suspense
+      fallback={
+        <CategoryNavLinksContent
+          activeMegaMenu={activeMegaMenu}
+          handleMenuEnter={handleMenuEnter}
+          handleCloseMegaMenu={handleCloseMegaMenu}
+          pathname={pathname}
+          currentCategory={null}
+          currentFilter={null}
+        />
+      }
+    >
+      <CategoryNavLinksWithParams
+        activeMegaMenu={activeMegaMenu}
+        handleMenuEnter={handleMenuEnter}
+        handleCloseMegaMenu={handleCloseMegaMenu}
+        pathname={pathname}
+      />
+    </Suspense>
+  );
+}
+
+function CategoryNavLinksWithParams(props: CategoryNavLinksProps) {
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams ? searchParams.get("category") : null;
+  const currentFilter = searchParams ? searchParams.get("filter") : null;
+
+  return (
+    <CategoryNavLinksContent
+      {...props}
+      currentCategory={currentCategory}
+      currentFilter={currentFilter}
+    />
+  );
+}
+
+function CategoryNavLinksContent({
+  activeMegaMenu,
+  handleMenuEnter,
+  handleCloseMegaMenu,
+  pathname,
+  currentCategory,
+  currentFilter,
+}: CategoryNavLinksProps & {
+  currentCategory: string | null;
+  currentFilter: string | null;
+}) {
+  return (
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex items-center justify-between text-[12px] md:text-[13px] xl:text-[14px] font-semibold tracking-normal xl:tracking-wide uppercase text-obsidian">
+      {/* Category Links with Active Indicator */}
+      <div className="flex items-center space-x-0.5 md:space-x-1 lg:space-x-1.5 xl:space-x-2">
+        {CATEGORY_NAV_ITEMS.map((item) => {
+          const isHovered = activeMegaMenu === item.id;
+          const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
+          return (
+            <div
+              key={item.id}
+              className="relative py-2.5"
+              onMouseEnter={() => handleMenuEnter(item.id)}
+            >
+              <Link
+                href={item.href}
+                onClick={handleCloseMegaMenu}
+                className={`px-2.5 py-1 transition-colors relative flex items-center gap-1 ${
+                  isHovered || isActive
+                    ? "text-gold-dark font-bold"
+                    : "hover:text-gold-dark"
+                }`}
+              >
+                <span>{item.label}</span>
+                <span
+                  className={`absolute bottom-0 left-2.5 right-2.5 h-[2px] bg-gold-dark transition-all duration-200 ${
+                    isHovered || isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                  }`}
+                />
+              </Link>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Utility Pages Links with Active Indicator */}
+      <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 py-2.5 text-neutral-700 shrink-0">
+        <Link
+          href="/calculator"
+          onClick={handleCloseMegaMenu}
+          className={`py-1 px-1 transition-colors relative flex items-center ${
+            pathname === "/calculator"
+              ? "text-gold-dark font-bold"
+              : "text-obsidian font-bold hover:text-gold-dark"
+          }`}
+        >
+          <span>FREE TILE CALCULATOR</span>
+          <span
+            className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
+              pathname === "/calculator" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+            }`}
+          />
+        </Link>
+        <Link
+          href="/about"
+          onClick={handleCloseMegaMenu}
+          className={`py-1 px-1 transition-colors relative flex items-center ${
+            pathname === "/about"
+              ? "text-gold-dark font-bold"
+              : "hover:text-gold-dark"
+          }`}
+        >
+          <span>SHOWROOM &amp; RAK SPECS</span>
+          <span
+            className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
+              pathname === "/about" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+            }`}
+          />
+        </Link>
+        <Link
+          href="/contact"
+          onClick={handleCloseMegaMenu}
+          className={`py-1 px-1 transition-colors relative flex items-center ${
+            pathname === "/contact"
+              ? "text-gold-dark font-bold"
+              : "text-gold-dark font-bold hover:text-gold"
+          }`}
+        >
+          <span>CONTACT &amp; MAP</span>
+          <span
+            className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
+              pathname === "/contact" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+            }`}
+          />
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function Header() {
   const [msgIndex, setMsgIndex] = useState(0);
@@ -221,16 +412,6 @@ export default function Header() {
             <span>{lang === "bn" ? "EN" : "বাংলা"}</span>
           </button>
 
-          {/* Direct Call / WhatsApp Link */}
-          <a
-            href={`tel:${BUSINESS_INFO.mainPhoneClean}`}
-            className="hidden lg:flex items-center gap-1.5 text-xs font-semibold text-obsidian hover:text-gold-dark shrink-0"
-            title="Showroom Hotline & WhatsApp"
-          >
-            <IconPhoneCall size={17} stroke={1.8} className="text-gold-dark" />
-            <span>{BUSINESS_INFO.mainPhone}</span>
-          </a>
-
           {/* Wishlist Icon with Red/Gold Badge (matching Tilebar header) */}
           <Link
             href="/catalog?wishlist=true"
@@ -263,14 +444,14 @@ export default function Header() {
             )}
           </button>
 
-          {/* Manager / Admin Portal Shortcut */}
+          {/* Admin / Manager Portal Shortcut */}
           <Link
             href="/admin"
-            className="p-1.5 text-neutral-700 hover:text-obsidian hover:bg-neutral-100 rounded transition flex items-center gap-1"
-            title="Manager & Showroom Admin Portal"
+            className="p-1.5 text-neutral-700 hover:text-gold-dark hover:bg-neutral-100 rounded transition flex items-center justify-center"
+            title="Admin & Showroom Portal"
           >
-            <span className="sr-only">Manager Portal</span>
-            <IconLock size={20} stroke={1.8} />
+            <span className="sr-only">Admin Portal</span>
+            <IconUserShield size={21} stroke={1.8} />
           </Link>
 
           {/* Mobile Hamburger Button */}
@@ -293,68 +474,12 @@ export default function Header() {
         className="hidden md:block border-t border-neutral-200 bg-white relative"
         onMouseLeave={handleMenuLeave}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex items-center justify-between text-[12px] md:text-[13px] xl:text-[14px] font-semibold tracking-normal xl:tracking-wide uppercase text-obsidian">
-          <div className="flex items-center space-x-0.5 md:space-x-1 lg:space-x-1.5 xl:space-x-2">
-            {[
-              { id: "new", label: "NEW ARRIVALS", href: "/catalog?filter=new" },
-              { id: "tiles", label: "WALL & FLOOR TILES", href: "/catalog?category=Tiles" },
-              { id: "basin", label: "BASIN", href: "/catalog?category=Basin" },
-              { id: "commode", label: "COMMODE", href: "/catalog?category=Commode" },
-              { id: "sanitary", label: "SANITARY", href: "/catalog?category=Sanitary" },
-              { id: "accessories", label: "BATHROOM ACCESSORIES", href: "/catalog?category=Bathroom+Accessories" },
-            ].map((item) => {
-              const isHovered = activeMegaMenu === item.id;
-              return (
-                <div
-                  key={item.id}
-                  className="relative py-2.5"
-                  onMouseEnter={() => handleMenuEnter(item.id)}
-                >
-                  <Link
-                    href={item.href}
-                    onClick={handleCloseMegaMenu}
-                    className={`px-2.5 py-1 transition-colors relative flex items-center gap-1 ${
-                      isHovered
-                        ? "text-gold-dark font-bold"
-                        : "hover:text-gold-dark"
-                    }`}
-                  >
-                    <span>{item.label}</span>
-                    <span
-                      className={`absolute bottom-0 left-2.5 right-2.5 h-[2px] bg-gold-dark transition-all duration-200 ${
-                        isHovered ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-                      }`}
-                    />
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 py-2.5 text-neutral-700 shrink-0">
-            <Link
-              href="/calculator"
-              onClick={handleCloseMegaMenu}
-              className="hover:text-gold-dark transition font-bold text-obsidian"
-            >
-              FREE TILE CALCULATOR
-            </Link>
-            <Link
-              href="/about"
-              onClick={handleCloseMegaMenu}
-              className="hover:text-gold-dark transition"
-            >
-              SHOWROOM &amp; RAK SPECS
-            </Link>
-            <Link
-              href="/contact"
-              onClick={handleCloseMegaMenu}
-              className="hover:text-gold-dark transition text-gold-dark font-bold"
-            >
-              CONTACT &amp; MAP
-            </Link>
-          </div>
-        </div>
+        <CategoryNavLinks
+          activeMegaMenu={activeMegaMenu}
+          handleMenuEnter={handleMenuEnter}
+          handleCloseMegaMenu={handleCloseMegaMenu}
+          pathname={pathname}
+        />
 
         {/* Mega Menu Dropdown Container */}
         {activeMegaMenu && MEGA_MENU_DATA[activeMegaMenu] && (

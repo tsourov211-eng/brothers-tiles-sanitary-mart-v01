@@ -12,7 +12,7 @@ import {
   IconMapPin,
   IconBrandFacebook,
   IconAddressBook,
-  IconLock,
+  IconUserShield,
 } from "@tabler/icons-react";
 
 export default function Footer() {
@@ -65,38 +65,66 @@ export default function Footer() {
           </h4>
           <ul className="space-y-2 text-xs text-neutral-300">
             <li>
-              <Link href="/catalog?category=Tiles" className="hover:text-gold transition">
-                Wall &amp; Floor Tiles (ওয়াল ও ফ্লোর টাইলস)
+              <Link
+                href="/catalog?category=Tiles"
+                className="hover:text-gold transition flex items-center gap-2 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 group-hover:scale-125 transition-transform" />
+                <span>Wall &amp; Floor Tiles (ওয়াল ও ফ্লোর টাইলস)</span>
               </Link>
             </li>
             <li>
-              <Link href="/catalog?size=60x120+cm" className="hover:text-gold transition">
-                RAK 60x120 cm Grand Slabs (২৪x৪৮ স্ল্যাব)
+              <Link
+                href="/catalog?size=60x120+cm"
+                className="hover:text-gold transition flex items-center gap-2 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 group-hover:scale-125 transition-transform" />
+                <span>RAK 60x120 cm Grand Slabs (২৪x৪৮ স্ল্যাব)</span>
               </Link>
             </li>
             <li>
-              <Link href="/catalog?size=80x80+cm" className="hover:text-gold transition">
-                RAK 80x80 &amp; 60x60 Mirror Polish (মিরর পলিশ)
+              <Link
+                href="/catalog?size=80x80+cm"
+                className="hover:text-gold transition flex items-center gap-2 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 group-hover:scale-125 transition-transform" />
+                <span>RAK 80x80 &amp; 60x60 Mirror Polish (মিরর পলিশ)</span>
               </Link>
             </li>
             <li>
-              <Link href="/catalog?category=Basin" className="hover:text-gold transition">
-                Table Top, Pedestal &amp; Cabinet Basin (বেসিন)
+              <Link
+                href="/catalog?category=Basin"
+                className="hover:text-gold transition flex items-center gap-2 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 group-hover:scale-125 transition-transform" />
+                <span>Table Top, Pedestal &amp; Cabinet Basin (বেসিন)</span>
               </Link>
             </li>
             <li>
-              <Link href="/catalog?category=Commode" className="hover:text-gold transition">
-                High, Low &amp; Smart Commode (কমোড)
+              <Link
+                href="/catalog?category=Commode"
+                className="hover:text-gold transition flex items-center gap-2 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 group-hover:scale-125 transition-transform" />
+                <span>High, Low &amp; Smart Commode (কমোড)</span>
               </Link>
             </li>
             <li>
-              <Link href="/catalog?category=Sanitary" className="hover:text-gold transition">
-                Sanitary Ware &amp; Jaynamaj Tiles (স্যানিটারি ও জায়নামাজ)
+              <Link
+                href="/catalog?category=Sanitary"
+                className="hover:text-gold transition flex items-center gap-2 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 group-hover:scale-125 transition-transform" />
+                <span>Sanitary Ware &amp; Jaynamaj Tiles (স্যানিটারি ও জায়নামাজ)</span>
               </Link>
             </li>
             <li>
-              <Link href="/catalog?category=Bathroom+Accessories" className="hover:text-gold transition">
-                Bathroom Accessories &amp; Mixers (বাথরুম ফিটিংস)
+              <Link
+                href="/catalog?category=Bathroom+Accessories"
+                className="hover:text-gold transition flex items-center gap-2 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 group-hover:scale-125 transition-transform" />
+                <span>Bathroom Accessories &amp; Mixers (বাথরুম ফিটিংস)</span>
               </Link>
             </li>
           </ul>
@@ -194,8 +222,8 @@ export default function Footer() {
                 href="/admin"
                 className="text-[11px] font-bold border border-gold/70 text-gold hover:bg-gold hover:text-obsidian px-3 py-1.5 transition flex items-center gap-1"
               >
-                <IconLock size={14} stroke={2} />
-                <span>Manager</span>
+                <IconUserShield size={14} stroke={1.8} />
+                <span>Admin</span>
               </Link>
             </div>
           </div>

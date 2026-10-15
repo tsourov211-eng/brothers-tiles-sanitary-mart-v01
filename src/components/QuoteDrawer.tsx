@@ -65,7 +65,7 @@ export default function QuoteDrawer() {
         </a>
         <button
           onClick={() => setIsDrawerOpen(true)}
-          title="Open Quote & Sample List"
+          title="Open Cart & Order Bag"
           className="w-10 h-10 rounded-full bg-obsidian border-2 border-gold text-white hover:bg-gold hover:text-obsidian shadow-lg flex items-center justify-center transition relative cursor-pointer"
         >
           <IconShoppingBag size={20} stroke={1.8} />
@@ -77,7 +77,7 @@ export default function QuoteDrawer() {
         </button>
       </div>
 
-      {/* Slide-Over Quote & Sample Drawer */}
+      {/* Slide-Over Cart & Order Drawer */}
       {isDrawerOpen && (
         <div
           className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs"
@@ -101,10 +101,10 @@ export default function QuoteDrawer() {
                 </div>
                 <div>
                   <h3 className="font-serif font-bold text-base sm:text-lg text-gold leading-tight">
-                    Sample &amp; Quotation List
+                    Shopping Cart &amp; Order Bag
                   </h3>
                   <p className="text-[11px] text-neutral-300">
-                    পাইকারি ও খুচরা দর জানতে হোয়াটসঅ্যাপে পাঠান
+                    পণ্য অর্ডার ও পাইকারি/খুচরা দর জানতে হোয়াটসঅ্যাপে পাঠান
                   </p>
                 </div>
               </div>
@@ -199,7 +199,7 @@ export default function QuoteDrawer() {
                   className="flex items-center justify-center gap-2 w-full bg-obsidian hover:bg-gold text-gold hover:text-obsidian border border-gold text-center text-xs sm:text-sm font-bold uppercase tracking-wider py-3.5 px-4 shadow-sm transition cursor-pointer active:scale-98"
                 >
                   <IconBrandWhatsapp size={19} stroke={2} />
-                  <span>Send Quote via WhatsApp</span>
+                  <span>Send Order via WhatsApp</span>
                 </a>
                 <div className="flex items-center justify-between pt-1">
                   <span className="text-xs text-neutral-500 font-medium">
@@ -357,7 +357,7 @@ export default function QuoteDrawer() {
                   className="w-full bg-gold hover:bg-gold-dark text-obsidian font-bold text-xs uppercase tracking-widest py-3 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"
                 >
                   <IconShoppingBag size={17} stroke={2} />
-                  <span>+ Add to Quote Bag</span>
+                  <span>+ Add to Cart</span>
                 </button>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <a

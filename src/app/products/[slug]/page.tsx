@@ -200,25 +200,17 @@ export default function ProductDetailPage({ params }: PageProps) {
                 <span>Download PDF Spec Sheet</span>
               </button>
 
-              {product.driveUrl ? (
-                <a
-                  href={product.driveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-3 px-4 bg-obsidian text-gold border border-gold text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-gold hover:text-obsidian transition shadow-2xs"
-                >
-                  <IconExternalLink size={18} />
-                  <span>2000px Master Drive Image ↗</span>
-                </a>
-              ) : (
-                <Link
-                  href="/calculator"
-                  className="py-3 px-4 bg-stonebg text-obsidian border border-neutral-300 hover:border-obsidian text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition"
-                >
-                  <IconCalculator size={18} />
-                  <span>Open Tile Calculator</span>
-                </Link>
-              )}
+              <a
+                href={`https://wa.me/8801625073614?text=${encodeURIComponent(
+                  `আসসালামু আলাইকুম, আমি ${product.name} (Code: ${product.code}, Size: ${product.sizeCm || product.sizeInch || ""}) অর্ডার/দাম জানতে চাই।`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-3 px-4 bg-[#25D366] text-white border border-[#20bd5a] hover:bg-[#20bd5a] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-2xs"
+              >
+                <IconBrandWhatsapp size={18} />
+                <span>WhatsApp Order / Inquiry</span>
+              </a>
             </div>
           </div>
 
@@ -365,7 +357,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                   className="py-3.5 bg-obsidian hover:bg-gold text-gold hover:text-obsidian border border-obsidian font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-98"
                 >
                   <IconShoppingBag size={18} />
-                  <span>Add {calculatedBoxes} {isTile ? "Boxes" : "Units"} to Quote</span>
+                  <span>Add {calculatedBoxes} {isTile ? "Boxes" : "Units"} to Cart</span>
                 </button>
                 <a
                   href={`${BUSINESS_INFO.whatsappUrl}?text=${encodeURIComponent(

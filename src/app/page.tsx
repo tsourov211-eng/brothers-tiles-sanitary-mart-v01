@@ -21,11 +21,12 @@ import {
 
 export default function HomePage() {
   const [heroIndex, setHeroIndex] = useState(0);
+  const [isHeroHovered, setIsHeroHovered] = useState(false);
   const [activeDept, setActiveDept] = useState<string>("All");
   const { products, wishlist, toggleWishlist, addToQuoteBag, setSelectedProduct } = useShop();
 
-  const newArrivals = products.filter((p) => p.isNewArrival).slice(0, 6);
-  const bestsellers = products.filter((p) => p.isBestseller).slice(0, 6);
+  const newArrivals = products.filter((p) => p.isNewArrival).slice(0, 4);
+  const bestsellers = products.filter((p) => p.isBestseller).slice(0, 4);
 
   const currentHero = HERO_SLIDES[heroIndex];
 
@@ -52,29 +53,23 @@ export default function HomePage() {
     setTouchStartX(null);
   };
 
-  // Auto-play hero carousel every 2.5 seconds; stops when all slides finish
+  // Continuous auto-play for hero carousel (loops infinitely every 4.5s; pauses when hovered)
   useEffect(() => {
+    if (isHeroHovered) return;
     const timer = setInterval(() => {
-      setHeroIndex((prev) => {
-        if (prev < HERO_SLIDES.length - 1) {
-          return prev + 1;
-        }
-        clearInterval(timer);
-        return prev;
-      });
-    }, 2500);
+      setHeroIndex((prev) => (prev === HERO_SLIDES.length - 1 ? 0 : prev + 1));
+    }, 4500);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isHeroHovered, heroIndex]);
 
-  // Train Carousel for "Shop by Color" (continuous ping-pong train movement: left-to-right then right-to-left)
+  // Train Carousel for "Shop by Color" (continuous fluid ping-pong train movement: left-to-right then right-to-left)
   const trainRef = useRef<HTMLDivElement>(null);
-  const scrollPosRef = useRef<number>(0);
-  const directionRef = useRef<1 | -1>(1);
-  const [trainDirection, setTrainDirection] = useState<1 | -1>(1);
   const [isTrainHovered, setIsTrainHovered] = useState(false);
   const isTrainHoveredRef = useRef(false);
-  const isStationPausedRef = useRef(false);
+  const directionRef = useRef<1 | -1>(1);
+  const trainUserPauseRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserPausedRef = useRef(false);
 
   useEffect(() => {
     isTrainHoveredRef.current = isTrainHovered;
@@ -82,57 +77,40 @@ export default function HomePage() {
 
   useEffect(() => {
     let animId: number;
-    let stationTimeout: NodeJS.Timeout | null = null;
     let lastTime: number | null = null;
 
     const animateTrain = (currentTime: number) => {
       if (lastTime === null) {
         lastTime = currentTime;
       }
-      // Clamp delta time to 100ms max to prevent jump on tab focus switch
-      const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1);
+      const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.05);
       lastTime = currentTime;
 
       const container = trainRef.current;
-      if (container && !isTrainHoveredRef.current && !isStationPausedRef.current) {
+      if (container && !isTrainHoveredRef.current && !isUserPausedRef.current) {
         const maxScroll = container.scrollWidth - container.clientWidth;
 
         if (maxScroll > 10) {
-          // Fast, energetic & silky smooth (135px/s on desktop, 95px/s on mobile)
-          const speed = window.innerWidth < 640 ? 95 : 135;
+          // Continuous constant speed: 50px/second (silky smooth, continuous train glide)
+          const speed = 50;
           const step = speed * deltaTime;
 
+          let newScroll = container.scrollLeft;
           if (directionRef.current === 1) {
-            // Forward motion towards the right
-            scrollPosRef.current += step;
-            if (scrollPosRef.current >= maxScroll) {
-              scrollPosRef.current = maxScroll;
-              container.scrollLeft = maxScroll;
-              isStationPausedRef.current = true;
-              stationTimeout = setTimeout(() => {
-                directionRef.current = -1;
-                setTrainDirection(-1);
-                isStationPausedRef.current = false;
-              }, 900);
-            } else {
-              container.scrollLeft = scrollPosRef.current;
+            newScroll += step;
+            if (newScroll >= maxScroll) {
+              newScroll = maxScroll;
+              directionRef.current = -1; // seamlessly glide back from right to left
             }
           } else {
-            // Reverse motion back towards the left
-            scrollPosRef.current -= step;
-            if (scrollPosRef.current <= 0) {
-              scrollPosRef.current = 0;
-              container.scrollLeft = 0;
-              isStationPausedRef.current = true;
-              stationTimeout = setTimeout(() => {
-                directionRef.current = 1;
-                setTrainDirection(1);
-                isStationPausedRef.current = false;
-              }, 900);
-            } else {
-              container.scrollLeft = scrollPosRef.current;
+            newScroll -= step;
+            if (newScroll <= 0) {
+              newScroll = 0;
+              directionRef.current = 1; // seamlessly glide forward from left to right
             }
           }
+
+          container.scrollLeft = newScroll;
         }
       }
 
@@ -143,26 +121,29 @@ export default function HomePage() {
 
     return () => {
       cancelAnimationFrame(animId);
-      if (stationTimeout) clearTimeout(stationTimeout);
+      if (trainUserPauseRef.current) clearTimeout(trainUserPauseRef.current);
     };
   }, []);
 
   const scrollTrain = (dir: "prev" | "next") => {
     if (!trainRef.current) return;
     const container = trainRef.current;
-    const scrollAmount = Math.max(280, container.clientWidth * 0.65);
-    const maxScroll = container.scrollWidth - container.clientWidth;
+    const scrollAmount = Math.max(240, container.clientWidth * 0.5);
+
+    // Pause auto-cruise for 2.5 seconds on manual arrow click
+    isUserPausedRef.current = true;
+    if (trainUserPauseRef.current) clearTimeout(trainUserPauseRef.current);
+    trainUserPauseRef.current = setTimeout(() => {
+      isUserPausedRef.current = false;
+    }, 2500);
 
     if (dir === "prev") {
-      scrollPosRef.current = Math.max(0, scrollPosRef.current - scrollAmount);
       directionRef.current = -1;
-      setTrainDirection(-1);
+      container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     } else {
-      scrollPosRef.current = Math.min(maxScroll, scrollPosRef.current + scrollAmount);
       directionRef.current = 1;
-      setTrainDirection(1);
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
-    container.scrollTo({ left: scrollPosRef.current, behavior: "smooth" });
   };
 
   return (
@@ -172,6 +153,8 @@ export default function HomePage() {
          ===================================================================== */}
       <section
         className="relative w-full h-[76vh] min-h-[500px] max-h-[640px] sm:h-[calc(100vh-130px)] sm:min-h-[660px] sm:max-h-none lg:h-[calc(100vh-135px)] bg-obsidian overflow-hidden select-none"
+        onMouseEnter={() => setIsHeroHovered(true)}
+        onMouseLeave={() => setIsHeroHovered(false)}
         onTouchStart={handleHeroTouchStart}
         onTouchEnd={handleHeroTouchEnd}
       >
@@ -180,14 +163,14 @@ export default function HomePage() {
           <div
             key={slide.id}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              idx === heroIndex ? "opacity-100 z-0 scale-100" : "opacity-0 -z-10 scale-105 pointer-events-none"
-            } transition-all duration-1000`}
+              idx === heroIndex ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
+            }`}
           >
             <Image
               src={slide.image}
               alt={slide.title}
               fill
-              priority={idx === 0}
+              priority={idx <= 1}
               className="object-cover object-center"
               sizes="100vw"
             />
@@ -195,32 +178,32 @@ export default function HomePage() {
         ))}
 
         {/* Luxury Black-to-Transparent Gradient Overlay for crisp readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 z-5 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 z-15 pointer-events-none" />
 
-        {/* Left & Right Carousel Arrows (Hidden on mobile, matching Tilebar mobile reference) */}
+        {/* Left & Right Carousel Arrows */}
         <button
           onClick={prevHero}
           aria-label="Previous slide"
-          className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center bg-black/55 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer"
+          className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer shadow-md"
         >
           &#8249;
         </button>
         <button
           onClick={nextHero}
           aria-label="Next slide"
-          className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center bg-black/55 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer"
+          className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer shadow-md"
         >
           &#8250;
         </button>
 
-        {/* Slide Progress Indicator Dashes (Centered at Bottom, exact replica of mobile reference) */}
-        <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center gap-2 sm:gap-2.5">
+        {/* Slide Progress Indicator Dashes */}
+        <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-2 sm:gap-2.5">
           {HERO_SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setHeroIndex(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-[2px] sm:h-[2.5px] rounded-full transition-all duration-300 cursor-pointer ${
+              className={`h-[3px] rounded-full transition-all duration-300 cursor-pointer ${
                 i === heroIndex
                   ? "w-8 sm:w-10 bg-white shadow-sm"
                   : "w-5 sm:w-7 bg-white/45 hover:bg-white/75"
@@ -230,7 +213,7 @@ export default function HomePage() {
         </div>
 
         {/* Bottom-Left Overlay Content */}
-        <div className="relative z-10 max-w-[1400px] mx-auto h-full px-5 sm:px-12 pb-9 sm:pb-20 flex flex-col justify-end">
+        <div className="relative z-20 max-w-[1400px] mx-auto h-full px-5 sm:px-12 pb-9 sm:pb-20 flex flex-col justify-end">
           <div
             key={heroIndex}
             className="animate-slide-left max-w-2xl space-y-2 sm:space-y-3"
@@ -273,15 +256,9 @@ export default function HomePage() {
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 pt-12 pb-10">
         <div className="flex items-end justify-between mb-6 gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-obsidian tracking-tight">
-                Shop by Color
-              </h2>
-              <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-semibold text-obsidian bg-stonebg px-2.5 py-0.5 border border-neutral-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
-                <span>অটো স্লাইড</span>
-              </span>
-            </div>
+            <h2 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-obsidian tracking-tight">
+              Shop by Color
+            </h2>
             <p className="text-xs sm:text-sm text-neutral-500 mt-1">
               রঙ অনুযায়ী আপনার পছন্দের টাইলস বেছে নিন ({COLOR_SWATCHES.length}টি প্রিমিয়াম কালার শেড)
             </p>
@@ -323,15 +300,9 @@ export default function HomePage() {
         <div
           className="relative group/train"
           onMouseEnter={() => setIsTrainHovered(true)}
-          onMouseLeave={() => {
-            setIsTrainHovered(false);
-            if (trainRef.current) scrollPosRef.current = trainRef.current.scrollLeft;
-          }}
+          onMouseLeave={() => setIsTrainHovered(false)}
           onTouchStart={() => setIsTrainHovered(true)}
-          onTouchEnd={() => {
-            setIsTrainHovered(false);
-            if (trainRef.current) scrollPosRef.current = trainRef.current.scrollLeft;
-          }}
+          onTouchEnd={() => setIsTrainHovered(false)}
         >
           {/* Subtle edge fade overlays on desktop */}
           <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 opacity-0 sm:group-hover/train:opacity-100 transition duration-300" />
@@ -528,7 +499,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {newArrivals.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -595,7 +566,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {bestsellers.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

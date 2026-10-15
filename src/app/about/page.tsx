@@ -25,8 +25,11 @@ export default function AboutPage() {
             <span className="text-[10px] font-bold uppercase tracking-widest text-gold">
               ABOUT OUR SHOWROOM &amp; BRANDS
             </span>
-            <h1 className="text-2xl sm:text-4xl font-serif font-bold text-white">
-              {BUSINESS_INFO.fullName}
+            <h1 className="text-2xl sm:text-4xl font-serif font-bold text-white leading-snug">
+              <span>{BUSINESS_INFO.nameEn}</span>
+              <span className="block text-lg sm:text-2xl font-normal text-gold-light mt-1">
+                ({BUSINESS_INFO.nameBn})
+              </span>
             </h1>
             <p className="text-sm text-gold font-medium">
               {BUSINESS_INFO.tagline} — {BUSINESS_INFO.subLine}
