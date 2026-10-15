@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { ProductItem, PRODUCTS } from "@/data/siteData";
+import { ProductItem, PRODUCTS, ALL_PRODUCTS } from "@/data/siteData";
 import { OrderRecord, OrderStatus, InvoiceRecord, CustomerRecord } from "@/types/management";
 import { INITIAL_ORDERS, INITIAL_INVOICES } from "@/data/initialManagementData";
 
@@ -9,6 +9,8 @@ export interface QuoteBagItem {
   product: ProductItem;
   quantityBoxes: number;
   note?: string;
+  itemType?: "BOX" | "SAMPLE";
+  unitPrice?: number;
 }
 
 export interface NewSaleInput {
@@ -57,6 +59,7 @@ interface ShopContextType {
   toggleWishlist: (productId: string) => void;
   quoteBag: QuoteBagItem[];
   addToQuoteBag: (product: ProductItem, quantityBoxes?: number) => void;
+  addSampleToBag: (product: ProductItem) => void;
   removeFromQuoteBag: (productId: string) => void;
   updateQuoteQty: (productId: string, quantityBoxes: number) => void;
   clearQuoteBag: () => void;
@@ -72,14 +75,14 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
 // Helper to initialize products with stock and offer metadata
 function getInitialProducts(): ProductItem[] {
-  return PRODUCTS.map((p, idx) => {
+  return ALL_PRODUCTS.map((p, idx) => {
     const isTile =
       p.category === "Floor Tiles" ||
       p.category === "Wall Tiles" ||
       p.category === "Stair & Parking" ||
       p.category === "Tiles";
-    let stock = isTile ? 120 + (idx % 5) * 20 : 30 + (idx % 4) * 8;
-    let minThreshold = 20;
+    let stock = p.stockBoxes ?? (isTile ? 120 + (idx % 5) * 20 : 30 + (idx % 4) * 8);
+    let minThreshold = p.minStockThreshold ?? 20;
 
     // Set a couple low-stock items for immediate demonstration of stock alerts
     if (p.id === "geo-series-1") {
@@ -92,14 +95,17 @@ function getInitialProducts(): ProductItem[] {
 
     const isOffer = idx === 0 || idx === 3;
     const isHotSale = p.isBestseller || idx === 1;
+    const basePrice = p.price || p.pricePerSqFt || 115;
 
     return {
       ...p,
+      price: basePrice,
+      pricePerSqFt: p.pricePerSqFt || basePrice,
       stockBoxes: stock,
       minStockThreshold: minThreshold,
       isOffer,
       discountPercent: isOffer ? 10 : undefined,
-      originalPrice: isOffer && p.price ? Math.round(p.price * 1.12) : undefined,
+      originalPrice: isOffer ? Math.round(basePrice * 1.12) : undefined,
       isHotSale,
       isUpcoming: idx === 4,
     };
@@ -402,6 +408,32 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     setIsDrawerOpen(true);
   };
 
+  const addSampleToBag = (product: ProductItem) => {
+    setQuoteBag((prev) => {
+      const existing = prev.find(
+        (item) => item.product.id === product.id && item.itemType === "SAMPLE"
+      );
+      if (existing) {
+        return prev;
+      }
+      const next: QuoteBagItem[] = [
+        ...prev,
+        {
+          product,
+          quantityBoxes: 1,
+          itemType: "SAMPLE",
+          unitPrice: product.samplePrice || 100,
+          note: "Sample Swatch (৳100)",
+        },
+      ];
+      try {
+        localStorage.setItem("btsm_quotebag", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    setIsDrawerOpen(true);
+  };
+
   const removeFromQuoteBag = (productId: string) => {
     setQuoteBag((prev) => {
       const next = prev.filter((item) => item.product.id !== productId);
@@ -463,6 +495,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         toggleWishlist,
         quoteBag,
         addToQuoteBag,
+        addSampleToBag,
         removeFromQuoteBag,
         updateQuoteQty,
         clearQuoteBag,

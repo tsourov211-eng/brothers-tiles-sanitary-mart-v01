@@ -247,6 +247,75 @@ export default function AdminPage() {
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>("All");
   const [stockFilter, setStockFilter] = useState<"All" | "Low" | "Out">("All");
 
+  // Products Management pagination states (default 25 per user request)
+  const [productsPerPage, setProductsPerPage] = useState<number>(25);
+  const [productCurrentPage, setProductCurrentPage] = useState<number>(1);
+
+  // Helper to match category including RAK PDF tiles
+  const isProductInCategory = (p: ProductItem, cat: string) => {
+    if (cat === "All") return true;
+    if (p.category === cat) return true;
+    if (cat === "Floor Tiles") {
+      return (
+        p.category === "Floor Tiles" ||
+        p.pdfCategory === "04 - Porcelain Floor Tiles" ||
+        p.pdfCategory === "03 - Porcelain Wall & Floor Tiles" ||
+        (p.subCategory && p.subCategory.toLowerCase().includes("floor"))
+      );
+    }
+    if (cat === "Wall Tiles") {
+      return (
+        p.category === "Wall Tiles" ||
+        p.pdfCategory === "01 - Ceramic Wall Tiles" ||
+        p.pdfCategory === "03 - Porcelain Wall & Floor Tiles" ||
+        (p.subCategory && p.subCategory.toLowerCase().includes("wall"))
+      );
+    }
+    if (cat === "Stair & Parking") {
+      return (
+        p.category === "Stair & Parking" ||
+        p.pdfCategory === "05 - Porcelain Industrial, Step & Parking Tiles" ||
+        (p.subCategory &&
+          (p.subCategory.toLowerCase().includes("step") ||
+            p.subCategory.toLowerCase().includes("parking") ||
+            p.subCategory.toLowerCase().includes("industrial")))
+      );
+    }
+    return false;
+  };
+
+  const filteredManagementProducts = useMemo(() => {
+    return products.filter((p) => {
+      if (productCategoryFilter !== "All" && !isProductInCategory(p, productCategoryFilter)) {
+        return false;
+      }
+      if (productSearch.trim()) {
+        const query = productSearch.toLowerCase();
+        return (
+          p.name.toLowerCase().includes(query) ||
+          p.nameBn.toLowerCase().includes(query) ||
+          p.code.toLowerCase().includes(query) ||
+          p.brand.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          p.subCategory.toLowerCase().includes(query) ||
+          (p.series && p.series.toLowerCase().includes(query))
+        );
+      }
+      return true;
+    });
+  }, [products, productCategoryFilter, productSearch]);
+
+  const totalProductPages = Math.max(1, Math.ceil(filteredManagementProducts.length / productsPerPage));
+  const currentSafeProductPage = Math.min(Math.max(1, productCurrentPage), totalProductPages);
+
+  const paginatedManagementProducts = useMemo(() => {
+    if (productsPerPage >= filteredManagementProducts.length) {
+      return filteredManagementProducts;
+    }
+    const startIndex = (currentSafeProductPage - 1) * productsPerPage;
+    return filteredManagementProducts.slice(startIndex, startIndex + productsPerPage);
+  }, [filteredManagementProducts, currentSafeProductPage, productsPerPage]);
+
   // Modals state
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
@@ -1568,7 +1637,10 @@ export default function AdminPage() {
               <input
                 type="text"
                 value={productSearch}
-                onChange={(e) => setProductSearch(e.target.value)}
+                onChange={(e) => {
+                  setProductSearch(e.target.value);
+                  setProductCurrentPage(1);
+                }}
                 placeholder="Search products by name, code or brand..."
                 className="flex-1 text-xs border border-neutral-300 rounded px-3 py-2 focus:outline-none focus:border-obsidian"
               />
@@ -1577,51 +1649,84 @@ export default function AdminPage() {
                 className="w-full sm:w-64"
                 menuClassName="w-64"
                 value={productCategoryFilter}
-                onChange={setProductCategoryFilter}
+                onChange={(val) => {
+                  setProductCategoryFilter(val);
+                  setProductCurrentPage(1);
+                }}
                 options={ADMIN_CATEGORY_FILTER_OPTIONS}
                 ariaLabel="Filter products by category"
               />
             </div>
 
-            {/* Category Filter Pills Bar */}
-            <div className="flex flex-wrap items-center gap-2">
-              {[
-                { id: "All", label: "All Items" },
-                { id: "Floor Tiles", label: "Floor Tiles" },
-                { id: "Wall Tiles", label: "Wall Tiles" },
-                { id: "Basin", label: "Basin" },
-                { id: "Commode", label: "Commode" },
-                { id: "Sanitary", label: "Sanitary" },
-                { id: "Bathroom Accessories", label: "Accessories" },
-                { id: "Stair & Parking", label: "Stair & Parking" },
-              ].map((c) => {
-                const count =
-                  c.id === "All"
-                    ? products.length
-                    : products.filter((p) => p.category === c.id).length;
-                return (
-                  <button
-                    key={c.id}
-                    onClick={() => setProductCategoryFilter(c.id)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full border transition cursor-pointer ${
-                      productCategoryFilter === c.id
-                        ? "bg-obsidian text-gold border-obsidian shadow-xs"
-                        : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-400"
-                    }`}
-                  >
-                    <span>{c.label}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+            {/* Category Filter Pills & Items Per Page Row (Marked Location) */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {[
+                  { id: "All", label: "All Items" },
+                  { id: "Floor Tiles", label: "Floor Tiles" },
+                  { id: "Wall Tiles", label: "Wall Tiles" },
+                  { id: "Basin", label: "Basin" },
+                  { id: "Commode", label: "Commode" },
+                  { id: "Sanitary", label: "Sanitary" },
+                  { id: "Bathroom Accessories", label: "Accessories" },
+                  { id: "Stair & Parking", label: "Stair & Parking" },
+                ].map((c) => {
+                  const count =
+                    c.id === "All"
+                      ? products.length
+                      : products.filter((p) => isProductInCategory(p, c.id)).length;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setProductCategoryFilter(c.id);
+                        setProductCurrentPage(1);
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full border transition cursor-pointer ${
                         productCategoryFilter === c.id
-                          ? "bg-gold text-obsidian font-bold"
-                          : "bg-neutral-100 text-neutral-600"
+                          ? "bg-obsidian text-gold border-obsidian shadow-xs"
+                          : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-400"
                       }`}
                     >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
+                      <span>{c.label}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                          productCategoryFilter === c.id
+                            ? "bg-gold text-obsidian font-bold"
+                            : "bg-neutral-100 text-neutral-600"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Items Per Page Selector (Marked Location - Default 25) */}
+              <div className="flex items-center gap-2 shrink-0 self-end md:self-auto bg-white border border-neutral-300 rounded-lg px-2.5 py-1 shadow-2xs">
+                <span className="text-xs font-semibold text-neutral-500 whitespace-nowrap">
+                  Show:
+                </span>
+                <CustomDropdown
+                  variant="compact"
+                  align="right"
+                  value={String(productsPerPage)}
+                  onChange={(val) => {
+                    setProductsPerPage(Number(val));
+                    setProductCurrentPage(1);
+                  }}
+                  options={[
+                    { value: "10", label: "10 / page" },
+                    { value: "25", label: "25 / page", badge: "Default" },
+                    { value: "50", label: "50 / page" },
+                    { value: "100", label: "100 / page" },
+                    { value: "250", label: "250 / page" },
+                    { value: "1000", label: `All (${filteredManagementProducts.length})` },
+                  ]}
+                  ariaLabel="Items to display per page"
+                />
+              </div>
             </div>
 
             {/* Products Table */}
@@ -1640,27 +1745,14 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100">
-                    {products
-                      .filter((p) => {
-                        if (
-                          productCategoryFilter !== "All" &&
-                          p.category !== productCategoryFilter
-                        )
-                          return false;
-                        if (productSearch.trim()) {
-                          const query = productSearch.toLowerCase();
-                          return (
-                            p.name.toLowerCase().includes(query) ||
-                            p.nameBn.toLowerCase().includes(query) ||
-                            p.code.toLowerCase().includes(query) ||
-                            p.brand.toLowerCase().includes(query) ||
-                            p.category.toLowerCase().includes(query) ||
-                            p.subCategory.toLowerCase().includes(query)
-                          );
-                        }
-                        return true;
-                      })
-                      .map((p) => (
+                    {paginatedManagementProducts.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center text-neutral-400">
+                          কোনো পণ্য পাওয়া যায়নি
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedManagementProducts.map((p) => (
                         <tr key={p.id} className="hover:bg-neutral-50">
                           <td className="py-2.5 px-4">
                             <div className="flex items-center gap-3">
@@ -1722,7 +1814,7 @@ export default function AdminPage() {
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 onClick={() => setEditingProduct({ ...p })}
-                                className="px-2 py-1 text-xs font-semibold text-neutral-700 hover:text-obsidian border border-neutral-300 rounded hover:bg-neutral-100"
+                                className="px-2 py-1 text-xs font-semibold text-neutral-700 hover:text-obsidian border border-neutral-300 rounded hover:bg-neutral-100 cursor-pointer"
                               >
                                 Edit
                               </button>
@@ -1732,16 +1824,94 @@ export default function AdminPage() {
                                     deleteProduct(p.id);
                                   }
                                 }}
-                                className="px-2 py-1 text-xs font-semibold text-red-600 hover:text-red-800 border border-red-200 rounded hover:bg-red-50"
+                                className="px-2 py-1 text-xs font-semibold text-red-600 hover:text-red-800 border border-red-200 rounded hover:bg-red-50 cursor-pointer"
                               >
                                 Delete
                               </button>
                             </div>
                           </td>
                         </tr>
-                      ))}
+                      ))
+                    )}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Pagination Bar */}
+              <div className="px-4 py-3 bg-[#FAF8F5] border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <p className="text-neutral-500">
+                  Showing{" "}
+                  <strong className="text-obsidian font-bold">
+                    {filteredManagementProducts.length === 0
+                      ? 0
+                      : (currentSafeProductPage - 1) * productsPerPage + 1}
+                  </strong>{" "}
+                  to{" "}
+                  <strong className="text-obsidian font-bold">
+                    {Math.min(
+                      currentSafeProductPage * productsPerPage,
+                      filteredManagementProducts.length
+                    )}
+                  </strong>{" "}
+                  of{" "}
+                  <strong className="text-obsidian font-bold">
+                    {filteredManagementProducts.length}
+                  </strong>{" "}
+                  products {filteredManagementProducts.length > productsPerPage && `(Page ${currentSafeProductPage} of ${totalProductPages})`}
+                </p>
+
+                {totalProductPages > 1 && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      disabled={currentSafeProductPage <= 1}
+                      onClick={() => setProductCurrentPage((p) => Math.max(1, p - 1))}
+                      className="px-2.5 py-1 text-xs rounded border border-neutral-300 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-obsidian transition cursor-pointer"
+                    >
+                      Prev
+                    </button>
+
+                    {Array.from({ length: totalProductPages }, (_, i) => i + 1)
+                      .filter((pg) => {
+                        return (
+                          pg === 1 ||
+                          pg === totalProductPages ||
+                          Math.abs(pg - currentSafeProductPage) <= 1
+                        );
+                      })
+                      .map((pg, idx, arr) => {
+                        const prev = arr[idx - 1];
+                        const showEllipsis = prev && pg - prev > 1;
+                        return (
+                          <React.Fragment key={pg}>
+                            {showEllipsis && (
+                              <span className="px-1 text-neutral-400 select-none">...</span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setProductCurrentPage(pg)}
+                              className={`w-7 h-7 text-xs font-bold rounded border transition cursor-pointer ${
+                                currentSafeProductPage === pg
+                                  ? "bg-obsidian text-gold border-obsidian"
+                                  : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-100"
+                              }`}
+                            >
+                              {pg}
+                            </button>
+                          </React.Fragment>
+                        );
+                      })}
+
+                    <button
+                      type="button"
+                      disabled={currentSafeProductPage >= totalProductPages}
+                      onClick={() => setProductCurrentPage((p) => Math.min(totalProductPages, p + 1))}
+                      className="px-2.5 py-1 text-xs rounded border border-neutral-300 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-obsidian transition cursor-pointer"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

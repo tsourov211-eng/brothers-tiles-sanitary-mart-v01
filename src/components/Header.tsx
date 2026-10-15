@@ -33,9 +33,43 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { wishlist, quoteBag, setIsDrawerOpen, lang, setLang } = useShop();
+
+  // Dynamically set --header-height CSS variable so sticky sub-bars lock right underneath the navbar
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.getBoundingClientRect().height;
+        document.documentElement.style.setProperty(
+          "--header-height",
+          `${Math.ceil(height)}px`
+        );
+      }
+    };
+
+    updateHeaderHeight();
+    requestAnimationFrame(updateHeaderHeight);
+    const timeout = setTimeout(updateHeaderHeight, 150);
+
+    window.addEventListener("resize", updateHeaderHeight);
+    window.addEventListener("load", updateHeaderHeight);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && headerRef.current) {
+      resizeObserver = new ResizeObserver(updateHeaderHeight);
+      resizeObserver.observe(headerRef.current);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("resize", updateHeaderHeight);
+      window.removeEventListener("load", updateHeaderHeight);
+      if (resizeObserver) resizeObserver.disconnect();
+    };
+  }, []);
 
   // If on admin management dashboard, hide customer storefront header
   if (pathname?.startsWith("/admin")) {
@@ -95,7 +129,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-neutral-200 shadow-sm">
+    <header ref={headerRef} className="sticky top-0 z-40 bg-white border-b-2 border-gold shadow-sm">
       {/* Tier 0: Top Announcement Bar Carousel (Auto rotates every 4s, left-to-right slide) */}
       <div
         className="bg-obsidian text-gold border-b border-gold/25 text-xs py-2 px-3 sm:px-4"
@@ -151,11 +185,11 @@ export default function Header() {
           />
         </Link>
 
-        {/* Center-Right: Tilebar-style Wide Rectangular Search Box + Icons */}
-        <div className="flex items-center gap-4 flex-1 justify-end max-w-2xl">
+        {/* Center-Right: Tilebar-style Rectangular Search Box + Icons */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-1 justify-end max-w-2xl">
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden sm:flex items-center w-full max-w-md border border-neutral-400 focus-within:border-obsidian bg-white px-3 py-1.5"
+            className="hidden sm:flex items-center w-full max-w-[280px] md:max-w-[320px] lg:max-w-[350px] border border-neutral-400 focus-within:border-obsidian bg-white px-3 py-1.5"
           >
             <input
               type="text"
@@ -163,8 +197,8 @@ export default function Header() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={
                 lang === "bn"
-                  ? "৫০০০+ টাইলস, বেসিন, কমোড বা RAK কোড খুঁজুন..."
-                  : "Search 5,000+ Tiles, Basin, Commode, RAK Series..."
+                  ? "টাইলস, বেসিন বা RAK কোড খুঁজুন..."
+                  : "Search 5,000+ Tiles, Basin, Commode, RAK..."
               }
               className="w-full text-xs sm:text-sm text-obsidian placeholder-neutral-500 focus:outline-none bg-transparent"
             />
@@ -259,8 +293,8 @@ export default function Header() {
         className="hidden md:block border-t border-neutral-200 bg-white relative"
         onMouseLeave={handleMenuLeave}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex items-center justify-between text-[14px] font-semibold tracking-wide uppercase text-obsidian">
-          <div className="flex items-center space-x-1 lg:space-x-2">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex items-center justify-between text-[12px] md:text-[13px] xl:text-[14px] font-semibold tracking-normal xl:tracking-wide uppercase text-obsidian">
+          <div className="flex items-center space-x-0.5 md:space-x-1 lg:space-x-1.5 xl:space-x-2">
             {[
               { id: "new", label: "NEW ARRIVALS", href: "/catalog?filter=new" },
               { id: "tiles", label: "WALL & FLOOR TILES", href: "/catalog?category=Tiles" },
@@ -297,7 +331,7 @@ export default function Header() {
             })}
           </div>
 
-          <div className="flex items-center space-x-4 lg:space-x-6 py-2.5 text-neutral-700">
+          <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 py-2.5 text-neutral-700 shrink-0">
             <Link
               href="/calculator"
               onClick={handleCloseMegaMenu}

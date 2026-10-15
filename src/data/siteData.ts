@@ -1,3 +1,5 @@
+import { PDF_CATALOG_974, PdfTileRecord } from "./pdfCatalog974";
+
 export type ProductCategory =
   | "Tiles"
   | "Floor Tiles"
@@ -115,6 +117,7 @@ export const SHOWROOM_CATEGORIES: ShowroomCategoryMeta[] = [
 
 export interface ProductItem {
   id: string;
+  slug?: string;
   code: string;
   name: string;
   nameBn: string;
@@ -136,6 +139,15 @@ export interface ProductItem {
   description: string;
   descriptionBn: string;
   pdfPage?: number;
+  catalogPage?: number;
+  tileRole?: string;
+  pdfCategory?: string;
+  driveUrl?: string;
+  pricePerSqFt?: number;
+  wholesalePricePerSqFt?: number;
+  sqFtPerBox?: number;
+  tilesPerBox?: number;
+  samplePrice?: number;
   price?: number;
   priceUnit?: "sq. ft." | "Piece";
   swatchColors?: string[];
@@ -1305,3 +1317,139 @@ export const FACEBOOK_REVIEWS = [
     translation: "বাসার মাপ/প্ল্যান অনুযায়ী ফ্রি ডিজাইন ও হিসাব এবং পাইকারি দামে খুচরা ক্রয়ের সেরা ঠিকানা।",
   },
 ];
+
+// ============================================================================
+// PDF CATALOG 974 + ALL COMBINED PRODUCTS (1,000+ SKUs)
+// ============================================================================
+export { PDF_CATALOG_974 };
+export type { PdfTileRecord };
+
+export const ALL_PRODUCTS: ProductItem[] = [
+  ...PRODUCTS.map((p) => ({
+    ...p,
+    slug: p.slug || p.id,
+    pricePerSqFt: p.pricePerSqFt || p.price || 115,
+    sqFtPerBox: p.sqFtPerBox || 14.53,
+    tilesPerBox: p.tilesPerBox || 4,
+    samplePrice: p.samplePrice || 100,
+    stockBoxes: p.stockBoxes ?? 120,
+    rating: p.rating ?? 4.9,
+    reviewCount: p.reviewCount ?? 48,
+  })),
+  ...(PDF_CATALOG_974 as unknown as ProductItem[]),
+];
+
+export const PDF_EXTRACTION_SUMMARY = {
+  totalPdfPages: 116,
+  productPages: 107,
+  nonProductPages: 9,
+  totalExtractedTiles: 974,
+  enhancedResolution: "2000px on longest side (Lanczos-4 + Bilateral Denoise + Unsharp Mask)",
+  googleDriveRootFolder: "https://drive.google.com/drive/folders/1RW42pUeUtlW2UOw5mBVmjR7Tx-LF9sPm",
+  excelIndexDriveUrl: "https://drive.google.com/file/d/10Tb8z-a7iEocwg5dDqLUj5ZSNyXXjswn/view?usp=drivesdk",
+  categories: [
+    {
+      id: "01 - Ceramic Wall Tiles",
+      nameEn: "01 - Ceramic Wall Tiles",
+      nameBn: "সিরামিক ওয়াল টাইলস (Ceramic Wall Tiles)",
+      tileCount: 478,
+      pdfPages: "Pages 7–43 (Catalog Pages 1–37)",
+      sizes: ["30x90", "25x70", "30x60", "30x50.5", "25x40", "20x30"],
+      series: [
+        "Premija Collection",
+        "Premium Collection - Paris & Berlin Series",
+        "Premium Collection - Turin & Dallas Series",
+        "Premium Collection - Dallas, Diana & Eden Series",
+        "Premium Collection - Aston Series",
+        "Premium Collection - Jordana Series",
+        "Premium Collection - Vivid Collection",
+        "Premium Collection - Stone Art",
+        "Premium Collection - Suger Series",
+        "Premium Collection - Vivid Collection (30x50.5)",
+        "Premium Collection (30x50.5)",
+        "Premium Collection - Emir Series",
+        "Wall Tiles (25x40)",
+        "Victoria Series",
+        "Wall Tiles (20x30)",
+      ],
+      driveFolderUrl: "https://drive.google.com/drive/folders/11h_LAQuGpDdjFxRp9snSvKz3rYOhvYUr",
+    },
+    {
+      id: "02 - Ceramic Cladding Tiles",
+      nameEn: "02 - Ceramic Cladding Tiles",
+      nameBn: "সিরামিক ও রাস্টিক ক্লাডিং টাইলস (Cladding Exterior)",
+      tileCount: 7,
+      pdfPages: "Page 44 (Catalog Page 38)",
+      sizes: ["20x7.5", "30.5x7.5"],
+      series: ["Ceramics & Rustic Cladding"],
+      driveFolderUrl: "https://drive.google.com/drive/folders/1ixKXEO2x9s6WfCafuCZmk0nGTsOedUPf",
+    },
+    {
+      id: "03 - Porcelain Wall & Floor Tiles",
+      nameEn: "03 - Porcelain Wall & Floor Tiles",
+      nameBn: "পোরসেলিন ওয়াল ও ফ্লোর টাইলস (30x60 Gres Porcellanato)",
+      tileCount: 122,
+      pdfPages: "Pages 45–54, 57–59, 100 (Catalog Pages 39–48, 51–53, 94)",
+      sizes: ["30x60"],
+      series: [
+        "Rocker Series (30x60)",
+        "Hard Rock Collections",
+        "Glaze Rustic (30x60)",
+        "Vista Series",
+        "Wood Art Collection (30x60)",
+      ],
+      driveFolderUrl: "https://drive.google.com/drive/folders/1S8NFwxJ8o-rwtul-bkJ76JsQL0rsvsQD",
+    },
+    {
+      id: "04 - Porcelain Floor Tiles",
+      nameEn: "04 - Porcelain Floor Tiles",
+      nameBn: "পোরসেলিন ফ্লোর ও গ্র্যান্ড স্ল্যাব টাইলস (60x120, 80x80, 60x60, 40x40)",
+      tileCount: 312,
+      pdfPages: "Pages 61–99, 101–103, 106–111 (Catalog Pages 55–93, 95–97, 100–105)",
+      sizes: ["60x120", "80x80", "60x60", "40x40"],
+      series: [
+        "Elegant Slab Series",
+        "Imperial Silk Series",
+        "Rocker Slab Series",
+        "Rocker Slab & Glaze Rustic Series",
+        "Wooden Slab Series",
+        "Double Charge (80x80)",
+        "Rocker Series (80x80)",
+        "Lapato Tiles (80x80)",
+        "Elegant Alpha",
+        "Double Charge (60x60)",
+        "Double Charge & Stonechips (60x60)",
+        "Terrazzo",
+        "Elegant Series (60x60)",
+        "Classic Series",
+        "Classic Super Series",
+        "Apollo Series",
+        "Salt & Pepper / Dura (60x60)",
+        "Wood Art Collection (60x60)",
+        "Concrete & Cementina Series",
+        "Glaze Rustic (60x60)",
+        "High Tech Porcelain & GEO Series",
+        "Glaze Homogeneous (40x40)",
+        "Salt & Pepper (Glaze) & SG (40x40)",
+      ],
+      driveFolderUrl: "https://drive.google.com/drive/folders/1ONwWz9cNpCM-BwqBjHVheq9X6Pw5VQ7L",
+    },
+    {
+      id: "05 - Porcelain Industrial, Step & Parking Tiles",
+      nameEn: "05 - Porcelain Industrial, Step & Parking Tiles",
+      nameBn: "ইন্ডাস্ট্রিয়াল, সিঁড়ি (Step/Tread) ও পার্কিং টাইলস",
+      tileCount: 55,
+      pdfPages: "Pages 55–56, 104–105, 112–114 (Catalog Pages 49–50, 98–99, 106–108)",
+      sizes: ["30x60", "40x40", "30.5x30.5", "30x30"],
+      series: [
+        "RAK Tread Tiles (Self Embossed)",
+        "Bull-nose with Groove",
+        "Industrial Tiles Heavy Duty 13mm",
+        "Industrial Tiles 10mm & Marking Tiles",
+        "Salt & Pepper (Glaze) & Step Tiles (30.5x30.5)",
+        "Parking Tiles & Glaze Rustic (30x30)",
+      ],
+      driveFolderUrl: "https://drive.google.com/drive/folders/1xh7UQYsgubHBwsbpOAUZ5RtraWDVBZgf",
+    },
+  ],
+};
