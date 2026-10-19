@@ -441,7 +441,7 @@ export default function Header() {
                 />
               )}
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {wishlist.length}
                 </span>
               )}
@@ -459,7 +459,7 @@ export default function Header() {
                 className="text-neutral-700 group-hover:text-gold-dark group-hover:scale-110 transition-all duration-200"
               />
               {quoteBag.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[10px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {quoteBag.length}
                 </span>
               )}
