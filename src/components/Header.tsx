@@ -376,12 +376,18 @@ export default function Header() {
           />
         </Link>
 
-        {/* Center-Right: Tilebar-style Rectangular Search Box + Icons */}
-        <div className="flex items-center gap-3 sm:gap-4 flex-1 justify-end max-w-2xl">
+        {/* Center-Right: Luxury Search Box + Language + Action Icons */}
+        <div className="flex items-center gap-2.5 sm:gap-3.5 flex-1 justify-end max-w-2xl">
+          {/* Redesigned Pill Search Form */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden sm:flex items-center w-full max-w-[280px] md:max-w-[320px] lg:max-w-[350px] border border-neutral-400 focus-within:border-obsidian bg-white px-3 py-1.5"
+            className="hidden sm:flex items-center w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] bg-[#F7F6F2] hover:bg-[#F2F0EB] focus-within:bg-white border border-neutral-300/80 hover:border-gold/60 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/20 rounded-full px-3.5 py-2 transition-all duration-300 shadow-2xs group"
           >
+            <IconSearch
+              size={17}
+              stroke={2}
+              className="text-neutral-400 group-focus-within:text-gold-dark transition-colors shrink-0 mr-2"
+            />
             <input
               type="text"
               value={searchQuery}
@@ -391,81 +397,101 @@ export default function Header() {
                   ? "টাইলস, বেসিন বা RAK কোড খুঁজুন..."
                   : "Search 5,000+ Tiles, Basin, Commode, RAK..."
               }
-              className="w-full text-xs sm:text-sm text-obsidian placeholder-neutral-500 focus:outline-none bg-transparent"
+              className="w-full text-xs sm:text-[13px] text-obsidian placeholder:text-neutral-400 focus:outline-none bg-transparent"
             />
-            <button
-              type="submit"
-              aria-label="Search catalog"
-              className="text-obsidian hover:text-gold-dark pl-2 cursor-pointer flex items-center"
-            >
-              <IconSearch size={18} stroke={2} />
-            </button>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-neutral-400 hover:text-obsidian p-0.5 rounded-full hover:bg-neutral-200/60 transition"
+              >
+                <IconX size={14} stroke={2} />
+              </button>
+            )}
           </form>
 
-          {/* Language Switcher */}
+          {/* Language Switcher Pill */}
           <button
             onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-            className="text-[11px] font-semibold border border-obsidian/20 hover:border-gold bg-obsidian text-gold px-2.5 py-1 tracking-wider uppercase transition shrink-0 flex items-center gap-1 cursor-pointer"
+            className="rounded-full bg-obsidian text-gold hover:text-white hover:bg-neutral-900 border border-gold/40 hover:border-gold px-3 py-1.5 text-[11px] font-bold tracking-wider uppercase shadow-xs flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shrink-0"
             title="Switch Language"
           >
-            <IconLanguage size={14} stroke={1.8} />
-            <span>{lang === "bn" ? "EN" : "বাংলা"}</span>
+            <IconLanguage size={14} stroke={2} className="text-gold" />
+            <span className="font-sans">{lang === "bn" ? "EN" : "বাংলা"}</span>
           </button>
 
-          {/* Wishlist Icon with Red/Gold Badge (matching Tilebar header) */}
-          <Link
-            href="/catalog?wishlist=true"
-            className="relative p-1.5 text-obsidian hover:text-gold-dark transition flex items-center justify-center"
-            title="Saved Favorites"
-          >
-            {wishlist.length > 0 ? (
-              <IconHeartFilled size={21} className="text-red-600" />
-            ) : (
-              <IconHeart size={21} stroke={1.8} />
-            )}
-            {wishlist.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-red-700 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {wishlist.length}
-              </span>
-            )}
-          </Link>
+          {/* Action Icons Group */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Wishlist Button */}
+            <Link
+              href="/catalog?wishlist=true"
+              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-rose-50 border border-neutral-200/90 hover:border-rose-300 text-obsidian hover:text-rose-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              title="Saved Favorites (পছন্দের তালিকা)"
+            >
+              {wishlist.length > 0 ? (
+                <IconHeartFilled
+                  size={19}
+                  className="text-rose-600 group-hover:scale-110 transition-transform duration-200"
+                />
+              ) : (
+                <IconHeart
+                  size={19}
+                  stroke={1.8}
+                  className="text-neutral-700 group-hover:text-rose-600 group-hover:scale-110 transition-all duration-200"
+                />
+              )}
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
 
-          {/* Sample & Wholesale Quote Bag Icon */}
-          <button
-            onClick={() => setIsDrawerOpen(true)}
-            className="relative p-1.5 text-obsidian hover:text-gold-dark transition cursor-pointer flex items-center justify-center"
-            title="Sample & Quotation List"
-          >
-            <IconShoppingBag size={21} stroke={1.8} />
-            {quoteBag.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-gold text-obsidian text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {quoteBag.length}
-              </span>
-            )}
-          </button>
+            {/* Sample & Wholesale Quote Bag Button */}
+            <button
+              onClick={() => setIsDrawerOpen(true)}
+              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
+              title="Sample & Quotation List (কোটেশন ব্যাগ)"
+            >
+              <IconShoppingBag
+                size={19}
+                stroke={1.8}
+                className="text-neutral-700 group-hover:text-gold-dark group-hover:scale-110 transition-all duration-200"
+              />
+              {quoteBag.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
+                  {quoteBag.length}
+                </span>
+              )}
+            </button>
 
-          {/* Admin / Manager Portal Shortcut */}
-          <Link
-            href="/admin"
-            className="p-1.5 text-neutral-700 hover:text-gold-dark hover:bg-neutral-100 rounded transition flex items-center justify-center"
-            title="Admin & Showroom Portal"
-          >
-            <span className="sr-only">Admin Portal</span>
-            <IconUserShield size={21} stroke={1.8} />
-          </Link>
+            {/* Admin / Manager Portal Shortcut Button */}
+            <Link
+              href="/admin"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              title="Admin & Showroom Portal"
+            >
+              <span className="sr-only">Admin Portal</span>
+              <IconUserShield
+                size={19}
+                stroke={1.8}
+                className="group-hover:scale-110 transition-transform duration-200"
+              />
+            </Link>
 
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 text-obsidian cursor-pointer flex items-center justify-center"
-            aria-label="Toggle Menu"
-          >
-            {mobileMenuOpen ? (
-              <IconX size={24} stroke={2} />
-            ) : (
-              <IconMenu2 size={24} stroke={2} />
-            )}
-          </button>
+            {/* Mobile Hamburger Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
+              aria-label="Toggle Menu"
+            >
+              {mobileMenuOpen ? (
+                <IconX size={20} stroke={2} />
+              ) : (
+                <IconMenu2 size={20} stroke={2} />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
