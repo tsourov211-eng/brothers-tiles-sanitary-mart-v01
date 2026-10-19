@@ -21,6 +21,8 @@ import {
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
+  IconZoomIn,
+  IconZoomOut,
   IconX,
 } from "@tabler/icons-react";
 import CustomDropdown, { DropdownOption } from "@/components/CustomDropdown";
@@ -168,7 +170,34 @@ function CatalogContent() {
   const [sortBy, setSortBy] = useState("popular");
   const [onlyWishlist, setOnlyWishlist] = useState(initialWishlist);
   const [activePdfPage, setActivePdfPage] = useState<number>(1);
+  const [isPdfZoomOpen, setIsPdfZoomOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1.2);
   const [visibleCount, setVisibleCount] = useState<number>(36);
+
+  // Keyboard navigation for PDF Book Zoom Modal
+  useEffect(() => {
+    if (!isPdfZoomOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsPdfZoomOpen(false);
+      } else if (e.key === "ArrowLeft") {
+        const currentIdx = CATALOG_BOOK_PAGES.indexOf(activePdfPage);
+        const prevIdx = currentIdx > 0 ? currentIdx - 1 : CATALOG_BOOK_PAGES.length - 1;
+        setActivePdfPage(CATALOG_BOOK_PAGES[prevIdx]);
+      } else if (e.key === "ArrowRight") {
+        const currentIdx = CATALOG_BOOK_PAGES.indexOf(activePdfPage);
+        const nextIdx = currentIdx < CATALOG_BOOK_PAGES.length - 1 ? currentIdx + 1 : 0;
+        setActivePdfPage(CATALOG_BOOK_PAGES[nextIdx]);
+      } else if (e.key === "+" || e.key === "=") {
+        setZoomLevel((z) => Math.min(3, z + 0.25));
+      } else if (e.key === "-") {
+        setZoomLevel((z) => Math.max(0.8, z - 0.25));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isPdfZoomOpen, activePdfPage]);
 
   const { products, wishlist, toggleWishlist, addToQuoteBag, setSelectedProduct } = useShop();
 
@@ -813,12 +842,22 @@ function CatalogContent() {
 
               {/* Viewport-Optimized Dual Columns (Image Preview + Size Index) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-stretch h-auto lg:h-[480px] xl:h-[510px]">
-                {/* Left: High-Res Extracted PDF Page with In-Image Prev/Next Controls */}
+                {/* Left: High-Res Extracted PDF Page with Click-to-Zoom */}
                 <div className="lg:col-span-5 flex flex-col w-full h-[420px] sm:h-[460px] lg:h-full">
-                  <div className="w-full h-full bg-white p-2 sm:p-2.5 border-2 border-gold shadow-xl flex items-center justify-center relative group select-none">
+                  <div
+                    onClick={() => {
+                      setIsPdfZoomOpen(true);
+                      setZoomLevel(1.25);
+                    }}
+                    className="w-full h-full bg-white p-2 sm:p-2.5 border-2 border-gold shadow-xl flex items-center justify-center relative group select-none cursor-zoom-in"
+                    title="Click image to Zoom In (বড় করে দেখতে ক্লিক করুন)"
+                  >
                     {/* Previous Page Floating Button */}
                     <button
-                      onClick={handlePrevPdfPage}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePrevPdfPage();
+                      }}
                       className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full bg-obsidian/85 hover:bg-gold text-white hover:text-obsidian flex items-center justify-center transition shadow-lg border border-gold/40 cursor-pointer z-10 opacity-90 group-hover:opacity-100 active:scale-95"
                       aria-label="Previous Page"
                       title="Previous Page (পূর্ববর্তী পৃষ্ঠা)"
@@ -828,7 +867,10 @@ function CatalogContent() {
 
                     {/* Next Page Floating Button */}
                     <button
-                      onClick={handleNextPdfPage}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNextPdfPage();
+                      }}
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full bg-obsidian/85 hover:bg-gold text-white hover:text-obsidian flex items-center justify-center transition shadow-lg border border-gold/40 cursor-pointer z-10 opacity-90 group-hover:opacity-100 active:scale-95"
                       aria-label="Next Page"
                       title="Next Page (পরবর্তী পৃষ্ঠা)"
@@ -836,10 +878,10 @@ function CatalogContent() {
                       <IconChevronRight size={20} stroke={2.5} />
                     </button>
 
-                    {/* Floating Bottom Page Indicator */}
-                    <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 bg-obsidian/90 backdrop-blur-xs text-white text-[10px] sm:text-[10.5px] font-bold px-3 py-1 rounded-full border border-gold/40 flex items-center gap-1.5 shadow-md pointer-events-none z-10 whitespace-nowrap">
-                      <span className="text-gold">Page {activePdfPage}</span>
-                      <span className="text-neutral-400">• Click ‹ › arrows or buttons above</span>
+                    {/* Top Right Zoom Hint Badge */}
+                    <div className="absolute top-2.5 right-2.5 bg-obsidian/85 text-white group-hover:text-gold px-2.5 py-1 rounded-full border border-gold/40 shadow-md transition-all flex items-center gap-1 z-10 pointer-events-none opacity-80 group-hover:opacity-100">
+                      <IconZoomIn size={14} stroke={2} />
+                      <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline">Zoom</span>
                     </div>
 
                     {/* PDF Page Image */}
@@ -848,7 +890,7 @@ function CatalogContent() {
                         src={`/images/catalog/page-${activePdfPage}.jpg`}
                         alt={`RAK Ceramics Catalog Page ${activePdfPage}`}
                         fill
-                        className="object-contain"
+                        className="object-contain transition-transform duration-300 group-hover:scale-[1.01]"
                         priority
                       />
                     </div>
@@ -900,6 +942,166 @@ function CatalogContent() {
           </section>
         );
       })()}
+
+      {/* Interactive Fullscreen PDF Book Zoom Lightbox Modal */}
+      {isPdfZoomOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-5 select-none animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsPdfZoomOpen(false);
+          }}
+        >
+          {/* Top Lightbox Controls Bar */}
+          <div className="w-full max-w-6xl flex items-center justify-between text-white border-b border-gold/30 pb-3 shrink-0">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gold bg-gold/15 px-2.5 py-1 border border-gold/40 rounded-xs">
+                RAK Ceramics Book
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-white">
+                Page {activePdfPage} of 116
+              </span>
+            </div>
+
+            {/* Center/Right Zoom and Navigation Controls */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Zoom In / Zoom Out Controls */}
+              <div className="flex items-center bg-neutral-900 border border-gold/40 rounded-full px-2 py-0.5 gap-1 shadow-sm">
+                <button
+                  onClick={() => setZoomLevel((z) => Math.max(0.75, +(z - 0.25).toFixed(2)))}
+                  className="w-7 h-7 flex items-center justify-center text-neutral-300 hover:text-gold hover:bg-neutral-800 rounded-full cursor-pointer transition"
+                  title="Zoom Out (-)"
+                >
+                  <IconZoomOut size={16} stroke={2} />
+                </button>
+                <span className="text-[11px] font-mono font-bold text-gold px-1 min-w-[44px] text-center">
+                  {Math.round(zoomLevel * 100)}%
+                </span>
+                <button
+                  onClick={() => setZoomLevel((z) => Math.min(3, +(z + 0.25).toFixed(2)))}
+                  className="w-7 h-7 flex items-center justify-center text-neutral-300 hover:text-gold hover:bg-neutral-800 rounded-full cursor-pointer transition"
+                  title="Zoom In (+)"
+                >
+                  <IconZoomIn size={16} stroke={2} />
+                </button>
+                <button
+                  onClick={() => setZoomLevel(1)}
+                  className="text-[10px] uppercase font-bold text-neutral-400 hover:text-white px-1.5 py-0.5 transition cursor-pointer"
+                  title="Reset Zoom to 100%"
+                >
+                  Reset
+                </button>
+              </div>
+
+              {/* Prev & Next Quick Buttons in Header */}
+              <div className="hidden sm:flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    const currentIdx = CATALOG_BOOK_PAGES.indexOf(activePdfPage);
+                    const prevIdx = currentIdx > 0 ? currentIdx - 1 : CATALOG_BOOK_PAGES.length - 1;
+                    setActivePdfPage(CATALOG_BOOK_PAGES[prevIdx]);
+                  }}
+                  className="px-2.5 py-1 text-xs font-bold border border-gold/40 bg-neutral-900 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition flex items-center gap-1 cursor-pointer"
+                  title="Previous Page (‹)"
+                >
+                  <IconChevronLeft size={14} stroke={2.5} />
+                  <span>Prev</span>
+                </button>
+                <button
+                  onClick={() => {
+                    const currentIdx = CATALOG_BOOK_PAGES.indexOf(activePdfPage);
+                    const nextIdx = currentIdx < CATALOG_BOOK_PAGES.length - 1 ? currentIdx + 1 : 0;
+                    setActivePdfPage(CATALOG_BOOK_PAGES[nextIdx]);
+                  }}
+                  className="px-2.5 py-1 text-xs font-bold border border-gold/40 bg-neutral-900 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition flex items-center gap-1 cursor-pointer"
+                  title="Next Page (›)"
+                >
+                  <span>Next</span>
+                  <IconChevronRight size={14} stroke={2.5} />
+                </button>
+              </div>
+
+              {/* Close Lightbox Button */}
+              <button
+                onClick={() => setIsPdfZoomOpen(false)}
+                className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-red-600 text-white flex items-center justify-center transition cursor-pointer shadow-md"
+                title="Close (Esc)"
+              >
+                <IconX size={18} stroke={2.5} />
+              </button>
+            </div>
+          </div>
+
+          {/* Center Image Canvas with Pan & Zoom */}
+          <div
+            className="relative flex-1 w-full max-w-5xl my-2 overflow-auto flex items-center justify-center p-2 rounded-lg bg-neutral-950/70 border border-neutral-800 cursor-grab active:cursor-grabbing no-scrollbar"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setIsPdfZoomOpen(false);
+            }}
+          >
+            {/* Floating Prev Button in Lightbox */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const currentIdx = CATALOG_BOOK_PAGES.indexOf(activePdfPage);
+                const prevIdx = currentIdx > 0 ? currentIdx - 1 : CATALOG_BOOK_PAGES.length - 1;
+                setActivePdfPage(CATALOG_BOOK_PAGES[prevIdx]);
+              }}
+              className="fixed left-3 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-obsidian/90 hover:bg-gold text-white hover:text-obsidian flex items-center justify-center transition shadow-2xl border-2 border-gold/50 cursor-pointer z-30"
+              title="Previous Page (‹)"
+            >
+              <IconChevronLeft size={24} stroke={2.5} />
+            </button>
+
+            {/* Floating Next Button in Lightbox */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const currentIdx = CATALOG_BOOK_PAGES.indexOf(activePdfPage);
+                const nextIdx = currentIdx < CATALOG_BOOK_PAGES.length - 1 ? currentIdx + 1 : 0;
+                setActivePdfPage(CATALOG_BOOK_PAGES[nextIdx]);
+              }}
+              className="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-obsidian/90 hover:bg-gold text-white hover:text-obsidian flex items-center justify-center transition shadow-2xl border-2 border-gold/50 cursor-pointer z-30"
+              title="Next Page (›)"
+            >
+              <IconChevronRight size={24} stroke={2.5} />
+            </button>
+
+            {/* High-Resolution Zoomable Scaled Image */}
+            <div
+              className="relative transition-transform duration-150 ease-out shadow-2xl bg-white border-2 border-gold"
+              style={{
+                width: `${Math.round(580 * zoomLevel)}px`,
+                height: `${Math.round(773 * zoomLevel)}px`,
+                maxWidth: "none",
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoomLevel((z) => (z >= 2.2 ? 1 : +(z + 0.4).toFixed(2)));
+              }}
+              title="Click to zoom in / out"
+            >
+              <Image
+                src={`/images/catalog/page-${activePdfPage}.jpg`}
+                alt={`RAK Ceramics Catalog Page ${activePdfPage}`}
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Bottom Info & Keyboard Hints */}
+          <div className="text-[11px] text-neutral-400 flex items-center gap-3 shrink-0">
+            <span>Click image to toggle zoom</span>
+            <span>•</span>
+            <span>Use ‹ › keys to flip pages</span>
+            <span>•</span>
+            <span>Press Esc to close</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
