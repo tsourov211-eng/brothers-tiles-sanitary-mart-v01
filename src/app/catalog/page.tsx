@@ -775,21 +775,23 @@ function CatalogContent() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            {/* Left 2 cols: High-Res Extracted PDF Page */}
-            <div className="lg:col-span-2 bg-white p-3 border-2 border-gold shadow-xl">
-              <div className="relative aspect-[3/4] w-full">
-                <Image
-                  src={`/images/catalog/page-${activePdfPage}.jpg`}
-                  alt={`RAK Ceramics Catalog Page ${activePdfPage}`}
-                  fill
-                  className="object-contain"
-                />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            {/* Left: High-Res Extracted PDF Page (Reduced to half size) */}
+            <div className="lg:col-span-5 flex justify-center w-full">
+              <div className="w-full max-w-[420px] bg-white p-2.5 sm:p-3 border-2 border-gold shadow-xl">
+                <div className="relative aspect-[3/4] w-full">
+                  <Image
+                    src={`/images/catalog/page-${activePdfPage}.jpg`}
+                    alt={`RAK Ceramics Catalog Page ${activePdfPage}`}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Right 1 col: Complete Size & Series Index from Pages 3–5 */}
-            <div className="space-y-4 bg-obsidian-800 border border-gold/40 p-5">
+            {/* Right: Complete Size & Series Index from Pages 3–5 */}
+            <div className="lg:col-span-7 space-y-4 bg-obsidian-800 border border-gold/40 p-5 w-full">
               <h3 className="text-sm font-bold uppercase tracking-wider text-gold border-b border-gold/30 pb-2">
                 RAK Ceramics Size &amp; Series Index
               </h3>
@@ -797,7 +799,7 @@ function CatalogContent() {
                 <div key={group.type} className="space-y-2">
                   <h4 className="text-xs font-bold text-white">{group.type}</h4>
                   <p className="text-[10px] text-gold/80">{group.standard}</p>
-                  <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
                     {group.sizes.map((s) => (
                       <div
                         key={s.sizeCm}
