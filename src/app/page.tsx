@@ -153,8 +153,6 @@ export default function HomePage() {
          ===================================================================== */}
       <section
         className="relative w-full h-[76vh] min-h-[500px] max-h-[640px] sm:h-[calc(100vh-130px)] sm:min-h-[660px] sm:max-h-none lg:h-[calc(100vh-135px)] bg-obsidian overflow-hidden select-none"
-        onMouseEnter={() => setIsHeroHovered(true)}
-        onMouseLeave={() => setIsHeroHovered(false)}
         onTouchStart={handleHeroTouchStart}
         onTouchEnd={handleHeroTouchEnd}
       >
@@ -182,9 +180,11 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-transparent z-15 pointer-events-none w-full md:w-[75%] lg:w-[65%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent z-15 pointer-events-none" />
 
-        {/* Left & Right Carousel Arrows */}
+        {/* Left & Right Carousel Arrows (Pauses auto-play only when hovered) */}
         <button
           onClick={prevHero}
+          onMouseEnter={() => setIsHeroHovered(true)}
+          onMouseLeave={() => setIsHeroHovered(false)}
           aria-label="Previous slide"
           className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer shadow-md"
         >
@@ -192,14 +192,20 @@ export default function HomePage() {
         </button>
         <button
           onClick={nextHero}
+          onMouseEnter={() => setIsHeroHovered(true)}
+          onMouseLeave={() => setIsHeroHovered(false)}
           aria-label="Next slide"
           className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer shadow-md"
         >
           &#8250;
         </button>
 
-        {/* Slide Progress Indicator Dashes */}
-        <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-2 sm:gap-2.5">
+        {/* Slide Progress Indicator Dashes (Pauses auto-play only when hovered) */}
+        <div
+          onMouseEnter={() => setIsHeroHovered(true)}
+          onMouseLeave={() => setIsHeroHovered(false)}
+          className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-2 sm:gap-2.5"
+        >
           {HERO_SLIDES.map((_, i) => (
             <button
               key={i}
@@ -215,7 +221,7 @@ export default function HomePage() {
         </div>
 
         {/* Bottom-Left Overlay Content */}
-        <div className="relative z-20 max-w-[1400px] mx-auto h-full px-5 sm:px-12 pb-9 sm:pb-20 flex flex-col justify-end">
+        <div className="relative z-20 max-w-[1400px] mx-auto h-full px-5 sm:px-12 pb-9 sm:pb-20 flex flex-col justify-end pointer-events-none">
           <div
             key={heroIndex}
             className="animate-slide-left max-w-2xl space-y-2.5 sm:space-y-3.5"
@@ -232,7 +238,11 @@ export default function HomePage() {
             <p className="text-xs sm:text-sm text-gold-light font-bold line-clamp-1 drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
               {currentHero.titleBn}
             </p>
-            <div className="pt-1.5 sm:pt-3 flex flex-wrap items-center gap-3">
+            <div
+              onMouseEnter={() => setIsHeroHovered(true)}
+              onMouseLeave={() => setIsHeroHovered(false)}
+              className="pt-1.5 sm:pt-3 flex flex-wrap items-center gap-3 pointer-events-auto"
+            >
               <Link
                 href={currentHero.ctaLink}
                 className="bg-white hover:bg-gold text-obsidian text-xs sm:text-[11px] font-bold tracking-widest uppercase px-6 sm:px-7 py-3 sm:py-3.5 transition shadow-lg inline-block active:scale-98"
