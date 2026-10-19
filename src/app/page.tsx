@@ -53,12 +53,12 @@ export default function HomePage() {
     setTouchStartX(null);
   };
 
-  // Continuous auto-play for hero carousel (loops infinitely every 4.5s; pauses when hovered)
+  // Continuous auto-play for hero carousel (loops infinitely every 3s; pauses when hovered)
   useEffect(() => {
     if (isHeroHovered) return;
     const timer = setInterval(() => {
       setHeroIndex((prev) => (prev === HERO_SLIDES.length - 1 ? 0 : prev + 1));
-    }, 4500);
+    }, 3000);
 
     return () => clearInterval(timer);
   }, [isHeroHovered, heroIndex]);
