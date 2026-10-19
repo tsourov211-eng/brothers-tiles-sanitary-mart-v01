@@ -79,7 +79,7 @@ function normalizeSizeForComparison(s: string): string {
 }
 
 const COLOR_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Color: All" },
+  { value: "All", label: "Color" },
   { value: "white-gold", label: "White & Gold", colorSwatch: "#F3F4F6", subLabel: "সাদা ও সোনালি মার্বেল" },
   { value: "black", label: "Black & Charcoal", colorSwatch: "#1F2937", subLabel: "কালো গ্রাফাইট" },
   { value: "grey", label: "Grey & Silver", colorSwatch: "#9CA3AF", subLabel: "ধূসর স্ল্যাব" },
@@ -90,7 +90,7 @@ const COLOR_OPTIONS: DropdownOption[] = [
 ];
 
 const CATEGORY_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "All Categories" },
+  { value: "All", label: "Category" },
   { value: "Tiles", label: "All Tiles (টাইলস)", subLabel: "সকল টাইলস (৯৯২টি)" },
   { value: "Floor Tiles", label: "Floor Tiles", subLabel: "ফ্লোর টাইলস ও স্ল্যাব" },
   { value: "Wall Tiles", label: "Wall Tiles", subLabel: "ওয়াল টাইলস" },
@@ -107,7 +107,7 @@ const CATEGORY_OPTIONS: DropdownOption[] = [
 ];
 
 const SIZE_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Tile Size: All" },
+  { value: "All", label: "Tile Size" },
   { value: "60x120", label: "60x120 cm (24x48″ Slab)", badge: "Flagship" },
   { value: "80x80", label: "80x80 cm (32x32″ Royal)", badge: "Popular" },
   { value: "60x60", label: "60x60 cm (24x24″ Grand)", badge: "Standard" },
@@ -125,14 +125,14 @@ const SIZE_OPTIONS: DropdownOption[] = [
 ];
 
 const FINISH_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Finish: All" },
+  { value: "All", label: "Finish" },
   { value: "glossy", label: "Glossy / Mirror Polish", subLabel: "চকচকে মিরর পলিশ" },
   { value: "matte", label: "Matte / Satin / Rustic", subLabel: "ম্যাট ও রাস্টিক ফিনিশ" },
   { value: "sugar", label: "Sugar Glazed / Carving", subLabel: "সুগার গ্লেজড ও কার্ভিং" },
 ];
 
 const BRAND_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Brand: All" },
+  { value: "All", label: "Brand" },
   { value: "RAK Ceramics", label: "RAK Ceramics", badge: "Flagship" },
   { value: "Akij Ceramics", label: "Akij Ceramics" },
   { value: "DBL Ceramics", label: "DBL Ceramics" },
@@ -523,9 +523,9 @@ function CatalogContent() {
 
       {/* Sticky Filter Bar (Static on mobile for maximum browsing viewport, snaps directly beneath navbar on desktop) */}
       <div className="static md:sticky md:top-[var(--header-height,172px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs py-3 sm:py-3.5 transition-all">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-          {/* Left: Filter Dropdowns + Search Bar */}
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-4">
+          {/* Left: Filter Dropdowns with expanded spacing */}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-3.5 lg:gap-4">
             {/* Color Custom Dropdown */}
             <CustomDropdown
               variant="pill"
@@ -570,41 +570,10 @@ function CatalogContent() {
               options={BRAND_OPTIONS}
               ariaLabel="Filter by brand"
             />
-
-            {/* Search Bar matching header design */}
-            <div className="relative flex items-center w-full sm:w-56 lg:w-64 h-[36px] bg-white border border-neutral-300 hover:border-neutral-400 focus-within:border-[#BE8226] focus-within:ring-2 focus-within:ring-[#BE8226]/20 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs transition shrink-0">
-              <IconSearch size={14} stroke={1.8} className="text-neutral-500 mr-2 shrink-0 pointer-events-none" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setVisibleCount(36);
-                }}
-                placeholder="Search tiles, sanitary..."
-                className="w-full h-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
-              />
-              {query.trim() && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setQuery("");
-                    setVisibleCount(36);
-                  }}
-                  className="text-neutral-400 hover:text-obsidian p-1 mr-1 shrink-0 cursor-pointer"
-                  title="Clear search"
-                >
-                  <IconX size={13} stroke={2.5} />
-                </button>
-              )}
-              <div className="h-full w-9 bg-[#BE8226] flex items-center justify-center shrink-0 rounded-r-full pointer-events-none">
-                <IconSearch size={15} stroke={2.2} className="text-white" />
-              </div>
-            </div>
           </div>
 
-          {/* Right: Wishlist, Reset & Sort By */}
-          <div className="flex items-center justify-between lg:justify-end gap-2 shrink-0 w-full lg:w-auto">
+          {/* Right: Wishlist, Reset & Sort By with increased spacing */}
+          <div className="flex items-center justify-between lg:justify-end gap-2.5 sm:gap-3 lg:gap-3.5 shrink-0 w-full lg:w-auto">
             <button
               onClick={() => {
                 setOnlyWishlist(!onlyWishlist);
