@@ -19,6 +19,8 @@ import {
   IconBrandWhatsapp,
   IconAdjustmentsHorizontal,
   IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
   IconX,
 } from "@tabler/icons-react";
 import CustomDropdown, { DropdownOption } from "@/components/CustomDropdown";
@@ -743,93 +745,161 @@ function CatalogContent() {
         )}
       </div>
 
-      {/* Interactive RAK Ceramics Digital PDF Book Viewer Section */}
-      <section className="bg-obsidian text-white border-t-2 border-gold py-12 px-4 sm:px-8 mt-8">
-        <div className="max-w-[1400px] mx-auto space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gold/30 pb-4">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gold">
-                SHOWROOM DIGITAL TILES BOOK (116 PAGES)
-              </span>
-              <h2 className="text-xl sm:text-2xl font-serif font-bold text-white mt-0.5">
-                RAK Ceramics Official Tiles Book Preview
-              </h2>
-              <p className="text-xs text-neutral-300">
-                আমাদের শোরুমের আর-এ-কে সিরামিকস ক্যাটালগের গুরুত্বপূর্ণ পৃষ্ঠাগুলো নিচে সরাসরি দেখুন
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {CATALOG_BOOK_PAGES.map((pg) => (
-                <button
-                  key={pg}
-                  onClick={() => setActivePdfPage(pg)}
-                  className={`px-2.5 py-1 text-xs font-bold border transition ${
-                    activePdfPage === pg
-                      ? "bg-gold text-obsidian border-gold"
-                      : "bg-obsidian-800 text-neutral-300 border-gold/30 hover:border-gold"
-                  }`}
-                >
-                  Page {pg}
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Interactive RAK Ceramics Digital PDF Book Viewer Section - Optimized for Single-Screen Browsing */}
+      {(() => {
+        const currentPdfIndex = CATALOG_BOOK_PAGES.indexOf(activePdfPage);
+        const handlePrevPdfPage = () => {
+          const nextIdx = currentPdfIndex > 0 ? currentPdfIndex - 1 : CATALOG_BOOK_PAGES.length - 1;
+          setActivePdfPage(CATALOG_BOOK_PAGES[nextIdx]);
+        };
+        const handleNextPdfPage = () => {
+          const nextIdx = currentPdfIndex < CATALOG_BOOK_PAGES.length - 1 ? currentPdfIndex + 1 : 0;
+          setActivePdfPage(CATALOG_BOOK_PAGES[nextIdx]);
+        };
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
-            {/* Left: High-Res Extracted PDF Page (Matches height of right section) */}
-            <div className="lg:col-span-5 flex flex-col w-full h-full">
-              <div className="w-full h-full bg-white p-3 sm:p-4 border-2 border-gold shadow-xl flex flex-col items-center justify-center min-h-[500px]">
-                <div className="relative w-full h-full min-h-[480px] flex-1">
-                  <Image
-                    src={`/images/catalog/page-${activePdfPage}.jpg`}
-                    alt={`RAK Ceramics Catalog Page ${activePdfPage}`}
-                    fill
-                    className="object-contain"
-                    priority
-                  />
+        return (
+          <section className="bg-obsidian text-white border-t-2 border-gold py-4 sm:py-5 px-3 sm:px-6 lg:px-8 mt-6">
+            <div className="max-w-[1400px] mx-auto space-y-3 sm:space-y-4">
+              {/* Compact Header with Integrated Page Selector */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 border-b border-gold/30 pb-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9.5px] font-bold uppercase tracking-widest text-gold bg-gold/10 px-2 py-0.5 border border-gold/30 rounded-xs">
+                      DIGITAL TILES BOOK
+                    </span>
+                    <span className="text-[11px] text-neutral-400 font-mono">
+                      Page {activePdfPage} of 116 ({currentPdfIndex + 1}/{CATALOG_BOOK_PAGES.length})
+                    </span>
+                  </div>
+                  <h2 className="text-base sm:text-lg font-serif font-bold text-white mt-0.5 leading-tight">
+                    RAK Ceramics Official Tiles Book Preview
+                  </h2>
                 </div>
-              </div>
-            </div>
 
-            {/* Right: Complete Size & Series Index from Pages 3–5 */}
-            <div className="lg:col-span-7 space-y-4 bg-obsidian-800 border border-gold/40 p-5 w-full flex flex-col justify-between">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-gold border-b border-gold/30 pb-2">
-                  RAK Ceramics Size &amp; Series Index
-                </h3>
-                <div className="space-y-4 mt-3">
-                  {RAK_SIZE_INDEX.map((group) => (
-                    <div key={group.type} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-bold text-white">{group.type}</h4>
-                        <span className="text-[10px] text-gold/80 font-mono">{group.standard}</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {group.sizes.map((s) => (
-                          <div
-                            key={s.sizeCm}
-                            className="bg-obsidian p-2.5 border border-neutral-800 text-xs hover:border-gold/50 transition-colors"
-                          >
-                            <div className="flex justify-between font-bold text-gold">
-                              <span>
-                                {s.sizeCm} ({s.sizeInch})
-                              </span>
-                              <span className="text-[10px] text-neutral-400">PDF pp. {s.pages}</span>
-                            </div>
-                            <p className="text-[11px] text-neutral-300 mt-1 leading-tight">
-                              {s.series.join(" • ")}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                {/* Single-Row Page Nav Strip with Prev/Next buttons */}
+                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+                  <button
+                    onClick={handlePrevPdfPage}
+                    className="px-2 py-1 text-xs font-bold border border-gold/40 bg-obsidian-800 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition shrink-0 flex items-center gap-0.5 cursor-pointer shadow-2xs"
+                    title="Previous Page (পূর্ববর্তী পৃষ্ঠা)"
+                  >
+                    <IconChevronLeft size={14} stroke={2.5} />
+                    <span>Prev</span>
+                  </button>
+                  {CATALOG_BOOK_PAGES.map((pg) => (
+                    <button
+                      key={pg}
+                      onClick={() => setActivePdfPage(pg)}
+                      className={`px-1.5 sm:px-2 py-1 text-[11px] font-bold border rounded-xs transition shrink-0 cursor-pointer ${
+                        activePdfPage === pg
+                          ? "bg-gold text-obsidian border-gold shadow-xs font-black scale-105"
+                          : "bg-obsidian-800 text-neutral-300 border-gold/30 hover:border-gold hover:text-white"
+                      }`}
+                      title={`Go to Page ${pg}`}
+                    >
+                      P.{pg}
+                    </button>
                   ))}
+                  <button
+                    onClick={handleNextPdfPage}
+                    className="px-2 py-1 text-xs font-bold border border-gold/40 bg-obsidian-800 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition shrink-0 flex items-center gap-0.5 cursor-pointer shadow-2xs"
+                    title="Next Page (পরবর্তী পৃষ্ঠা)"
+                  >
+                    <span>Next</span>
+                    <IconChevronRight size={14} stroke={2.5} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Viewport-Optimized Dual Columns (Image Preview + Size Index) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-stretch h-auto lg:h-[480px] xl:h-[510px]">
+                {/* Left: High-Res Extracted PDF Page with In-Image Prev/Next Controls */}
+                <div className="lg:col-span-5 flex flex-col w-full h-[420px] sm:h-[460px] lg:h-full">
+                  <div className="w-full h-full bg-white p-2 sm:p-2.5 border-2 border-gold shadow-xl flex items-center justify-center relative group select-none">
+                    {/* Previous Page Floating Button */}
+                    <button
+                      onClick={handlePrevPdfPage}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full bg-obsidian/85 hover:bg-gold text-white hover:text-obsidian flex items-center justify-center transition shadow-lg border border-gold/40 cursor-pointer z-10 opacity-90 group-hover:opacity-100 active:scale-95"
+                      aria-label="Previous Page"
+                      title="Previous Page (পূর্ববর্তী পৃষ্ঠা)"
+                    >
+                      <IconChevronLeft size={20} stroke={2.5} />
+                    </button>
+
+                    {/* Next Page Floating Button */}
+                    <button
+                      onClick={handleNextPdfPage}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full bg-obsidian/85 hover:bg-gold text-white hover:text-obsidian flex items-center justify-center transition shadow-lg border border-gold/40 cursor-pointer z-10 opacity-90 group-hover:opacity-100 active:scale-95"
+                      aria-label="Next Page"
+                      title="Next Page (পরবর্তী পৃষ্ঠা)"
+                    >
+                      <IconChevronRight size={20} stroke={2.5} />
+                    </button>
+
+                    {/* Floating Bottom Page Indicator */}
+                    <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 bg-obsidian/90 backdrop-blur-xs text-white text-[10px] sm:text-[10.5px] font-bold px-3 py-1 rounded-full border border-gold/40 flex items-center gap-1.5 shadow-md pointer-events-none z-10 whitespace-nowrap">
+                      <span className="text-gold">Page {activePdfPage}</span>
+                      <span className="text-neutral-400">• Click ‹ › arrows or buttons above</span>
+                    </div>
+
+                    {/* PDF Page Image */}
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={`/images/catalog/page-${activePdfPage}.jpg`}
+                        alt={`RAK Ceramics Catalog Page ${activePdfPage}`}
+                        fill
+                        className="object-contain"
+                        priority
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Complete Size & Series Index from Pages 3–5 */}
+                <div className="lg:col-span-7 flex flex-col h-[420px] sm:h-[460px] lg:h-full bg-obsidian-800 border border-gold/40 p-3.5 sm:p-4 w-full overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-gold/30 pb-2 shrink-0">
+                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gold">
+                      RAK Ceramics Size &amp; Series Index
+                    </h3>
+                    <span className="text-[10.5px] text-neutral-400">
+                      Pages 1–116 Specification
+                    </span>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto pr-1 space-y-3 mt-2.5">
+                    {RAK_SIZE_INDEX.map((group) => (
+                      <div key={group.type} className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-xs font-bold text-white">{group.type}</h4>
+                          <span className="text-[10px] text-gold/80 font-mono">{group.standard}</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                          {group.sizes.map((s) => (
+                            <div
+                              key={s.sizeCm}
+                              className="bg-obsidian p-2 border border-neutral-800 text-xs hover:border-gold/50 transition-colors"
+                            >
+                              <div className="flex justify-between font-bold text-gold">
+                                <span>
+                                  {s.sizeCm} ({s.sizeInch})
+                                </span>
+                                <span className="text-[10px] text-neutral-400">PDF pp. {s.pages}</span>
+                              </div>
+                              <p className="text-[10.5px] text-neutral-300 mt-0.5 leading-tight">
+                                {s.series.join(" • ")}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        );
+      })()}
     </div>
   );
 }
