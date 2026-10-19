@@ -420,16 +420,17 @@ export default function HomePage() {
                   </div>
                 </div>
               </Link>
-              <div className="pt-3 space-y-1">
-                <h3 className="text-sm font-bold text-obsidian">{cat.title}</h3>
+              <div className="pt-3.5 space-y-1.5">
+                <h3 className="text-sm sm:text-base font-bold text-obsidian">{cat.title}</h3>
                 <p className="text-xs text-neutral-600">{cat.titleBn}</p>
-                <p className="text-[11px] text-neutral-500">{cat.subtitle}</p>
-                <div className="pt-1">
+                <p className="text-[11px] sm:text-xs text-neutral-500">{cat.subtitle}</p>
+                <div className="pt-2">
                   <Link
                     href={`/catalog?category=${encodeURIComponent(cat.filterCategory)}`}
-                    className="inline-block text-[10px] font-bold tracking-widest uppercase text-obsidian border-b border-obsidian hover:text-gold-dark hover:border-gold-dark pb-0.5 transition"
+                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase text-obsidian border-b-2 border-obsidian hover:text-gold-dark hover:border-gold-dark pb-1 transition group/btn"
                   >
-                    SHOP NOW
+                    <span>SHOP NOW</span>
+                    <span className="text-sm font-bold transition-transform group-hover/btn:translate-x-1.5">&rarr;</span>
                   </Link>
                 </div>
               </div>
