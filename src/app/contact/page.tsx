@@ -271,25 +271,25 @@ export default function ContactPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-wrap gap-3 relative z-10">
+              <div className="pt-2 flex flex-col sm:flex-row gap-3 relative z-10">
                 <a
                   href={BUSINESS_INFO.googleMapLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian text-xs font-bold uppercase tracking-wider px-5 py-3.5 rounded-xl shadow-lg shadow-gold/25 hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian text-xs font-bold uppercase tracking-wider px-4 sm:px-5 py-3.5 rounded-xl shadow-lg shadow-gold/25 hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-center"
                 >
-                  <IconMapPin size={16} stroke={2.2} />
+                  <IconMapPin size={16} stroke={2.2} className="shrink-0" />
                   <span>Open Official Google Map Link</span>
-                  <IconArrowRight size={14} stroke={2.2} />
+                  <IconArrowRight size={14} stroke={2.2} className="shrink-0" />
                 </a>
                 <a
                   href={BUSINESS_INFO.facebookLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 border border-gold/60 text-gold hover:bg-gold hover:text-obsidian text-xs font-bold uppercase tracking-wider px-5 py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  className="flex items-center justify-center gap-2 border border-gold/60 text-gold hover:bg-gold hover:text-obsidian text-xs font-bold uppercase tracking-wider px-4 sm:px-5 py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-center"
                 >
-                  <IconBrandFacebook size={16} stroke={2} />
-                  <span>facebook.com/brotherstilesbd</span>
+                  <IconBrandFacebook size={16} stroke={2} className="shrink-0" />
+                  <span className="truncate">facebook.com/brotherstilesbd</span>
                 </a>
               </div>
             </div>

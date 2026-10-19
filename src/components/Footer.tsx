@@ -25,11 +25,6 @@ import {
 
 export default function Footer() {
   const pathname = usePathname();
-  const [openSection, setOpenSection] = useState<string | null>(null);
-
-  const toggleSection = (section: string) => {
-    setOpenSection((prev) => (prev === section ? null : section));
-  };
 
   // If on admin dashboard, hide public footer
   if (pathname?.startsWith("/admin")) {
@@ -107,9 +102,9 @@ export default function Footer() {
       </div>
 
       {/* =========================================================================
-          DESKTOP VIEW (md and up) - Modern Luxury Redesign
+          MAIN FOOTER 4-COLUMN LUXURY GRID - RESPONSIVE ACROSS ALL DEVICES
           ========================================================================= */}
-      <div className="hidden md:grid max-w-[1400px] mx-auto px-6 sm:px-8 py-16 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-14 md:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
         {/* Column 1: Business Identity & Brand Authority */}
         <div className="space-y-5">
           <div className="space-y-3">
@@ -119,7 +114,7 @@ export default function Footer() {
                 alt="Brother's Tiles & Sanitary Mart"
                 width={260}
                 height={86}
-                className="h-12 lg:h-14 w-auto object-contain transition duration-300 group-hover:brightness-110"
+                className="h-11 sm:h-12 lg:h-14 w-auto object-contain transition duration-300 group-hover:brightness-110"
               />
             </Link>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-gold/10 border border-gold/30 text-gold text-[11px] font-semibold">
@@ -128,7 +123,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <p className="text-sm font-semibold text-white/95 leading-snug">
+          <p className="text-xs sm:text-sm font-semibold text-white/95 leading-snug">
             {BUSINESS_INFO.tagline}
           </p>
 
@@ -392,7 +387,7 @@ export default function Footer() {
                   <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                   <span>হটলাইন ও WhatsApp:</span>
                 </div>
-                <span className="text-sm font-bold text-white group-hover:text-green-400 transition">
+                <span className="text-xs sm:text-sm font-bold text-white group-hover:text-green-400 transition">
                   {BUSINESS_INFO.mainPhone}
                 </span>
               </div>
@@ -437,322 +432,6 @@ export default function Footer() {
               <span>Admin</span>
             </Link>
           </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          MOBILE VIEW (< md) - Modern Luxury Mobile Redesign
-          ========================================================================= */}
-      <div className="block md:hidden px-4 pt-8 pb-6 space-y-6">
-        {/* 1. Brand Identity & Header */}
-        <div className="flex flex-col items-center text-center space-y-3 pb-2 border-b border-gold/20">
-          <Link href="/" className="inline-block">
-            <Image
-              src="/images/logo/Brothers Tiles & Sanitary Logo-dark.png"
-              alt="Brother's Tiles & Sanitary Mart"
-              width={220}
-              height={70}
-              className="h-11 w-auto object-contain mx-auto"
-            />
-          </Link>
-          <div className="space-y-1">
-            <p className="text-xs text-gold font-semibold tracking-wide">
-              {BUSINESS_INFO.nameBn}
-            </p>
-            <p className="text-[11px] text-neutral-300 max-w-xs mx-auto">
-              {BUSINESS_INFO.tagline} • ৫০০০+ ডিজাইন
-            </p>
-          </div>
-
-          {/* Quick Category Badges */}
-          <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-            {BUSINESS_INFO.productsList.map((prod) => (
-              <span
-                key={prod}
-                className="text-[10px] uppercase tracking-wider font-semibold border border-gold/30 text-gold/90 px-2 py-0.5 bg-obsidian-800 rounded-sm"
-              >
-                {prod}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* 2. Quick Mobile Action Bar (4 Touch-Friendly Tiles) */}
-        <div className="grid grid-cols-4 gap-2">
-          {/* Call */}
-          <a
-            href={`tel:${BUSINESS_INFO.mainPhoneClean}`}
-            className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-neutral-900/90 border border-gold/30 text-white active:scale-95 transition hover:border-gold hover:bg-neutral-800"
-          >
-            <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-gold mb-1">
-              <IconPhone size={17} stroke={2} />
-            </div>
-            <span className="text-[10px] font-bold text-neutral-200">কল করুন</span>
-          </a>
-
-          {/* WhatsApp */}
-          <a
-            href={BUSINESS_INFO.whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-neutral-900/90 border border-green-500/30 text-white active:scale-95 transition hover:border-green-500 hover:bg-neutral-800"
-          >
-            <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-1">
-              <IconBrandWhatsapp size={18} stroke={2} />
-            </div>
-            <span className="text-[10px] font-bold text-neutral-200">হোয়াটসঅ্যাপ</span>
-          </a>
-
-          {/* Map Location */}
-          <a
-            href={BUSINESS_INFO.googleMapLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-neutral-900/90 border border-gold/30 text-white active:scale-95 transition hover:border-gold hover:bg-neutral-800"
-          >
-            <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-gold mb-1">
-              <IconMapPin size={17} stroke={2} />
-            </div>
-            <span className="text-[10px] font-bold text-neutral-200">ম্যাপ লোকেশন</span>
-          </a>
-
-          {/* Calculator */}
-          <Link
-            href="/calculator"
-            className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-gold text-obsidian active:scale-95 transition shadow-sm font-bold"
-          >
-            <div className="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center text-obsidian mb-1">
-              <IconCalculator size={18} stroke={2.2} />
-            </div>
-            <span className="text-[10px] font-black">ক্যালকুলেটর</span>
-          </Link>
-        </div>
-
-        {/* 3. Modern Collapsible Accordions */}
-        <div className="space-y-2.5">
-          {/* Accordion 1: Products & Collections */}
-          <div className="border border-gold/25 rounded-lg overflow-hidden bg-neutral-900/50">
-            <button
-              onClick={() => toggleSection("products")}
-              className="w-full px-4 py-3 flex items-center justify-between text-left transition hover:bg-neutral-800/60"
-              aria-expanded={openSection === "products"}
-            >
-              <span className="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold"></span>
-                টাইলস ও স্যানিটারি কালেকশন
-              </span>
-              <IconChevronDown
-                size={18}
-                className={`text-gold transition-transform duration-300 ${
-                  openSection === "products" ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {openSection === "products" && (
-              <div className="px-4 pb-4 pt-1 border-t border-gold/15 bg-black/40">
-                <ul className="space-y-2.5 text-xs text-neutral-300">
-                  <li>
-                    <Link
-                      href="/catalog?category=Tiles"
-                      className="flex items-center justify-between py-1 hover:text-gold active:text-gold transition"
-                    >
-                      <span>Wall &amp; Floor Tiles (ওয়াল ও ফ্লোর টাইলস)</span>
-                      <IconArrowRight size={13} className="text-gold/60" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/catalog?size=60x120+cm"
-                      className="flex items-center justify-between py-1 hover:text-gold active:text-gold transition"
-                    >
-                      <span>RAK 60x120 cm Grand Slabs (২৪x৪৮ স্ল্যাব)</span>
-                      <IconArrowRight size={13} className="text-gold/60" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/catalog?size=80x80+cm"
-                      className="flex items-center justify-between py-1 hover:text-gold active:text-gold transition"
-                    >
-                      <span>RAK 80x80 &amp; 60x60 Mirror Polish (মিরর পলিশ)</span>
-                      <IconArrowRight size={13} className="text-gold/60" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/catalog?category=Basin"
-                      className="flex items-center justify-between py-1 hover:text-gold active:text-gold transition"
-                    >
-                      <span>Table Top, Pedestal &amp; Cabinet Basin (বেসিন)</span>
-                      <IconArrowRight size={13} className="text-gold/60" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/catalog?category=Commode"
-                      className="flex items-center justify-between py-1 hover:text-gold active:text-gold transition"
-                    >
-                      <span>High, Low &amp; Smart Commode (কমোড)</span>
-                      <IconArrowRight size={13} className="text-gold/60" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/catalog?category=Sanitary"
-                      className="flex items-center justify-between py-1 hover:text-gold active:text-gold transition"
-                    >
-                      <span>Sanitary Ware &amp; Jaynamaj Tiles (স্যানিটারি ও জায়নামাজ)</span>
-                      <IconArrowRight size={13} className="text-gold/60" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/catalog?category=Bathroom+Accessories"
-                      className="flex items-center justify-between py-1 hover:text-gold active:text-gold transition"
-                    >
-                      <span>Bathroom Accessories &amp; Mixers (বাথরুম ফিটিংস)</span>
-                      <IconArrowRight size={13} className="text-gold/60" />
-                    </Link>
-                  </li>
-                </ul>
-                <div className="pt-3 mt-2 border-t border-neutral-800">
-                  <Link
-                    href="/catalog"
-                    className="block text-center text-xs font-bold bg-gold/15 text-gold border border-gold/40 hover:bg-gold hover:text-obsidian py-2 rounded transition"
-                  >
-                    সব কালেকশন একসাথে দেখুন &rarr;
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Accordion 2: Home Delivery & Coverage */}
-          <div className="border border-gold/25 rounded-lg overflow-hidden bg-neutral-900/50">
-            <button
-              onClick={() => toggleSection("delivery")}
-              className="w-full px-4 py-3 flex items-center justify-between text-left transition hover:bg-neutral-800/60"
-              aria-expanded={openSection === "delivery"}
-            >
-              <span className="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold"></span>
-                হোম ডেলিভারি কাভারেজ
-              </span>
-              <IconChevronDown
-                size={18}
-                className={`text-gold transition-transform duration-300 ${
-                  openSection === "delivery" ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {openSection === "delivery" && (
-              <div className="px-4 pb-4 pt-1 border-t border-gold/15 bg-black/40 space-y-3">
-                <p className="text-xs text-gold-light font-medium">
-                  {BUSINESS_INFO.homeDeliveryBn}
-                </p>
-                <div className="grid grid-cols-1 gap-1.5 text-xs text-neutral-300">
-                  {BUSINESS_INFO.homeDeliveryAreas.map((area) => (
-                    <div key={area} className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
-                      <span>{area}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="pt-2">
-                  <Link
-                    href="/calculator"
-                    className="w-full flex items-center justify-center gap-2 text-xs font-bold text-obsidian bg-gold hover:bg-gold-light p-2.5 rounded transition shadow"
-                  >
-                    <IconCalculator size={16} stroke={2} />
-                    <span>বাসার মাপ অনুযায়ী ফ্রি টাইলস ক্যালকুলেটর</span>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Accordion 3: Showroom Location & Contact */}
-          <div className="border border-gold/25 rounded-lg overflow-hidden bg-neutral-900/50">
-            <button
-              onClick={() => toggleSection("showroom")}
-              className="w-full px-4 py-3 flex items-center justify-between text-left transition hover:bg-neutral-800/60"
-              aria-expanded={openSection === "showroom"}
-            >
-              <span className="text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold"></span>
-                শোরুম ঠিকানা ও যোগাযোগ
-              </span>
-              <IconChevronDown
-                size={18}
-                className={`text-gold transition-transform duration-300 ${
-                  openSection === "showroom" ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {openSection === "showroom" && (
-              <div className="px-4 pb-4 pt-1 border-t border-gold/15 bg-black/40 space-y-3 text-xs text-neutral-300">
-                <div>
-                  <strong className="text-white block mb-0.5">ঠিকানা (Showroom Address):</strong>
-                  <p className="leading-relaxed text-neutral-300">{BUSINESS_INFO.addressExact}</p>
-                  <p className="text-[11px] text-gold/80 mt-1">{BUSINESS_INFO.addressBn}</p>
-                </div>
-                <div className="flex flex-col gap-2 pt-1 border-t border-neutral-800/80">
-                  <div className="flex items-center gap-2">
-                    <IconClock size={15} className="text-gold shrink-0" />
-                    <span>প্রতিদিন সকাল ৮:৩০ টা — রাত ১০:০০ টা</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <IconMail size={15} className="text-gold shrink-0" />
-                    <a href={`mailto:${BUSINESS_INFO.email}`} className="text-neutral-300 hover:text-gold transition">
-                      {BUSINESS_INFO.email}
-                    </a>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <IconBrandWhatsapp size={15} className="text-green-400 shrink-0" />
-                    <a href={BUSINESS_INFO.whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-gold font-semibold hover:underline">
-                      {BUSINESS_INFO.mainPhone}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* 4. Quick Links / Action Badges Row */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-2 border-t border-gold/15">
-          <a
-            href={BUSINESS_INFO.googleMapLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[11px] font-bold bg-white text-obsidian active:bg-gold px-3.5 py-1.5 rounded transition flex items-center gap-1.5 shadow-sm"
-          >
-            <IconMapPin size={14} stroke={2} />
-            <span>Google Map</span>
-          </a>
-          <a
-            href={BUSINESS_INFO.facebookLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[11px] font-bold border border-gold text-gold active:bg-gold active:text-obsidian px-3.5 py-1.5 rounded transition flex items-center gap-1.5"
-          >
-            <IconBrandFacebook size={14} stroke={1.8} />
-            <span>Facebook Page</span>
-          </a>
-          <Link
-            href="/contact"
-            className="text-[11px] font-bold border border-white/40 text-white active:border-gold active:text-gold px-3.5 py-1.5 rounded transition flex items-center gap-1.5"
-          >
-            <IconAddressBook size={14} stroke={1.8} />
-            <span>Contacts</span>
-          </Link>
-          <Link
-            href="/admin"
-            className="text-[11px] font-bold border border-gold/70 text-gold active:bg-gold active:text-obsidian px-3.5 py-1.5 rounded transition flex items-center gap-1.5"
-          >
-            <IconUserShield size={14} stroke={1.8} />
-            <span>Admin</span>
-          </Link>
         </div>
       </div>
 

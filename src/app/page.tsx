@@ -17,6 +17,7 @@ import ProductCard from "@/components/ProductCard";
 import {
   IconChevronLeft,
   IconChevronRight,
+  IconBrandWhatsapp,
 } from "@tabler/icons-react";
 
 export default function HomePage() {
@@ -186,7 +187,7 @@ export default function HomePage() {
           onMouseEnter={() => setIsHeroHovered(true)}
           onMouseLeave={() => setIsHeroHovered(false)}
           aria-label="Previous slide"
-          className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer shadow-md"
+          className="flex absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-base sm:text-xl cursor-pointer shadow-md rounded-xs"
         >
           &#8249;
         </button>
@@ -195,7 +196,7 @@ export default function HomePage() {
           onMouseEnter={() => setIsHeroHovered(true)}
           onMouseLeave={() => setIsHeroHovered(false)}
           aria-label="Next slide"
-          className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-xl cursor-pointer shadow-md"
+          className="flex absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-black/60 hover:bg-gold text-white hover:text-obsidian border border-gold/50 transition text-base sm:text-xl cursor-pointer shadow-md rounded-xs"
         >
           &#8250;
         </button>
@@ -221,18 +222,18 @@ export default function HomePage() {
         </div>
 
         {/* Bottom-Left Overlay Content */}
-        <div className="relative z-20 max-w-[1400px] mx-auto h-full px-5 sm:px-12 pb-9 sm:pb-20 flex flex-col justify-end pointer-events-none">
+        <div className="relative z-20 max-w-[1400px] mx-auto h-full px-4 sm:px-12 pb-8 sm:pb-20 flex flex-col justify-end pointer-events-none">
           <div
             key={heroIndex}
-            className="animate-slide-left max-w-2xl space-y-2.5 sm:space-y-3.5"
+            className="animate-slide-left max-w-2xl space-y-2 sm:space-y-3.5"
           >
-            <span className="inline-block bg-obsidian/95 border border-gold text-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1 shadow-md">
+            <span className="inline-block bg-obsidian/95 border border-gold text-gold text-[9px] sm:text-xs font-bold tracking-widest uppercase px-2.5 py-0.5 sm:px-3 sm:py-1 shadow-md">
               {currentHero.badge}
             </span>
-            <h1 className="text-[28px] sm:text-4xl lg:text-5xl font-extrabold tracking-tight uppercase text-white leading-[1.14] drop-shadow-[0_4px_16px_rgba(0,0,0,1)] [text-shadow:_0_2px_12px_rgba(0,0,0,0.9),_0_4px_24px_rgba(0,0,0,0.85)]">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight uppercase text-white leading-[1.14] drop-shadow-[0_4px_16px_rgba(0,0,0,1)] [text-shadow:_0_2px_12px_rgba(0,0,0,0.9),_0_4px_24px_rgba(0,0,0,0.85)]">
               {currentHero.title}
             </h1>
-            <p className="text-xs sm:text-base text-neutral-100 font-medium max-w-sm sm:max-w-xl leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
+            <p className="text-xs sm:text-base text-neutral-100 font-medium max-w-sm sm:max-w-xl leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,1)] line-clamp-2 sm:line-clamp-none">
               {currentHero.subtitle}
             </p>
             <p className="text-xs sm:text-sm text-gold-light font-bold line-clamp-1 drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
@@ -241,11 +242,11 @@ export default function HomePage() {
             <div
               onMouseEnter={() => setIsHeroHovered(true)}
               onMouseLeave={() => setIsHeroHovered(false)}
-              className="pt-1.5 sm:pt-3 flex flex-wrap items-center gap-3 pointer-events-auto"
+              className="pt-1.5 sm:pt-3 flex flex-wrap items-center gap-2.5 sm:gap-3 pointer-events-auto"
             >
               <Link
                 href={currentHero.ctaLink}
-                className="bg-white hover:bg-gold text-obsidian text-xs sm:text-[11px] font-bold tracking-widest uppercase px-6 sm:px-7 py-3 sm:py-3.5 transition shadow-lg inline-block active:scale-98"
+                className="bg-white hover:bg-gold text-obsidian text-[11px] sm:text-xs font-bold tracking-wider sm:tracking-widest uppercase px-5 sm:px-7 py-2.5 sm:py-3.5 transition shadow-lg inline-block active:scale-98"
               >
                 {currentHero.ctaText}
               </Link>
@@ -253,9 +254,10 @@ export default function HomePage() {
                 href={BUSINESS_INFO.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex bg-obsidian/95 hover:bg-gold text-gold hover:text-obsidian border border-gold text-[11px] font-bold tracking-widest uppercase px-6 py-3.5 transition shadow-lg active:scale-98"
+                className="inline-flex bg-obsidian/95 hover:bg-gold text-gold hover:text-obsidian border border-gold text-[10px] sm:text-[11px] font-bold tracking-wider sm:tracking-widest uppercase px-4 sm:px-6 py-2.5 sm:py-3.5 transition shadow-lg active:scale-98 items-center gap-1.5"
               >
-                WHATSAPP: {BUSINESS_INFO.mainPhone}
+                <IconBrandWhatsapp size={15} stroke={2} />
+                <span>WHATSAPP DIRECT</span>
               </a>
             </div>
           </div>
@@ -266,7 +268,7 @@ export default function HomePage() {
           SECTION 1: SHOP BY COLOR (Train Carousel: moves back & forth across all swatches)
          ===================================================================== */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 pt-12 pb-10">
-        <div className="flex items-end justify-between mb-6 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3 sm:gap-4">
           <div>
             <h2 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-obsidian tracking-tight">
               Shop by Color
@@ -276,7 +278,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
             {/* Manual Train Navigation Arrows */}
             <div className="flex items-center border border-neutral-300 bg-white shadow-sm">
               <button
@@ -435,8 +437,8 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Showroom 5 Core Product Lines Strip (Desktop only: hidden on mobile) */}
-        <div className="hidden md:block mt-10 bg-obsidian text-white border border-gold/40 p-5 sm:p-6">
+        {/* Showroom 5 Core Product Lines Strip (Responsive across all devices) */}
+        <div className="mt-8 sm:mt-10 bg-obsidian text-white border border-gold/40 p-4 sm:p-6 rounded-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gold/25">
             <div className="flex items-center gap-3.5">
               <div className="w-12 h-12 bg-white/10 border border-gold/40 p-1 flex items-center justify-center shrink-0">
@@ -782,64 +784,6 @@ export default function HomePage() {
             <p className="text-[11px] text-neutral-700 leading-relaxed">
               বাসার মাপ ও বাজেট অনুযায়ী ফ্রি ডিজাইন, সঠিক হিসাব এবং পাইকারি দামে খুচরা ক্রয়ের সুবিধা।
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================================
-          SHOWROOM 5 CORE DEPARTMENTS STRIP (MOBILE VIEW ONLY: Placed above footer)
-         ===================================================================== */}
-      <section className="block md:hidden bg-obsidian text-white border-t-2 border-gold/40 px-4 py-8">
-        <div className="max-w-[1400px] mx-auto space-y-4">
-          <div className="flex items-center gap-3 pb-3 border-b border-gold/25">
-            <div className="w-11 h-11 bg-white/10 border border-gold/40 p-1 flex items-center justify-center shrink-0">
-              <Image
-                src="/images/logo/Brothers-emblem.png"
-                alt="Brothers Emblem"
-                width={36}
-                height={36}
-                className="h-8 w-auto object-contain"
-              />
-            </div>
-            <div>
-              <span className="text-[9px] uppercase tracking-widest text-gold font-bold block">
-                BROTHER&rsquo;S TILES &amp; SANITARY MART DEPARTMENTS
-              </span>
-              <h3 className="text-sm font-serif font-bold text-white">
-                আমাদের ৫টি প্রধান প্রোডাক্ট ক্যাটাগরি — পাইকারি ও খুচরা
-              </h3>
-            </div>
-          </div>
-
-          <p className="text-xs text-gold font-medium">
-            হোম ডেলিভারি: {BUSINESS_INFO.homeDeliveryBn}
-          </p>
-
-          <div className="grid grid-cols-1 gap-3 pt-1">
-            {SHOWROOM_DEPARTMENTS.map((dept) => (
-              <Link
-                key={dept.id}
-                href={`/catalog?category=${encodeURIComponent(dept.id)}`}
-                className="group bg-obsidian-800 hover:bg-obsidian-700 border border-gold/25 hover:border-gold p-3.5 flex flex-col justify-between transition"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-bold text-gold group-hover:underline">
-                      {dept.name}
-                    </span>
-                    <span className="text-[10px] bg-gold/15 text-gold px-1.5 py-0.5 font-medium">
-                      {dept.count}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-neutral-300 leading-relaxed">
-                    {dept.descriptionBn}
-                  </p>
-                </div>
-                <p className="text-[10px] text-gold/80 font-medium mt-2 pt-2 border-t border-neutral-800">
-                  Sizes/Types: {dept.sizes}
-                </p>
-              </Link>
-            ))}
           </div>
         </div>
       </section>

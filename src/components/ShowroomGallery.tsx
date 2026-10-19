@@ -353,14 +353,14 @@ export default function ShowroomGallery() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/50 pointer-events-none z-20" />
 
               {/* Slide Category Badge - FOLDS WITH THIS PAGE */}
-              <div className="absolute top-2.5 left-7 sm:top-5 sm:left-16 z-30 pointer-events-none">
+              <div className="absolute top-2.5 left-10 sm:top-5 sm:left-16 z-30 pointer-events-none">
                 <span className="bg-white text-[#b8860b] font-bold text-[8.5px] sm:text-[11px] uppercase tracking-wider px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full shadow-md border border-white/90">
                   {currentSlide.category}
                 </span>
               </div>
 
               {/* Slide Title & Subtitle Card (Compact & Standard on Mobile) */}
-              <div className="absolute bottom-2 left-7 right-2 sm:bottom-6 sm:left-16 sm:right-6 z-30 pointer-events-none">
+              <div className="absolute bottom-2 left-10 right-2 sm:bottom-6 sm:left-16 sm:right-6 z-30 pointer-events-none">
                 <div className="py-1.5 px-2.5 sm:p-4 rounded-lg sm:rounded-xl max-w-[85%] sm:max-w-2xl space-y-0.5 sm:space-y-1 bg-black/80 backdrop-blur-md border border-white/10 shadow-lg">
                   <div className="flex items-center gap-1.5 sm:gap-2 text-[7.5px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest text-gold">
                     <span>{currentSlide.location}</span>
@@ -405,14 +405,14 @@ export default function ShowroomGallery() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/50 pointer-events-none" />
 
                 {/* Category Badge on turning sheet - TURNS & FOLDS WITH THIS PAGE */}
-                <div className="absolute top-2.5 left-7 sm:top-5 sm:left-16 z-30 pointer-events-none">
+                <div className="absolute top-2.5 left-10 sm:top-5 sm:left-16 z-30 pointer-events-none">
                   <span className="bg-white text-[#b8860b] font-bold text-[8.5px] sm:text-[11px] uppercase tracking-wider px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full shadow-md border border-white/90">
                     {previousSlide.category}
                   </span>
                 </div>
 
                 {/* Title & Subtitle Card on turning sheet (Compact & Standard on Mobile) */}
-                <div className="absolute bottom-2 left-7 right-2 sm:bottom-6 sm:left-16 sm:right-6 z-30 pointer-events-none">
+                <div className="absolute bottom-2 left-10 right-2 sm:bottom-6 sm:left-16 sm:right-6 z-30 pointer-events-none">
                   <div className="py-1.5 px-2.5 sm:p-4 rounded-lg sm:rounded-xl max-w-[85%] sm:max-w-2xl space-y-0.5 sm:space-y-1 bg-black/80 backdrop-blur-md border border-white/10 shadow-xl">
                     <div className="flex items-center gap-1.5 sm:gap-2 text-[7.5px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest text-gold">
                       <span>{previousSlide.location}</span>
@@ -442,7 +442,7 @@ export default function ShowroomGallery() {
               type="button"
               onClick={prevSlide}
               aria-label="Previous page"
-              className="absolute left-7 sm:left-14 top-0 bottom-16 w-12 sm:w-20 z-30 flex items-center justify-start pl-1 sm:pl-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer text-white/80 hover:text-white"
+              className="absolute left-9 sm:left-14 top-0 bottom-16 w-12 sm:w-20 z-30 flex items-center justify-start pl-1 sm:pl-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer text-white/80 hover:text-white"
             >
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-gold hover:text-obsidian hover:border-gold transition shadow-lg">
                 <IconChevronLeft size={18} stroke={2.5} />
@@ -483,8 +483,8 @@ export default function ShowroomGallery() {
             </div>
           </div>
 
-          {/* Clean Modern 4-Column Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {/* Clean Modern 4-Column Grid (2 columns on mobile, 4 on desktop) */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {SHOWROOM_SLIDES.map((slide, idx) => {
               return (
                 <div

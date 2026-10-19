@@ -203,7 +203,7 @@ export default function CustomDropdown({
           id={listboxId}
           role="listbox"
           tabIndex={-1}
-          className={`absolute top-full mt-1.5 z-50 min-w-[200px] max-h-72 overflow-y-auto overscroll-contain rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl shadow-2xl p-1.5 transition-all duration-150 animate-in fade-in zoom-in-95 focus:outline-none ${
+          className={`absolute top-full mt-1.5 z-50 min-w-[200px] max-w-[calc(100vw-2rem)] max-h-72 overflow-y-auto overscroll-contain rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl shadow-2xl p-1.5 transition-all duration-150 animate-in fade-in zoom-in-95 focus:outline-none ${
             align === "right" ? "right-0" : "left-0"
           } ${menuClassName}`}
           style={{

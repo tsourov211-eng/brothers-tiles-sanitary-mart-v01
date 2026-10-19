@@ -129,91 +129,144 @@ function CategoryNavLinksContent({
   currentFilter: string | null;
 }) {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex items-center justify-between text-[12px] md:text-[13px] xl:text-[14px] font-semibold tracking-normal xl:tracking-wide uppercase text-obsidian">
-      {/* Category Links with Active Indicator */}
-      <div className="flex items-center space-x-0.5 md:space-x-1 lg:space-x-1.5 xl:space-x-2">
-        {CATEGORY_NAV_ITEMS.map((item) => {
-          const isHovered = activeMegaMenu === item.id;
-          const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
-          return (
-            <div
-              key={item.id}
-              className="relative py-2.5"
-              onMouseEnter={() => handleMenuEnter(item.id)}
-            >
-              <Link
-                href={item.href}
-                onClick={handleCloseMegaMenu}
-                className={`px-2.5 py-1 transition-colors relative flex items-center gap-1 ${
-                  isHovered || isActive
-                    ? "text-gold-dark font-bold"
-                    : "hover:text-gold-dark"
-                }`}
+    <>
+      {/* Desktop Category Navigation */}
+      <div className="hidden md:flex max-w-[1400px] mx-auto px-4 sm:px-8 items-center justify-between text-[12px] md:text-[13px] xl:text-[14px] font-semibold tracking-normal xl:tracking-wide uppercase text-obsidian">
+        {/* Category Links with Active Indicator */}
+        <div className="flex items-center space-x-0.5 md:space-x-1 lg:space-x-1.5 xl:space-x-2">
+          {CATEGORY_NAV_ITEMS.map((item) => {
+            const isHovered = activeMegaMenu === item.id;
+            const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
+            return (
+              <div
+                key={item.id}
+                className="relative py-2.5"
+                onMouseEnter={() => handleMenuEnter(item.id)}
               >
-                <span>{item.label}</span>
-                <span
-                  className={`absolute bottom-0 left-2.5 right-2.5 h-[2px] bg-gold-dark transition-all duration-200 ${
-                    isHovered || isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                <Link
+                  href={item.href}
+                  onClick={handleCloseMegaMenu}
+                  className={`px-2.5 py-1 transition-colors relative flex items-center gap-1 ${
+                    isHovered || isActive
+                      ? "text-gold-dark font-bold"
+                      : "hover:text-gold-dark"
                   }`}
-                />
-              </Link>
-            </div>
-          );
-        })}
+                >
+                  <span>{item.label}</span>
+                  <span
+                    className={`absolute bottom-0 left-2.5 right-2.5 h-[2px] bg-gold-dark transition-all duration-200 ${
+                      isHovered || isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                    }`}
+                  />
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Utility Pages Links with Active Indicator */}
+        <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 py-2.5 text-neutral-700 shrink-0">
+          <Link
+            href="/calculator"
+            onClick={handleCloseMegaMenu}
+            className={`py-1 px-1 transition-colors relative flex items-center ${
+              pathname === "/calculator"
+                ? "text-gold-dark font-bold"
+                : "text-obsidian font-bold hover:text-gold-dark"
+            }`}
+          >
+            <span>FREE TILE CALCULATOR</span>
+            <span
+              className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
+                pathname === "/calculator" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+              }`}
+            />
+          </Link>
+          <Link
+            href="/about"
+            onClick={handleCloseMegaMenu}
+            className={`py-1 px-1 transition-colors relative flex items-center ${
+              pathname === "/about"
+                ? "text-gold-dark font-bold"
+                : "hover:text-gold-dark"
+            }`}
+          >
+            <span>SHOWROOM &amp; RAK SPECS</span>
+            <span
+              className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
+                pathname === "/about" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+              }`}
+            />
+          </Link>
+          <Link
+            href="/contact"
+            onClick={handleCloseMegaMenu}
+            className={`py-1 px-1 transition-colors relative flex items-center ${
+              pathname === "/contact"
+                ? "text-gold-dark font-bold"
+                : "text-gold-dark font-bold hover:text-gold"
+            }`}
+          >
+            <span>CONTACT &amp; MAP</span>
+            <span
+              className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
+                pathname === "/contact" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+              }`}
+            />
+          </Link>
+        </div>
       </div>
 
-      {/* Utility Pages Links with Active Indicator */}
-      <div className="flex items-center space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 py-2.5 text-neutral-700 shrink-0">
+      {/* Mobile Horizontal Category Rail - Keeps Same Design Across Devices */}
+      <div className="md:hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar px-3 py-1.5 bg-white border-t border-neutral-100 text-[11px] font-bold tracking-tight uppercase whitespace-nowrap">
+        {CATEGORY_NAV_ITEMS.map((item) => {
+          const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
+          return (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={`px-2.5 py-1 rounded-full transition-colors shrink-0 ${
+                isActive
+                  ? "bg-obsidian text-gold shadow-xs"
+                  : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
+              }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
         <Link
           href="/calculator"
-          onClick={handleCloseMegaMenu}
-          className={`py-1 px-1 transition-colors relative flex items-center ${
+          className={`px-2.5 py-1 rounded-full transition-colors shrink-0 ${
             pathname === "/calculator"
-              ? "text-gold-dark font-bold"
-              : "text-obsidian font-bold hover:text-gold-dark"
+              ? "bg-obsidian text-gold shadow-xs"
+              : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
           }`}
         >
-          <span>FREE TILE CALCULATOR</span>
-          <span
-            className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
-              pathname === "/calculator" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-            }`}
-          />
+          CALCULATOR
         </Link>
         <Link
           href="/about"
-          onClick={handleCloseMegaMenu}
-          className={`py-1 px-1 transition-colors relative flex items-center ${
+          className={`px-2.5 py-1 rounded-full transition-colors shrink-0 ${
             pathname === "/about"
-              ? "text-gold-dark font-bold"
-              : "hover:text-gold-dark"
+              ? "bg-obsidian text-gold shadow-xs"
+              : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
           }`}
         >
-          <span>SHOWROOM &amp; RAK SPECS</span>
-          <span
-            className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
-              pathname === "/about" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-            }`}
-          />
+          SHOWROOM
         </Link>
         <Link
           href="/contact"
-          onClick={handleCloseMegaMenu}
-          className={`py-1 px-1 transition-colors relative flex items-center ${
+          className={`px-2.5 py-1 rounded-full transition-colors shrink-0 ${
             pathname === "/contact"
-              ? "text-gold-dark font-bold"
-              : "text-gold-dark font-bold hover:text-gold"
+              ? "bg-gold text-obsidian font-black shadow-xs"
+              : "bg-gold/15 text-gold-dark hover:bg-gold hover:text-obsidian"
           }`}
         >
-          <span>CONTACT &amp; MAP</span>
-          <span
-            className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
-              pathname === "/contact" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-            }`}
-          />
+          CONTACT
         </Link>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -359,7 +412,7 @@ export default function Header() {
       </div>
 
       {/* Tier 1: Brand Logo + Wide Search Bar + User/Wishlist/Bag Icons (Exact Tilebar Tier 1) */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-4">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 md:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Brother's Tiles & Sanitary Mart Official Logo (Homepage Link) */}
         <Link
           href="/"
@@ -372,16 +425,16 @@ export default function Header() {
             width={300}
             height={84}
             priority
-            className="h-12 sm:h-14 md:h-16 lg:h-[68px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            className="h-9 sm:h-12 md:h-16 lg:h-[68px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </Link>
 
         {/* Center-Right: Luxury Search Box + Language + Action Icons */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5 flex-1 justify-end max-w-2xl">
-          {/* Redesigned Pill Search Form */}
+        <div className="flex items-center gap-1.5 sm:gap-3 flex-1 justify-end max-w-2xl">
+          {/* Redesigned Pill Search Form for Desktop/Tablet */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden sm:flex items-center w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] bg-[#F7F6F2] hover:bg-[#F2F0EB] focus-within:bg-white border border-neutral-300/80 hover:border-gold/60 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/20 rounded-full px-3.5 py-2 transition-all duration-300 shadow-2xs group"
+            className="hidden sm:flex items-center w-full max-w-[260px] md:max-w-[320px] lg:max-w-[360px] bg-[#F7F6F2] hover:bg-[#F2F0EB] focus-within:bg-white border border-neutral-300/80 hover:border-gold/60 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/20 rounded-full px-3.5 py-2 transition-all duration-300 shadow-2xs group"
           >
             <IconSearch
               size={17}
@@ -413,35 +466,35 @@ export default function Header() {
           {/* Language Switcher Pill */}
           <button
             onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-            className="rounded-full bg-obsidian text-gold hover:text-white hover:bg-neutral-900 border border-gold/40 hover:border-gold px-3 py-1.5 text-[11px] font-bold tracking-wider uppercase shadow-xs flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+            className="rounded-full bg-obsidian text-gold hover:text-white hover:bg-neutral-900 border border-gold/40 hover:border-gold px-2.5 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase shadow-xs flex items-center gap-1 sm:gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shrink-0"
             title="Switch Language"
           >
-            <IconLanguage size={14} stroke={2} className="text-gold" />
+            <IconLanguage size={13} stroke={2} className="text-gold" />
             <span className="font-sans">{lang === "bn" ? "EN" : "বাংলা"}</span>
           </button>
 
           {/* Action Icons Group */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Wishlist Button */}
             <Link
               href="/catalog?wishlist=true"
-              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-rose-50 border border-neutral-200/90 hover:border-rose-300 text-obsidian hover:text-rose-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-rose-50 border border-neutral-200/90 hover:border-rose-300 text-obsidian hover:text-rose-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
               title="Saved Favorites (পছন্দের তালিকা)"
             >
               {wishlist.length > 0 ? (
                 <IconHeartFilled
-                  size={19}
+                  size={17}
                   className="text-rose-600 group-hover:scale-110 transition-transform duration-200"
                 />
               ) : (
                 <IconHeart
-                  size={19}
+                  size={17}
                   stroke={1.8}
                   className="text-neutral-700 group-hover:text-rose-600 group-hover:scale-110 transition-all duration-200"
                 />
               )}
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {wishlist.length}
                 </span>
               )}
@@ -450,16 +503,16 @@ export default function Header() {
             {/* Sample & Wholesale Quote Bag Button */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
+              className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
               title="Sample & Quotation List (কোটেশন ব্যাগ)"
             >
               <IconShoppingBag
-                size={19}
+                size={17}
                 stroke={1.8}
                 className="text-neutral-700 group-hover:text-gold-dark group-hover:scale-110 transition-all duration-200"
               />
               {quoteBag.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[10px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[9px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {quoteBag.length}
                 </span>
               )}
@@ -468,12 +521,12 @@ export default function Header() {
             {/* Admin / Manager Portal Shortcut Button */}
             <Link
               href="/admin"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              className="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
               title="Admin & Showroom Portal"
             >
               <span className="sr-only">Admin Portal</span>
               <IconUserShield
-                size={19}
+                size={17}
                 stroke={1.8}
                 className="group-hover:scale-110 transition-transform duration-200"
               />
@@ -482,22 +535,52 @@ export default function Header() {
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
+              className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? (
-                <IconX size={20} stroke={2} />
+                <IconX size={18} stroke={2} />
               ) : (
-                <IconMenu2 size={20} stroke={2} />
+                <IconMenu2 size={18} stroke={2} />
               )}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Mobile Quick Search Bar (visible only on small screens) */}
+      <div className="sm:hidden px-3.5 pb-2">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex items-center w-full bg-[#F7F6F2] border border-neutral-300/90 rounded-full px-3 py-1.5 focus-within:border-gold focus-within:ring-1 focus-within:ring-gold/30 shadow-2xs"
+        >
+          <IconSearch size={15} stroke={2} className="text-neutral-400 mr-2 shrink-0" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={
+              lang === "bn"
+                ? "টাইলস, বেসিন বা RAK কোড খুঁজুন..."
+                : "Search 5,000+ Tiles, Basin, Commode..."
+            }
+            className="w-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="text-neutral-400 hover:text-obsidian p-0.5"
+            >
+              <IconX size={13} stroke={2} />
+            </button>
+          )}
+        </form>
+      </div>
+
       {/* Tier 2: Horizontal Category Navigation Bar with Mega Menu */}
       <nav
-        className="hidden md:block border-t border-neutral-200 bg-white relative"
+        className="border-t border-neutral-200 bg-white relative"
         onMouseLeave={handleMenuLeave}
       >
         <CategoryNavLinks
@@ -653,9 +736,13 @@ export default function Header() {
               <IconBuildingStore size={15} stroke={1.8} />
               <span>About Showroom</span>
             </Link>
-            <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="col-span-2 py-2.5 px-3 bg-gold text-obsidian font-bold text-center flex items-center justify-center gap-2 rounded-xs">
+            <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="col-span-2 py-2.5 px-3 bg-gold text-obsidian font-bold text-center flex items-center justify-center gap-2 rounded-lg shadow-sm">
               <IconMapPin size={16} stroke={2} />
               <span>Contact &amp; Showroom Map (যোগাযোগ)</span>
+            </Link>
+            <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="col-span-2 py-2 px-3 bg-neutral-900 border border-gold/30 hover:border-gold text-gold text-xs font-semibold flex items-center justify-center gap-2 rounded-lg">
+              <IconUserShield size={16} stroke={1.8} />
+              <span>Admin &amp; Manager Portal (অ্যাডমিন লগইন)</span>
             </Link>
           </div>
         </div>

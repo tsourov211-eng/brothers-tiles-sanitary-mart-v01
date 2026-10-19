@@ -490,9 +490,9 @@ function CatalogContent() {
         </div>
       </div>
 
-      {/* Sticky Filter Bar (Snaps directly beneath the sticky Header Navbar) */}
-      <div className="sticky top-[var(--header-height,172px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs pt-4 pb-3.5 transition-all">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
+      {/* Sticky Filter Bar (Static on mobile for maximum browsing viewport, snaps directly beneath navbar on desktop) */}
+      <div className="static md:sticky md:top-[var(--header-height,172px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs py-3 sm:py-3.5 transition-all">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           {/* Left: Filter Dropdowns + Search Bar */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Color Custom Dropdown */}
@@ -540,8 +540,8 @@ function CatalogContent() {
               ariaLabel="Filter by brand"
             />
 
-            {/* Search Bar (Compact width to preserve row alignment) */}
-            <div className="relative w-44 sm:w-48 lg:w-52 shrink-0">
+            {/* Search Bar (Full width on mobile, compact on sm+) */}
+            <div className="relative w-full sm:w-48 lg:w-52 shrink-0">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none">
                 <IconSearch size={14} stroke={2} />
               </span>
@@ -572,7 +572,7 @@ function CatalogContent() {
           </div>
 
           {/* Right: Wishlist, Reset & Sort By */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center justify-between lg:justify-end gap-2 shrink-0 w-full lg:w-auto">
             <button
               onClick={() => {
                 setOnlyWishlist(!onlyWishlist);
@@ -720,7 +720,7 @@ function CatalogContent() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
               {displayedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
