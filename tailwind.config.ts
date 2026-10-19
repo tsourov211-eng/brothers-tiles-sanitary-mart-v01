@@ -28,8 +28,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Inter", "Hind Siliguri", "system-ui", "-apple-system", "sans-serif"],
-        serif: ["Playfair Display", "Georgia", "serif"],
+        sans: ["Helvetica", "Helvetica Neue", "Arial", "Hind Siliguri", "sans-serif"],
+        serif: ["Helvetica", "Helvetica Neue", "Arial", "Hind Siliguri", "sans-serif"],
+        helvetica: ["Helvetica", "Helvetica Neue", "Arial", "Hind Siliguri", "sans-serif"],
       },
       boxShadow: {
         gold: "0 4px 20px -2px rgba(212, 175, 55, 0.25)",
