@@ -40,11 +40,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="bn" className="overflow-x-hidden">
-      <body className="min-h-screen flex flex-col bg-white text-obsidian selection:bg-gold selection:text-obsidian overflow-x-hidden w-full">
+    <html lang="bn" className="overflow-x-clip">
+      <body className="min-h-screen flex flex-col bg-white text-obsidian selection:bg-gold selection:text-obsidian overflow-x-clip w-full">
         <ShopProvider>
           <Header />
-          <main className="flex-1 w-full overflow-x-hidden">{children}</main>
+          <main className="flex-1 w-full overflow-x-clip">{children}</main>
           <QuoteDrawer />
           <ScrollToTop />
           <Footer />

@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --header-height: 110px;
+  --header-height: 38px;
 }
 
 @media (max-width: 768px) {
   :root {
-    --header-height: 90px;
+    --header-height: 34px;
   }
 }
 
@@ -17,11 +17,13 @@
     scroll-behavior: smooth;
     background-color: #ffffff;
     color: #0a0a0a;
+    overflow-x: clip;
   }
 
   body {
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
   }
 }
 

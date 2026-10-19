@@ -277,16 +277,16 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const headerRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { wishlist, quoteBag, setIsDrawerOpen, lang, setLang } = useShop();
 
-  // Dynamically set --header-height CSS variable so sticky sub-bars lock right underneath the navbar
+  // Dynamically set --header-height CSS variable so sticky sub-bars lock right underneath the sticky navbar
   useEffect(() => {
     const updateHeaderHeight = () => {
-      if (headerRef.current) {
-        const height = headerRef.current.getBoundingClientRect().height;
+      if (navRef.current) {
+        const height = navRef.current.getBoundingClientRect().height;
         document.documentElement.style.setProperty(
           "--header-height",
           `${Math.ceil(height)}px`
@@ -302,9 +302,9 @@ export default function Header() {
     window.addEventListener("load", updateHeaderHeight);
 
     let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== "undefined" && headerRef.current) {
+    if (typeof ResizeObserver !== "undefined" && navRef.current) {
       resizeObserver = new ResizeObserver(updateHeaderHeight);
-      resizeObserver.observe(headerRef.current);
+      resizeObserver.observe(navRef.current);
     }
 
     return () => {
@@ -373,8 +373,9 @@ export default function Header() {
   };
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-40 bg-white border-b border-gold/70 shadow-2xs">
-      {/* Tier 0: Top Announcement Bar Carousel (Auto rotates every 4s, left-to-right slide) */}
+    <>
+      <header className="relative bg-white z-30">
+        {/* Tier 0: Top Announcement Bar Carousel (Auto rotates every 4s, left-to-right slide) */}
       <div
         className="bg-obsidian text-gold border-b border-gold/20 text-[10px] sm:text-[11px] py-1 px-3 sm:px-4"
         onMouseEnter={() => setIsCarouselPaused(true)}
@@ -578,106 +579,6 @@ export default function Header() {
         </form>
       </div>
 
-      {/* Tier 2: Horizontal Category Navigation Bar with Mega Menu */}
-      <nav
-        className="border-t border-neutral-200 bg-white relative"
-        onMouseLeave={handleMenuLeave}
-      >
-        <CategoryNavLinks
-          activeMegaMenu={activeMegaMenu}
-          handleMenuEnter={handleMenuEnter}
-          handleCloseMegaMenu={handleCloseMegaMenu}
-          pathname={pathname}
-        />
-
-        {/* Mega Menu Dropdown Container */}
-        {activeMegaMenu && MEGA_MENU_DATA[activeMegaMenu] && (
-          <div
-            className="absolute top-full left-0 right-0 w-full bg-white shadow-2xl border-t border-b border-neutral-200 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
-            onMouseEnter={() => handleMenuEnter(activeMegaMenu)}
-            onMouseLeave={handleMenuLeave}
-          >
-            <div className="max-w-[1400px] mx-auto px-6 sm:px-8 py-7">
-              <div
-                className={`grid gap-8 ${
-                  MEGA_MENU_DATA[activeMegaMenu].columns.length === 5
-                    ? "grid-cols-5"
-                    : "grid-cols-4"
-                }`}
-              >
-                {MEGA_MENU_DATA[activeMegaMenu].columns.map((col, colIdx) => (
-                  <div key={colIdx} className="space-y-3">
-                    <div className="border-b border-neutral-200 pb-2">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-obsidian">
-                        {col.title}
-                      </h4>
-                      {col.titleBn && (
-                        <p className="text-[11px] text-neutral-600 font-medium tracking-normal mt-0.5">
-                          {col.titleBn}
-                        </p>
-                      )}
-                    </div>
-                    <ul className="space-y-2">
-                      {col.items.map((item, itemIdx) => (
-                        <li key={itemIdx}>
-                          <Link
-                            href={item.href}
-                            onClick={handleCloseMegaMenu}
-                            className={`group/link flex items-center gap-2 text-[13px] transition-colors py-0.5 ${
-                              item.isBold
-                                ? "font-bold text-obsidian hover:text-gold-dark"
-                                : "text-neutral-600 hover:text-gold-dark"
-                            }`}
-                          >
-                            {/* Color Dot if color swatch exists (Exact Tilebar reference match) */}
-                            {item.colorHex && (
-                              <span
-                                className="w-3.5 h-3.5 rounded-full border border-neutral-300 shrink-0 shadow-2xs group-hover/link:scale-110 transition-transform"
-                                style={{ backgroundColor: item.colorHex }}
-                              />
-                            )}
-                            <span className="group-hover/link:translate-x-0.5 transition-transform duration-150">
-                              {item.name}
-                            </span>
-                            {item.badge && (
-                              <span className="text-[9px] font-bold px-1.5 py-0.2 bg-gold/15 text-gold-dark border border-gold/30 rounded-xs tracking-wider shrink-0">
-                                {item.badge}
-                              </span>
-                            )}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                    {col.viewAll && (
-                      <div className="pt-2 mt-2 border-t border-neutral-100">
-                        <Link
-                          href={col.viewAll.href}
-                          onClick={handleCloseMegaMenu}
-                          className="text-xs font-bold text-obsidian hover:text-gold-dark transition-colors flex items-center gap-1 group/va"
-                        >
-                          <span>{col.viewAll.name}</span>
-                          <span className="group-hover/va:translate-x-1 transition-transform duration-150 text-gold-dark">
-                            &rsaquo;
-                          </span>
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Backdrop overlay for focus when Mega Menu is open */}
-      {activeMegaMenu && (
-        <div
-          className="fixed inset-0 top-[110px] sm:top-[120px] bg-black/20 backdrop-blur-[0.5px] z-30 pointer-events-none transition-opacity duration-200"
-          aria-hidden="true"
-        />
-      )}
-
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-obsidian text-white border-t border-gold/30 px-4 py-4 space-y-3">
@@ -748,5 +649,107 @@ export default function Header() {
         </div>
       )}
     </header>
+
+    {/* Tier 2: Sticky Category Navigation Bar with Mega Menu (Sticks to top of screen as you scroll down) */}
+    <nav
+      ref={navRef}
+      className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200/80 border-b-2 border-gold shadow-sm"
+      onMouseLeave={handleMenuLeave}
+    >
+      <CategoryNavLinks
+        activeMegaMenu={activeMegaMenu}
+        handleMenuEnter={handleMenuEnter}
+        handleCloseMegaMenu={handleCloseMegaMenu}
+        pathname={pathname}
+      />
+
+      {/* Mega Menu Dropdown Container */}
+      {activeMegaMenu && MEGA_MENU_DATA[activeMegaMenu] && (
+        <div
+          className="absolute top-full left-0 right-0 w-full bg-white shadow-2xl border-t border-b border-neutral-200 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+          onMouseEnter={() => handleMenuEnter(activeMegaMenu)}
+          onMouseLeave={handleMenuLeave}
+        >
+          <div className="max-w-[1400px] mx-auto px-6 sm:px-8 py-7">
+            <div
+              className={`grid gap-8 ${
+                MEGA_MENU_DATA[activeMegaMenu].columns.length === 5
+                  ? "grid-cols-5"
+                  : "grid-cols-4"
+              }`}
+            >
+              {MEGA_MENU_DATA[activeMegaMenu].columns.map((col, colIdx) => (
+                <div key={colIdx} className="space-y-3">
+                  <div className="border-b border-neutral-200 pb-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-obsidian">
+                      {col.title}
+                    </h4>
+                    {col.titleBn && (
+                      <p className="text-[11px] text-neutral-600 font-medium tracking-normal mt-0.5">
+                        {col.titleBn}
+                      </p>
+                    )}
+                  </div>
+                  <ul className="space-y-2">
+                    {col.items.map((item, itemIdx) => (
+                      <li key={itemIdx}>
+                        <Link
+                          href={item.href}
+                          onClick={handleCloseMegaMenu}
+                          className={`group/link flex items-center gap-2 text-[13px] transition-colors py-0.5 ${
+                            item.isBold
+                              ? "font-bold text-obsidian hover:text-gold-dark"
+                              : "text-neutral-600 hover:text-gold-dark"
+                          }`}
+                        >
+                          {/* Color Dot if color swatch exists (Exact Tilebar reference match) */}
+                          {item.colorHex && (
+                            <span
+                              className="w-3.5 h-3.5 rounded-full border border-neutral-300 shrink-0 shadow-2xs group-hover/link:scale-110 transition-transform"
+                              style={{ backgroundColor: item.colorHex }}
+                            />
+                          )}
+                          <span className="group-hover/link:translate-x-0.5 transition-transform duration-150">
+                            {item.name}
+                          </span>
+                          {item.badge && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 bg-gold/15 text-gold-dark border border-gold/30 rounded-xs tracking-wider shrink-0">
+                              {item.badge}
+                            </span>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  {col.viewAll && (
+                    <div className="pt-2 mt-2 border-t border-neutral-100">
+                      <Link
+                        href={col.viewAll.href}
+                        onClick={handleCloseMegaMenu}
+                        className="text-xs font-bold text-obsidian hover:text-gold-dark transition-colors flex items-center gap-1 group/va"
+                      >
+                        <span>{col.viewAll.name}</span>
+                        <span className="group-hover/va:translate-x-1 transition-transform duration-150 text-gold-dark">
+                          &rsaquo;
+                        </span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </nav>
+
+    {/* Backdrop overlay for focus when Mega Menu is open */}
+    {activeMegaMenu && (
+      <div
+        className="fixed inset-0 top-[38px] bg-black/20 backdrop-blur-[0.5px] z-30 pointer-events-none transition-opacity duration-200"
+        aria-hidden="true"
+      />
+    )}
+  </>
   );
 }
