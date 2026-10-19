@@ -262,11 +262,6 @@ export default function Header() {
     };
   }, []);
 
-  // If on admin management dashboard, hide customer storefront header
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
-
   // Auto-play announcement carousel every 4 seconds
   useEffect(() => {
     if (isCarouselPaused) return;
@@ -276,6 +271,11 @@ export default function Header() {
 
     return () => clearInterval(interval);
   }, [isCarouselPaused]);
+
+  // If on admin management dashboard, hide customer storefront header
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const handleMenuEnter = (menuId: string) => {
     if (menuTimeoutRef.current) {
