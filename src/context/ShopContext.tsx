@@ -126,9 +126,8 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
 
   // Storefront
   const [wishlist, setWishlist] = useState<string[]>([
-    "classic-super-20",
-    "elegant-slab-1211",
-    "sanitary-commode-luxury",
+    "rak-001-7002-lwd-premija-collection",
+    "rak-004-7003-lshell-premija-collection",
   ]);
   const [quoteBag, setQuoteBag] = useState<QuoteBagItem[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -138,28 +137,33 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   // Load from localStorage on mount
   useEffect(() => {
     try {
-      const savedProducts = localStorage.getItem("btsm_products");
-      if (savedProducts) {
-        const parsed: ProductItem[] = JSON.parse(savedProducts);
-        const baseMap = new Map(getInitialProducts().map((p) => [p.id, p]));
-        const merged = parsed.map((item) => {
-          const base = baseMap.get(item.id);
-          if (base) {
+      const storageVersion = localStorage.getItem("btsm_catalog_version");
+      if (storageVersion !== "v2_rak_974") {
+        localStorage.removeItem("btsm_products");
+        localStorage.setItem("btsm_catalog_version", "v2_rak_974");
+      } else {
+        const savedProducts = localStorage.getItem("btsm_products");
+        if (savedProducts) {
+          const parsed: ProductItem[] = JSON.parse(savedProducts);
+          const baseMap = new Map(getInitialProducts().map((p) => [p.id, p]));
+          const validSaved = parsed.filter((item) => baseMap.has(item.id));
+          const merged = validSaved.map((item) => {
+            const base = baseMap.get(item.id)!;
             return {
               ...base,
               ...item,
+              image: base.image,
               category: base.category,
               subCategory: base.subCategory,
             };
-          }
-          return item;
-        });
-        baseMap.forEach((baseItem, id) => {
-          if (!merged.some((m) => m.id === id)) {
-            merged.push(baseItem);
-          }
-        });
-        setProducts(merged);
+          });
+          baseMap.forEach((baseItem, id) => {
+            if (!merged.some((m) => m.id === id)) {
+              merged.push(baseItem);
+            }
+          });
+          setProducts(merged);
+        }
       }
 
       const savedOrders = localStorage.getItem("btsm_orders");
@@ -172,7 +176,13 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       if (savedAdmin === "true") setIsAdminLoggedIn(true);
 
       const savedWishlist = localStorage.getItem("btsm_wishlist");
-      if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
+      if (savedWishlist) {
+        const parsedWishlist: string[] = JSON.parse(savedWishlist);
+        const validWishlist = parsedWishlist.filter((id) =>
+          ALL_PRODUCTS.some((p) => p.id === id)
+        );
+        if (validWishlist.length > 0) setWishlist(validWishlist);
+      }
 
       const savedBag = localStorage.getItem("btsm_quotebag");
       if (savedBag) setQuoteBag(JSON.parse(savedBag));
