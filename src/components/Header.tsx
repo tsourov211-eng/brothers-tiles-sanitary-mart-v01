@@ -475,27 +475,27 @@ export default function Header() {
           </button>
 
           {/* Action Icons Group */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {/* Wishlist Button */}
             <Link
               href="/catalog?wishlist=true"
-              className="relative w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-rose-50 border border-neutral-200/90 hover:border-rose-300 text-obsidian hover:text-rose-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              className="relative w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-rose-50 border border-neutral-200/90 hover:border-rose-300 text-obsidian hover:text-rose-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
               title="Saved Favorites (পছন্দের তালিকা)"
             >
               {wishlist.length > 0 ? (
                 <IconHeartFilled
-                  size={16.5}
+                  size={20}
                   className="text-rose-600 group-hover:scale-110 transition-transform duration-200"
                 />
               ) : (
                 <IconHeart
-                  size={16.5}
-                  stroke={1.8}
+                  size={20}
+                  stroke={2}
                   className="text-neutral-700 group-hover:text-rose-600 group-hover:scale-110 transition-all duration-200"
                 />
               )}
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[9.5px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {wishlist.length}
                 </span>
               )}
@@ -504,16 +504,16 @@ export default function Header() {
             {/* Sample & Wholesale Quote Bag Button */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="relative w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
+              className="relative w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
               title="Sample & Quotation List (কোটেশন ব্যাগ)"
             >
               <IconShoppingBag
-                size={16.5}
-                stroke={1.8}
+                size={20}
+                stroke={2}
                 className="text-neutral-700 group-hover:text-gold-dark group-hover:scale-110 transition-all duration-200"
               />
               {quoteBag.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[9px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[9.5px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {quoteBag.length}
                 </span>
               )}
@@ -522,13 +522,13 @@ export default function Header() {
             {/* Admin / Manager Portal Shortcut Button */}
             <Link
               href="/admin"
-              className="hidden sm:flex w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              className="hidden sm:flex w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
               title="Admin & Showroom Portal"
             >
               <span className="sr-only">Admin Portal</span>
               <IconUserShield
-                size={16.5}
-                stroke={1.8}
+                size={20}
+                stroke={2}
                 className="group-hover:scale-110 transition-transform duration-200"
               />
             </Link>
@@ -536,13 +536,13 @@ export default function Header() {
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
+              className="md:hidden w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? (
-                <IconX size={17} stroke={2} />
+                <IconX size={20} stroke={2} />
               ) : (
-                <IconMenu2 size={17} stroke={2} />
+                <IconMenu2 size={20} stroke={2} />
               )}
             </button>
           </div>
