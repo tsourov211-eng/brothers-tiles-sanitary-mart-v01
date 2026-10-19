@@ -131,30 +131,30 @@ function CategoryNavLinksContent({
   return (
     <>
       {/* Desktop Category Navigation */}
-      <div className="hidden md:flex max-w-[1400px] mx-auto px-4 sm:px-8 items-center justify-between text-[11px] md:text-[12px] xl:text-[13px] font-semibold tracking-normal xl:tracking-wide uppercase text-obsidian">
+      <div className="hidden md:flex max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-6 xl:px-8 items-center justify-between text-[11px] lg:text-[12px] xl:text-[13px] font-semibold tracking-tight lg:tracking-normal xl:tracking-wide uppercase text-obsidian overflow-x-auto no-scrollbar">
         {/* Category Links with Active Indicator */}
-        <div className="flex items-center space-x-0.5 md:space-x-1 lg:space-x-1.5 xl:space-x-2">
+        <div className="flex items-center space-x-0.5 lg:space-x-1 xl:space-x-1.5 shrink-0">
           {CATEGORY_NAV_ITEMS.map((item) => {
             const isHovered = activeMegaMenu === item.id;
             const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
             return (
               <div
                 key={item.id}
-                className="relative py-1.5"
+                className="relative py-1.5 shrink-0"
                 onMouseEnter={() => handleMenuEnter(item.id)}
               >
                 <Link
                   href={item.href}
                   onClick={handleCloseMegaMenu}
-                  className={`px-2 py-0.5 transition-colors relative flex items-center gap-1 ${
+                  className={`px-1.5 lg:px-2 xl:px-2.5 py-0.5 transition-colors relative flex items-center gap-1 whitespace-nowrap shrink-0 ${
                     isHovered || isActive
                       ? "text-gold-dark font-bold"
                       : "hover:text-gold-dark"
                   }`}
                 >
-                  <span>{item.label}</span>
+                  <span className="whitespace-nowrap">{item.label}</span>
                   <span
-                    className={`absolute bottom-0 left-2 right-2 h-[2px] bg-gold-dark transition-all duration-200 ${
+                    className={`absolute bottom-0 left-1.5 right-1.5 h-[2px] bg-gold-dark transition-all duration-200 ${
                       isHovered || isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
                     }`}
                   />
@@ -165,17 +165,19 @@ function CategoryNavLinksContent({
         </div>
 
         {/* Utility Pages Links with Active Indicator */}
-        <div className="flex items-center space-x-2.5 md:space-x-3.5 lg:space-x-4 xl:space-x-5 py-1.5 text-neutral-700 shrink-0">
+        <div className="flex items-center space-x-2 md:space-x-2.5 lg:space-x-3.5 xl:space-x-4 py-1.5 text-neutral-700 shrink-0 whitespace-nowrap ml-2 xl:ml-3">
           <Link
             href="/calculator"
             onClick={handleCloseMegaMenu}
-            className={`py-0.5 px-1 transition-colors relative flex items-center ${
+            className={`py-0.5 px-1 transition-colors relative flex items-center whitespace-nowrap shrink-0 ${
               pathname === "/calculator"
                 ? "text-gold-dark font-bold"
                 : "text-obsidian font-bold hover:text-gold-dark"
             }`}
           >
-            <span>FREE TILE CALCULATOR</span>
+            <span className="whitespace-nowrap">
+              <span className="hidden xl:inline">FREE </span>TILE CALCULATOR
+            </span>
             <span
               className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
                 pathname === "/calculator" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
@@ -185,13 +187,15 @@ function CategoryNavLinksContent({
           <Link
             href="/about"
             onClick={handleCloseMegaMenu}
-            className={`py-0.5 px-1 transition-colors relative flex items-center ${
+            className={`py-0.5 px-1 transition-colors relative flex items-center whitespace-nowrap shrink-0 ${
               pathname === "/about"
                 ? "text-gold-dark font-bold"
                 : "hover:text-gold-dark"
             }`}
           >
-            <span>SHOWROOM &amp; RAK SPECS</span>
+            <span className="whitespace-nowrap">
+              SHOWROOM &amp; <span className="hidden xl:inline">RAK </span>SPECS
+            </span>
             <span
               className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
                 pathname === "/about" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
@@ -201,13 +205,13 @@ function CategoryNavLinksContent({
           <Link
             href="/contact"
             onClick={handleCloseMegaMenu}
-            className={`py-0.5 px-1 transition-colors relative flex items-center ${
+            className={`py-0.5 px-1 transition-colors relative flex items-center whitespace-nowrap shrink-0 ${
               pathname === "/contact"
                 ? "text-gold-dark font-bold"
                 : "text-gold-dark font-bold hover:text-gold"
             }`}
           >
-            <span>CONTACT &amp; MAP</span>
+            <span className="whitespace-nowrap">CONTACT &amp; MAP</span>
             <span
               className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
                 pathname === "/contact" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
