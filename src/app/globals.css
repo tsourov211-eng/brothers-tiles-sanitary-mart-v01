@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --header-height: 172px;
+  --header-height: 110px;
 }
 
 @media (max-width: 768px) {
   :root {
-    --header-height: 108px;
+    --header-height: 90px;
   }
 }
 
