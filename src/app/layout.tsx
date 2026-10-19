@@ -4,6 +4,7 @@ import { ShopProvider } from "@/context/ShopContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import ScrollToTop from "@/components/ScrollToTop";
 import { BUSINESS_INFO } from "@/data/siteData";
 
 export const metadata: Metadata = {
@@ -38,6 +39,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <QuoteDrawer />
+          <ScrollToTop />
           <Footer />
         </ShopProvider>
       </body>

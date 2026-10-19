@@ -2,11 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
+import ShowroomGallery from "@/components/ShowroomGallery";
 import {
   BUSINESS_INFO,
   RAK_SIZE_INDEX,
-  TECHNICAL_SPECS_PORCELAIN,
   FACEBOOK_REVIEWS,
 } from "@/data/siteData";
 import {
@@ -18,34 +17,8 @@ import {
 export default function AboutPage() {
   return (
     <div className="bg-white min-h-screen">
-      {/* Header Banner */}
-      <div className="bg-obsidian text-white border-b-2 border-gold py-10 px-4 sm:px-8">
-        <div className="max-w-[1300px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gold">
-              ABOUT OUR SHOWROOM &amp; BRANDS
-            </span>
-            <h1 className="text-2xl sm:text-4xl font-serif font-bold text-white leading-snug">
-              <span>{BUSINESS_INFO.nameEn}</span>
-              <span className="block text-lg sm:text-2xl font-normal text-gold-light mt-1">
-                ({BUSINESS_INFO.nameBn})
-              </span>
-            </h1>
-            <p className="text-sm text-gold font-medium">
-              {BUSINESS_INFO.tagline} — {BUSINESS_INFO.subLine}
-            </p>
-          </div>
-          <div className="bg-white/10 border border-gold/40 p-3 rounded-sm flex items-center justify-center shrink-0 shadow-lg self-start md:self-auto">
-            <Image
-              src="/images/logo/Brothers Tiles & Sanitary Logo-dark.png"
-              alt="Brothers Tiles & Sanitary Mart Official Logo"
-              width={260}
-              height={86}
-              className="h-14 sm:h-18 w-auto object-contain"
-            />
-          </div>
-        </div>
-      </div>
+      {/* Real Showroom Grand Visual Tour & Gallery */}
+      <ShowroomGallery />
 
       {/* Showroom Story & RAK Partnership */}
       <section className="max-w-[1300px] mx-auto px-4 sm:px-8 py-12 grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -125,42 +98,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Technical Characteristics Table from Page 115 of PDF */}
-      <section className="max-w-[1300px] mx-auto px-4 sm:px-8 py-12 space-y-6">
-        <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-gold-dark">
-            ISO 13006 QUALITY BENCHMARKS (PDF PAGE 115)
-          </span>
-          <h2 className="text-xl font-serif font-bold text-obsidian mt-1">
-            Technical Characteristics — RAK Porcelain Tiles (BIa - GL)
-          </h2>
-        </div>
 
-        <div className="overflow-x-auto border border-neutral-200">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-obsidian text-gold uppercase tracking-wider text-[11px]">
-                <th className="p-3 border-b border-gold/30">Test Description</th>
-                <th className="p-3 border-b border-gold/30">Standard Test Method</th>
-                <th className="p-3 border-b border-gold/30">ISO 13006 Standard</th>
-                <th className="p-3 border-b border-gold/30">RAK Rectified Spec</th>
-                <th className="p-3 border-b border-gold/30">RAK Non-Rectified Spec</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-200">
-              {TECHNICAL_SPECS_PORCELAIN.map((row) => (
-                <tr key={row.property} className="hover:bg-stonebg-light">
-                  <td className="p-3 font-bold text-obsidian">{row.property}</td>
-                  <td className="p-3 text-neutral-600">{row.method}</td>
-                  <td className="p-3 text-neutral-600">{row.standard}</td>
-                  <td className="p-3 font-semibold text-obsidian">{row.rakRectified}</td>
-                  <td className="p-3 text-neutral-700">{row.rakNonRectified}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
 
       {/* Customer Reviews from Facebook (@brotherstilesbd) */}
       <section className="bg-stonebg py-12 px-4 sm:px-8 border-t border-neutral-300">

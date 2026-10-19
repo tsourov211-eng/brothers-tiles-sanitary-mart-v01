@@ -167,3 +167,71 @@ select option:checked {
 [role="listbox"]::-webkit-scrollbar-thumb:hover {
   background-color: rgba(181, 137, 40, 0.8);
 }
+
+/* ==============================================================
+   Architectural Design Book - Ultra-Smooth Corner Page Curl
+   ============================================================== */
+.book-perspective {
+  perspective: 2000px;
+  perspective-origin: center center;
+  transform-style: preserve-3d;
+}
+
+@keyframes pageCurlNext {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.95;
+  }
+  100% {
+    /* Smooth natural curl lifting from bottom-right towards left spine */
+    transform: rotateX(10deg) rotateY(-112deg) rotateZ(-7deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pageCurlPrev {
+  0% {
+    transform: rotateX(10deg) rotateY(-112deg) rotateZ(-7deg);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes cornerRevealShadow {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-page-curl-next {
+  transform-origin: 0% 80%;
+  animation: pageCurlNext 0.78s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.animate-page-curl-prev {
+  transform-origin: 0% 80%;
+  animation: pageCurlPrev 0.78s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.animate-corner-shadow {
+  animation: cornerRevealShadow 0.78s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}

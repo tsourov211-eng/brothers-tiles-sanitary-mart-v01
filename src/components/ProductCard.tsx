@@ -5,7 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductItem } from "@/data/siteData";
 import { useShop } from "@/context/ShopContext";
-import { IconEye, IconBrandWhatsapp, IconShoppingCart } from "@tabler/icons-react";
+import {
+  IconEye,
+  IconBrandWhatsapp,
+  IconShoppingCart,
+  IconHeart,
+  IconHeartFilled,
+} from "@tabler/icons-react";
 
 interface ProductCardProps {
   product: ProductItem;
@@ -32,7 +38,7 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
 
   return (
     <div
-      className={`bg-white border border-neutral-200 hover:border-gold transition group flex flex-col justify-between shadow-xs select-none ${className}`}
+      className={`bg-white rounded-2xl border border-neutral-200 hover:border-gold shadow-[0_4px_18px_rgba(0,0,0,0.07)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.13)] transition-all duration-300 group flex flex-col justify-between overflow-hidden select-none ${className}`}
     >
       <div>
         {/* ==============================================================
@@ -49,44 +55,49 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             />
           </Link>
 
-          {/* Top-Left Badges: Model Code + Promo Badge (PDF badge removed as marked) */}
-          <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1 z-10 pointer-events-none">
-            <span className="bg-obsidian/90 text-gold text-[10px] font-bold uppercase px-2 py-0.5 tracking-wider shadow-2xs">
-              {product.code}
-            </span>
-            {product.badge && (
-              <span className="bg-gold text-obsidian text-[10px] font-extrabold uppercase px-2 py-0.5 shadow-2xs">
-                {product.badge}
+          {/* Top Header Row inside Image Container (Prevents any overlap between badges and love icon) */}
+          <div className="absolute top-1.5 left-1.5 right-1.5 sm:top-2.5 sm:left-2.5 sm:right-2.5 flex items-start justify-between gap-1.5 z-10 pointer-events-none">
+            {/* Left Badges (Original: Product Code on top, Badge below) */}
+            <div className="flex flex-col items-start gap-0.5 sm:gap-1 min-w-0 max-w-[calc(100%-32px)] sm:max-w-[calc(100%-40px)]">
+              <span className="bg-obsidian/90 text-gold text-[8px] sm:text-[10px] font-bold uppercase px-1.5 sm:px-2 py-0.5 tracking-normal sm:tracking-wider shadow-2xs truncate max-w-full">
+                {product.code}
               </span>
-            )}
-          </div>
+              {product.badge && (
+                <span className="bg-gold text-obsidian text-[8px] sm:text-[10px] font-extrabold uppercase px-1.5 sm:px-2 py-0.5 tracking-normal sm:tracking-wider shadow-2xs truncate max-w-full">
+                  {product.badge}
+                </span>
+              )}
+            </div>
 
-          {/* Top-Right Wishlist Button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              toggleWishlist(product.id);
-            }}
-            aria-label="Save to wishlist"
-            className={`absolute top-2.5 right-2.5 z-10 w-8 h-8 flex items-center justify-center border transition cursor-pointer ${
-              isSaved
-                ? "bg-obsidian text-gold border-gold"
-                : "bg-white/90 text-obsidian border-neutral-300 hover:bg-obsidian hover:text-gold"
-            }`}
-          >
-            <span className={`text-sm ${isSaved ? "text-gold" : "text-neutral-500"}`}>
-              {isSaved ? "♥" : "♡"}
-            </span>
-          </button>
+            {/* Right Wishlist Button */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleWishlist(product.id);
+              }}
+              aria-label="Save to wishlist"
+              className={`pointer-events-auto shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition cursor-pointer shadow-2xs ${
+                isSaved
+                  ? "bg-obsidian text-gold border border-gold"
+                  : "bg-white/95 text-obsidian border border-neutral-200/90 hover:text-gold hover:bg-white"
+              }`}
+            >
+              {isSaved ? (
+                <IconHeartFilled className="w-4 h-4 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] sm:drop-shadow-none" />
+              ) : (
+                <IconHeart className="w-4 h-4 sm:w-4 sm:h-4 text-obsidian sm:text-neutral-600 drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] sm:drop-shadow-none" stroke={1.8} />
+              )}
+            </button>
+          </div>
 
           {/* Quick View Floating Action */}
           <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
             <button
               type="button"
               onClick={() => setSelectedProduct(product)}
-              className="pointer-events-auto transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 bg-white hover:bg-obsidian text-obsidian hover:text-gold text-[10px] sm:text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 border border-neutral-300 shadow-md cursor-pointer flex items-center gap-1.5"
+              className="pointer-events-auto transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 bg-white hover:bg-obsidian text-obsidian hover:text-gold text-[10px] sm:text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border border-neutral-300 shadow-md cursor-pointer flex items-center gap-1.5"
             >
               <IconEye size={13} stroke={2} />
               <span>QUICK VIEW</span>
@@ -97,29 +108,30 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
         {/* ==============================================================
             CARD INFO SECTION (Series, Size, Clean Title, Price & Stock)
            ============================================================== */}
-        <div className="p-4 space-y-1.5">
-          <div className="flex items-center justify-between text-[10px] text-neutral-500 uppercase tracking-wider font-semibold">
+        <div className="p-2.5 sm:p-4 space-y-1 sm:space-y-1.5 min-w-0">
+          <div className="flex items-center justify-between text-[8.5px] sm:text-[10px] text-neutral-500 uppercase tracking-normal sm:tracking-wider font-semibold">
             <span className="truncate">{product.series || product.brand}</span>
-            <span className="shrink-0 font-bold text-obsidian">{product.sizeCm || product.sizeInch}</span>
+            <span className="shrink-0 font-bold text-obsidian ml-1">{product.sizeCm || product.sizeInch}</span>
           </div>
 
           <Link
             href={productHref}
-            className="block font-serif font-bold text-sm text-obsidian hover:text-gold-dark line-clamp-1 transition-colors"
+            title={product.name}
+            className="block font-serif font-bold text-[11.5px] sm:text-sm leading-snug sm:leading-normal text-obsidian hover:text-gold-dark truncate transition-colors"
           >
             {shortTitle}
           </Link>
 
-          <div className="pt-2 flex items-baseline justify-between border-t border-neutral-100">
+          <div className="pt-1.5 sm:pt-2 flex items-baseline justify-between border-t border-neutral-100">
             <div>
-              <span className="text-sm font-extrabold text-obsidian">
+              <span className="text-xs sm:text-sm font-extrabold text-obsidian">
                 ৳ {priceFormatted}
               </span>
-              <span className="text-[10px] text-neutral-500 ml-1">
+              <span className="text-[8.5px] sm:text-[10px] text-neutral-500 ml-0.5 sm:ml-1">
                 {isTile ? "/ sq.ft." : "/ unit"}
               </span>
             </div>
-            <span className="text-[10px] text-emerald-700 font-bold">
+            <span className="text-[8.5px] sm:text-[10px] text-emerald-700 font-bold">
               Stock: {stockCount} {isTile ? "Boxes" : "Units"}
             </span>
           </div>
@@ -129,20 +141,20 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
       {/* ==============================================================
           BOTTOM ACTIONS: [ADD TO CART] (Left) & [WHATSAPP] (Right)
          ============================================================== */}
-      <div className="px-4 pb-4 pt-1">
-        <div className="flex items-center gap-2">
-          {/* Add to Cart Button on the left */}
+      <div className="px-2 sm:px-4 pb-2.5 sm:pb-4 pt-0.5 sm:pt-1">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Add to Cart Button with Modern Border Radius */}
           <button
             type="button"
             onClick={() => addToQuoteBag(product, 5)}
-            className="flex-1 py-2 px-2.5 bg-obsidian hover:bg-gold text-gold hover:text-obsidian border border-obsidian text-[11px] font-bold uppercase tracking-wider transition text-center cursor-pointer active:scale-98 flex items-center justify-center gap-1.5 shadow-2xs"
+            className="flex-1 min-w-0 py-1.5 sm:py-2 px-1.5 sm:px-2.5 bg-obsidian hover:bg-gold text-gold hover:text-obsidian border border-obsidian text-[9.5px] sm:text-[11px] font-bold uppercase tracking-normal sm:tracking-wider rounded-xl transition text-center cursor-pointer active:scale-98 flex items-center justify-center gap-1 sm:gap-1.5 shadow-2xs whitespace-nowrap"
             title="Add to Cart"
           >
-            <IconShoppingCart size={15} stroke={2} />
-            <span>Add to Cart</span>
+            <IconShoppingCart size={13} className="sm:w-[15px] sm:h-[15px] shrink-0" stroke={2} />
+            <span className="whitespace-nowrap">ADD TO CART</span>
           </button>
 
-          {/* WhatsApp Direct Contact on the right */}
+          {/* WhatsApp Direct Contact on the right - Modern Tabler Icon without box */}
           <a
             href={`https://wa.me/8801625073614?text=${encodeURIComponent(
               `আসসালামু আলাইকুম, আমি ${shortTitle} (Code: ${product.code}, Size: ${product.sizeCm || product.sizeInch || ""}) সম্পর্কে জানতে চাই। এটি কি স্টকে আছে?`
@@ -150,10 +162,10 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`WhatsApp contact for ${shortTitle}`}
-            className="shrink-0 w-10 h-[33px] bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center border border-[#20bd5a] transition cursor-pointer shadow-2xs active:scale-98"
-            title="WhatsApp Contact"
+            className="shrink-0 flex items-center justify-center text-[#25D366] hover:text-[#1ea952] transition-transform duration-200 hover:scale-115 active:scale-95 cursor-pointer p-1"
+            title="Chat on WhatsApp"
           >
-            <IconBrandWhatsapp size={19} stroke={2} />
+            <IconBrandWhatsapp className="w-5 h-5 sm:w-6 sm:h-6" stroke={2.2} />
           </a>
         </div>
       </div>

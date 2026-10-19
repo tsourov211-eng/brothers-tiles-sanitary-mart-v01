@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useShop } from "@/context/ShopContext";
@@ -50,6 +50,7 @@ import {
   IconChevronRight,
   IconChevronDown,
   IconLayoutGrid,
+  IconList,
 } from "@tabler/icons-react";
 import CustomDropdown, { DropdownOption } from "@/components/CustomDropdown";
 
@@ -315,6 +316,92 @@ export default function AdminPage() {
     const startIndex = (currentSafeProductPage - 1) * productsPerPage;
     return filteredManagementProducts.slice(startIndex, startIndex + productsPerPage);
   }, [filteredManagementProducts, currentSafeProductPage, productsPerPage]);
+
+  // Stock Management pagination & search states (Image 1 style)
+  const [stockPerPage, setStockPerPage] = useState<number>(25);
+  const [stockCurrentPage, setStockCurrentPage] = useState<number>(1);
+  const [stockSearch, setStockSearch] = useState("");
+  const [stockViewMode, setStockViewMode] = useState<"cards" | "table">("cards");
+
+  const filteredStockProducts = useMemo(() => {
+    return products.filter((p) => {
+      if (stockFilter === "Low") {
+        const isLow = (p.stockBoxes ?? 0) <= (p.minStockThreshold ?? 20);
+        if (!isLow) return false;
+      }
+      if (stockSearch.trim()) {
+        const query = stockSearch.toLowerCase();
+        return (
+          p.name.toLowerCase().includes(query) ||
+          p.code.toLowerCase().includes(query) ||
+          (p.brand && p.brand.toLowerCase().includes(query)) ||
+          p.category.toLowerCase().includes(query)
+        );
+      }
+      return true;
+    });
+  }, [products, stockFilter, stockSearch]);
+
+  const totalStockPages = Math.max(1, Math.ceil(filteredStockProducts.length / stockPerPage));
+  const currentSafeStockPage = Math.min(Math.max(1, stockCurrentPage), totalStockPages);
+
+  const paginatedStockProducts = useMemo(() => {
+    if (stockPerPage >= filteredStockProducts.length) {
+      return filteredStockProducts;
+    }
+    const startIndex = (currentSafeStockPage - 1) * stockPerPage;
+    return filteredStockProducts.slice(startIndex, startIndex + stockPerPage);
+  }, [filteredStockProducts, currentSafeStockPage, stockPerPage]);
+
+  // Promotions Management (Offers, Hot Sale, Featured) pagination & search states (Image 1 style)
+  const [promoPerPage, setPromoPerPage] = useState<number>(25);
+  const [promoCurrentPage, setPromoCurrentPage] = useState<number>(1);
+  const [promoSearch, setPromoSearch] = useState("");
+  const [promoFilterMode, setPromoFilterMode] = useState<"active" | "all">("active");
+
+  const promoActiveCount = useMemo(() => {
+    if (activeTab === "offers") return products.filter((p) => p.isOffer).length;
+    if (activeTab === "hot-sale") return products.filter((p) => p.isHotSale).length;
+    if (activeTab === "featured") return products.filter((p) => p.isBestseller || p.isNewArrival).length;
+    return 0;
+  }, [products, activeTab]);
+
+  const filteredPromoProducts = useMemo(() => {
+    return products.filter((p) => {
+      if (promoFilterMode === "active") {
+        if (activeTab === "offers" && !p.isOffer) return false;
+        if (activeTab === "hot-sale" && !p.isHotSale) return false;
+        if (activeTab === "featured" && !(p.isBestseller || p.isNewArrival)) return false;
+      }
+      if (promoSearch.trim()) {
+        const query = promoSearch.toLowerCase();
+        return (
+          p.name.toLowerCase().includes(query) ||
+          p.code.toLowerCase().includes(query) ||
+          (p.brand && p.brand.toLowerCase().includes(query)) ||
+          p.category.toLowerCase().includes(query)
+        );
+      }
+      return true;
+    });
+  }, [products, activeTab, promoFilterMode, promoSearch]);
+
+  const totalPromoPages = Math.max(1, Math.ceil(filteredPromoProducts.length / promoPerPage));
+  const currentSafePromoPage = Math.min(Math.max(1, promoCurrentPage), totalPromoPages);
+
+  const paginatedPromoProducts = useMemo(() => {
+    if (promoPerPage >= filteredPromoProducts.length) {
+      return filteredPromoProducts;
+    }
+    const startIndex = (currentSafePromoPage - 1) * promoPerPage;
+    return filteredPromoProducts.slice(startIndex, startIndex + promoPerPage);
+  }, [filteredPromoProducts, currentSafePromoPage, promoPerPage]);
+
+  useEffect(() => {
+    setProductCurrentPage(1);
+    setStockCurrentPage(1);
+    setPromoCurrentPage(1);
+  }, [activeTab]);
 
   // Modals state
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -700,23 +787,21 @@ export default function AdminPage() {
       >
         <div className="overflow-y-auto flex-1 p-5 space-y-6">
           {/* Logo Brand Header */}
-          <div className="flex items-center gap-3 pb-4 border-b border-neutral-800">
-            <div className="w-9 h-9 bg-white/10 border border-gold/40 p-1 flex items-center justify-center shrink-0">
+          <div className="pb-4 border-b border-neutral-800 space-y-2.5">
+            <Link href="/" target="_blank" className="block group" title="View Showroom Front">
               <Image
-                src="/images/logo/Brothers-emblem.png"
-                alt="Emblem"
-                width={32}
-                height={32}
-                className="h-7 w-auto object-contain"
+                src="/images/logo/Brothers Tiles & Sanitary Logo-dark.png"
+                alt="Brother's Tiles & Sanitary Mart"
+                width={220}
+                height={65}
+                className="h-10 sm:h-11 w-auto object-contain transition duration-200 group-hover:brightness-110"
               />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold tracking-wide text-white font-serif">
-                BROTHER&rsquo;S TILES
-              </h2>
-              <span className="text-[9px] uppercase tracking-widest text-gold font-bold">
+            </Link>
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] uppercase tracking-widest text-gold font-bold bg-gold/10 border border-gold/30 px-2 py-0.5 rounded-sm">
                 MANAGER CONSOLE
               </span>
+              <span className="text-[9px] text-neutral-500 font-mono">v2.0</span>
             </div>
           </div>
 
@@ -1035,7 +1120,7 @@ export default function AdminPage() {
             VIEW 1: OVERVIEW / DASHBOARD (EXACT REPLICA OF USER REFERENCE IMAGE)
            =================================================================== */}
         {activeTab === "dashboard" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
             {/* Header Title Section */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -1060,20 +1145,30 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* 4 Top Metric Cards (Exact replica from reference screenshot) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 4 Top Metric Cards (Redesigned with ProductCard aesthetic & 2-column mobile grid) */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
               {/* Metric 1: Total Products */}
               <div
                 onClick={() => setActiveTab("products")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold transition cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-neutral-200/90 hover:border-gold p-3.5 sm:p-5 shadow-[0_4px_18px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.11)] transition-all duration-300 cursor-pointer group flex flex-col justify-between active:scale-[0.98]"
               >
-                <div className="flex items-center justify-between">
-                  <IconBox size={22} stroke={1.8} className="text-[#B58928]" />
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center text-[#B58928] group-hover:bg-gold group-hover:text-obsidian transition-colors shrink-0">
+                    <IconBox size={18} stroke={2} />
+                  </div>
+                  <span className="bg-obsidian/90 text-gold text-[8px] sm:text-[9px] font-bold uppercase px-1.5 sm:px-2 py-0.5 rounded shadow-2xs tracking-wider">
+                    Catalog
+                  </span>
                 </div>
-                <div className="mt-3">
-                  <p className="text-[11px] text-neutral-500 font-medium">Total Products</p>
-                  <p className="text-2xl sm:text-3xl font-light text-obsidian mt-0.5">
+                <div className="mt-3 sm:mt-4">
+                  <p className="text-[10px] sm:text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                    Total Products
+                  </p>
+                  <p className="text-xl sm:text-3xl font-bold text-obsidian tracking-tight mt-0.5 group-hover:text-[#B58928] transition-colors">
                     {totalProductsCount}
+                  </p>
+                  <p className="text-[9px] sm:text-[10px] text-neutral-400 font-medium mt-0.5">
+                    লাইভ প্রোডাক্ট স্টক
                   </p>
                 </div>
               </div>
@@ -1081,15 +1176,25 @@ export default function AdminPage() {
               {/* Metric 2: Total Orders */}
               <div
                 onClick={() => setActiveTab("orders")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold transition cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-neutral-200/90 hover:border-gold p-3.5 sm:p-5 shadow-[0_4px_18px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.11)] transition-all duration-300 cursor-pointer group flex flex-col justify-between active:scale-[0.98]"
               >
-                <div className="flex items-center justify-between">
-                  <IconShoppingBag size={22} stroke={1.8} className="text-[#B58928]" />
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors shrink-0">
+                    <IconShoppingBag size={18} stroke={2} />
+                  </div>
+                  <span className="bg-blue-600 text-white text-[8px] sm:text-[9px] font-bold uppercase px-1.5 sm:px-2 py-0.5 rounded shadow-2xs tracking-wider">
+                    Orders
+                  </span>
                 </div>
-                <div className="mt-3">
-                  <p className="text-[11px] text-neutral-500 font-medium">Total Orders</p>
-                  <p className="text-2xl sm:text-3xl font-light text-obsidian mt-0.5">
+                <div className="mt-3 sm:mt-4">
+                  <p className="text-[10px] sm:text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                    Total Orders
+                  </p>
+                  <p className="text-xl sm:text-3xl font-bold text-obsidian tracking-tight mt-0.5 group-hover:text-blue-600 transition-colors">
                     {totalOrdersCount}
+                  </p>
+                  <p className="text-[9px] sm:text-[10px] text-neutral-400 font-medium mt-0.5">
+                    মোট কাস্টমার অর্ডার
                   </p>
                 </div>
               </div>
@@ -1097,15 +1202,25 @@ export default function AdminPage() {
               {/* Metric 3: Paid Revenue */}
               <div
                 onClick={() => setActiveTab("payments")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold transition cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-neutral-200/90 hover:border-gold p-3.5 sm:p-5 shadow-[0_4px_18px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.11)] transition-all duration-300 cursor-pointer group flex flex-col justify-between active:scale-[0.98]"
               >
-                <div className="flex items-center justify-between">
-                  <IconCoins size={22} stroke={1.8} className="text-[#B58928]" />
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
+                    <IconCoins size={18} stroke={2} />
+                  </div>
+                  <span className="bg-gold text-obsidian text-[8px] sm:text-[9px] font-extrabold uppercase px-1.5 sm:px-2 py-0.5 rounded shadow-2xs tracking-wider">
+                    Revenue
+                  </span>
                 </div>
-                <div className="mt-3">
-                  <p className="text-[11px] text-neutral-500 font-medium">Paid Revenue</p>
-                  <p className="text-2xl sm:text-3xl font-light text-obsidian mt-0.5">
+                <div className="mt-3 sm:mt-4">
+                  <p className="text-[10px] sm:text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                    Paid Revenue
+                  </p>
+                  <p className="text-lg sm:text-2xl font-bold text-obsidian tracking-tight mt-0.5 group-hover:text-emerald-600 transition-colors truncate">
                     ৳{totalPaidRevenue.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[9px] sm:text-[10px] text-emerald-600 font-medium mt-0.5">
+                    পরিশোধিত আয়
                   </p>
                 </div>
               </div>
@@ -1113,41 +1228,59 @@ export default function AdminPage() {
               {/* Metric 4: Stock Alerts */}
               <div
                 onClick={() => setActiveTab("stock")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold transition cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-neutral-200/90 hover:border-gold p-3.5 sm:p-5 shadow-[0_4px_18px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.11)] transition-all duration-300 cursor-pointer group flex flex-col justify-between active:scale-[0.98]"
               >
-                <div className="flex items-center justify-between">
-                  <IconClock size={22} stroke={1.8} className={stockAlertsCount > 0 ? "text-red-500" : "text-[#B58928]"} />
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${stockAlertsCount > 0 ? "bg-red-500/10 border border-red-500/30 text-red-600 group-hover:bg-red-600 group-hover:text-white" : "bg-neutral-100 border border-neutral-200 text-neutral-500"} flex items-center justify-center transition-colors shrink-0`}>
+                    <IconClock size={18} stroke={2} />
+                  </div>
+                  <span className={`${stockAlertsCount > 0 ? "bg-red-500 text-white animate-pulse" : "bg-neutral-200 text-neutral-600"} text-[8px] sm:text-[9px] font-bold uppercase px-1.5 sm:px-2 py-0.5 rounded shadow-2xs tracking-wider`}>
+                    Alerts
+                  </span>
                 </div>
-                <div className="mt-3">
-                  <p className="text-[11px] text-neutral-500 font-medium">Stock Alerts</p>
+                <div className="mt-3 sm:mt-4">
+                  <p className="text-[10px] sm:text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                    Stock Alerts
+                  </p>
                   <p
-                    className={`text-2xl sm:text-3xl font-light mt-0.5 ${
-                      stockAlertsCount > 0 ? "text-red-600 font-semibold" : "text-obsidian"
+                    className={`text-xl sm:text-3xl font-bold tracking-tight mt-0.5 ${
+                      stockAlertsCount > 0 ? "text-red-600" : "text-obsidian"
                     }`}
                   >
                     {stockAlertsCount}
+                  </p>
+                  <p className={`text-[9px] sm:text-[10px] font-medium mt-0.5 ${stockAlertsCount > 0 ? "text-red-500" : "text-neutral-400"}`}>
+                    {stockAlertsCount > 0 ? "স্টক শেষ হতে চলেছে" : "স্টক পর্যাপ্ত"}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Sub-Metric Pill Bar (Exact replica from reference screenshot) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#F1EFEA] border border-neutral-200/80 p-2 text-xs">
-              <div className="flex items-center justify-between px-3 py-1 bg-white/70">
-                <span className="text-neutral-600 text-[11px]">Offers</span>
-                <span className="font-bold text-obsidian">{offersCount}</span>
+            {/* Sub-Metric Pill Bar (Styled to match ProductCard elegance) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-white rounded-2xl border border-neutral-200/90 p-2 sm:p-2.5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] text-xs">
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-stonebg-card/70 border border-neutral-200/60 hover:border-gold/50 transition">
+                <span className="text-neutral-600 text-[10px] sm:text-[11px] font-medium">Offers</span>
+                <span className="font-bold text-obsidian bg-white px-2 py-0.5 rounded-md border border-neutral-200/80 text-[11px] sm:text-xs shadow-2xs">
+                  {offersCount}
+                </span>
               </div>
-              <div className="flex items-center justify-between px-3 py-1 bg-white/70">
-                <span className="text-neutral-600 text-[11px]">Hot Sale</span>
-                <span className="font-bold text-obsidian">{hotSaleCount}</span>
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-stonebg-card/70 border border-neutral-200/60 hover:border-gold/50 transition">
+                <span className="text-neutral-600 text-[10px] sm:text-[11px] font-medium">Hot Sale</span>
+                <span className="font-bold text-obsidian bg-white px-2 py-0.5 rounded-md border border-neutral-200/80 text-[11px] sm:text-xs shadow-2xs">
+                  {hotSaleCount}
+                </span>
               </div>
-              <div className="flex items-center justify-between px-3 py-1 bg-white/70">
-                <span className="text-neutral-600 text-[11px]">Featured</span>
-                <span className="font-bold text-obsidian">{featuredCount}</span>
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-stonebg-card/70 border border-neutral-200/60 hover:border-gold/50 transition">
+                <span className="text-neutral-600 text-[10px] sm:text-[11px] font-medium">Featured</span>
+                <span className="font-bold text-obsidian bg-white px-2 py-0.5 rounded-md border border-neutral-200/80 text-[11px] sm:text-xs shadow-2xs">
+                  {featuredCount}
+                </span>
               </div>
-              <div className="flex items-center justify-between px-3 py-1 bg-white/70">
-                <span className="text-neutral-600 text-[11px]">Pending Orders</span>
-                <span className="font-bold text-amber-600">{pendingOrdersCount}</span>
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-stonebg-card/70 border border-neutral-200/60 hover:border-gold/50 transition">
+                <span className="text-neutral-600 text-[10px] sm:text-[11px] font-medium">Pending Orders</span>
+                <span className="font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 text-[11px] sm:text-xs shadow-2xs">
+                  {pendingOrdersCount}
+                </span>
               </div>
             </div>
 
@@ -1157,78 +1290,90 @@ export default function AdminPage() {
               <p className="text-xs text-neutral-500">Frequently used manager tools.</p>
             </div>
 
-            {/* Quick Actions (6 Cards Grid - Exact replica from reference screenshot) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Quick Actions (6 Cards Grid - 2 cols on mobile, 3 on desktop) */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
               {/* Card 1: New Sale */}
               <div
                 onClick={() => setActiveTab("new-sale")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold hover:shadow-sm transition cursor-pointer group"
+                className="bg-white border border-neutral-200/90 p-3.5 sm:p-5 rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.05)] hover:border-gold hover:shadow-md transition cursor-pointer group active:scale-[0.98]"
               >
-                <IconShoppingCartPlus size={24} stroke={1.8} className="text-neutral-400 group-hover:text-obsidian mb-2 transition" />
-                <h3 className="text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-500 group-hover:bg-obsidian group-hover:text-gold mb-2 transition">
+                  <IconShoppingCartPlus size={20} stroke={1.8} />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
                   New Sale
                 </h3>
-                <p className="text-xs text-neutral-500 mt-1">Create a customer sale</p>
+                <p className="text-[10px] sm:text-xs text-neutral-500 mt-0.5 sm:mt-1 line-clamp-1">Create a customer sale</p>
               </div>
 
               {/* Card 2: + Add Product */}
               <div
                 onClick={() => setActiveTab("add-product")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold hover:shadow-sm transition cursor-pointer group"
+                className="bg-white border border-neutral-200/90 p-3.5 sm:p-5 rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.05)] hover:border-gold hover:shadow-md transition cursor-pointer group active:scale-[0.98]"
               >
-                <IconSquarePlus size={24} stroke={1.8} className="text-gold mb-2 transition" />
-                <h3 className="text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-[#B58928] group-hover:bg-gold group-hover:text-obsidian mb-2 transition">
+                  <IconSquarePlus size={20} stroke={2} />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
                   + Add Product
                 </h3>
-                <p className="text-xs text-neutral-500 mt-1">Publish new item to live site</p>
+                <p className="text-[10px] sm:text-xs text-neutral-500 mt-0.5 sm:mt-1 line-clamp-1">Publish new item</p>
               </div>
 
               {/* Card 3: Stock */}
               <div
                 onClick={() => setActiveTab("stock")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold hover:shadow-sm transition cursor-pointer group"
+                className="bg-white border border-neutral-200/90 p-3.5 sm:p-5 rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.05)] hover:border-gold hover:shadow-md transition cursor-pointer group active:scale-[0.98]"
               >
-                <IconStack2 size={24} stroke={1.8} className="text-neutral-400 group-hover:text-obsidian mb-2 transition" />
-                <h3 className="text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-500 group-hover:bg-obsidian group-hover:text-gold mb-2 transition">
+                  <IconStack2 size={20} stroke={1.8} />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
                   Stock
                 </h3>
-                <p className="text-xs text-neutral-500 mt-1">Update quantities quickly</p>
+                <p className="text-[10px] sm:text-xs text-neutral-500 mt-0.5 sm:mt-1 line-clamp-1">Update quantities</p>
               </div>
 
               {/* Card 4: Orders */}
               <div
                 onClick={() => setActiveTab("orders")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold hover:shadow-sm transition cursor-pointer group"
+                className="bg-white border border-neutral-200/90 p-3.5 sm:p-5 rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.05)] hover:border-gold hover:shadow-md transition cursor-pointer group active:scale-[0.98]"
               >
-                <IconShoppingBag size={24} stroke={1.8} className="text-neutral-400 group-hover:text-obsidian mb-2 transition" />
-                <h3 className="text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-500 group-hover:bg-obsidian group-hover:text-gold mb-2 transition">
+                  <IconShoppingBag size={20} stroke={1.8} />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
                   Orders
                 </h3>
-                <p className="text-xs text-neutral-500 mt-1">Review customer orders</p>
+                <p className="text-[10px] sm:text-xs text-neutral-500 mt-0.5 sm:mt-1 line-clamp-1">Review orders</p>
               </div>
 
               {/* Card 5: Offers */}
               <div
                 onClick={() => setActiveTab("offers")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold hover:shadow-sm transition cursor-pointer group"
+                className="bg-white border border-neutral-200/90 p-3.5 sm:p-5 rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.05)] hover:border-gold hover:shadow-md transition cursor-pointer group active:scale-[0.98]"
               >
-                <IconDiscount2 size={24} stroke={1.8} className="text-neutral-400 group-hover:text-obsidian mb-2 transition" />
-                <h3 className="text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-500 group-hover:bg-obsidian group-hover:text-gold mb-2 transition">
+                  <IconDiscount2 size={20} stroke={1.8} />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
                   Offers
                 </h3>
-                <p className="text-xs text-neutral-500 mt-1">Manage offer products</p>
+                <p className="text-[10px] sm:text-xs text-neutral-500 mt-0.5 sm:mt-1 line-clamp-1">Manage discounts</p>
               </div>
 
               {/* Card 6: Invoices */}
               <div
                 onClick={() => setActiveTab("invoices")}
-                className="bg-white border border-neutral-200 p-5 rounded-xs shadow-2xs hover:border-gold hover:shadow-sm transition cursor-pointer group"
+                className="bg-white border border-neutral-200/90 p-3.5 sm:p-5 rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.05)] hover:border-gold hover:shadow-md transition cursor-pointer group active:scale-[0.98]"
               >
-                <IconFileInvoice size={24} stroke={1.8} className="text-neutral-400 group-hover:text-obsidian mb-2 transition" />
-                <h3 className="text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-500 group-hover:bg-obsidian group-hover:text-gold mb-2 transition">
+                  <IconFileInvoice size={20} stroke={1.8} />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-obsidian group-hover:text-gold-dark transition">
                   Invoices
                 </h3>
-                <p className="text-xs text-neutral-500 mt-1">View and print invoices</p>
+                <p className="text-[10px] sm:text-xs text-neutral-500 mt-0.5 sm:mt-1 line-clamp-1">View &amp; print invoices</p>
               </div>
             </div>
 
@@ -1348,7 +1493,7 @@ export default function AdminPage() {
             VIEW 2: + NEW SALE (POS / INVOICE GENERATOR)
            =================================================================== */}
         {activeTab === "new-sale" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-5xl">
+          <div className="w-full max-w-5xl mx-auto p-4 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
@@ -1600,7 +1745,7 @@ export default function AdminPage() {
             VIEW 3: PRODUCTS MANAGEMENT (CATALOG)
            =================================================================== */}
         {activeTab === "products" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
@@ -2747,7 +2892,7 @@ export default function AdminPage() {
             VIEW 4: STOCK MANAGEMENT
            =================================================================== */}
         {activeTab === "stock" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
@@ -2763,21 +2908,29 @@ export default function AdminPage() {
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setStockFilter("All")}
-                  className={`text-xs px-3 py-1.5 rounded border ${
+                  type="button"
+                  onClick={() => {
+                    setStockFilter("All");
+                    setStockCurrentPage(1);
+                  }}
+                  className={`text-xs px-3 py-1.5 rounded border transition cursor-pointer font-medium ${
                     stockFilter === "All"
                       ? "bg-obsidian text-gold border-obsidian"
-                      : "bg-white text-neutral-700 border-neutral-300"
+                      : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50"
                   }`}
                 >
                   All Items
                 </button>
                 <button
-                  onClick={() => setStockFilter("Low")}
-                  className={`text-xs px-3 py-1.5 rounded border ${
+                  type="button"
+                  onClick={() => {
+                    setStockFilter("Low");
+                    setStockCurrentPage(1);
+                  }}
+                  className={`text-xs px-3 py-1.5 rounded border transition cursor-pointer font-medium ${
                     stockFilter === "Low"
-                      ? "bg-red-700 text-white border-red-700"
-                      : "bg-white text-red-700 border-red-300"
+                      ? "bg-red-700 text-white border-red-700 font-bold"
+                      : "bg-white text-red-700 border-red-300 hover:bg-red-50"
                   }`}
                 >
                   Low Stock ({stockAlertsCount})
@@ -2785,178 +2938,828 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-neutral-200 rounded overflow-hidden shadow-2xs">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#FAF8F5] border-b border-neutral-200 text-neutral-500 uppercase text-[10px]">
-                    <tr>
-                      <th className="py-3 px-4">Product Code &amp; Name</th>
-                      <th className="py-3 px-4">Category</th>
-                      <th className="py-3 px-4">Threshold</th>
-                      <th className="py-3 px-4">Current Stock</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4 text-right">Quick Stock Adjustment</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100">
-                    {products
-                      .filter((p) => {
-                        if (stockFilter === "Low") {
-                          return (p.stockBoxes ?? 0) <= (p.minStockThreshold ?? 20);
-                        }
-                        return true;
-                      })
-                      .map((p) => {
-                        const isLow = (p.stockBoxes ?? 0) <= (p.minStockThreshold ?? 20);
-                        return (
-                          <tr key={p.id} className="hover:bg-neutral-50">
-                            <td className="py-3 px-4">
-                              <p className="font-bold text-obsidian">{p.name}</p>
-                              <p className="text-[10px] text-neutral-400 font-mono">{p.code}</p>
-                            </td>
-                            <td className="py-3 px-4">{p.category}</td>
-                            <td className="py-3 px-4 text-neutral-500">
-                              {p.minStockThreshold ?? 15} Boxes
-                            </td>
-                            <td className="py-3 px-4">
-                              <span
-                                className={`text-sm font-extrabold ${
-                                  isLow ? "text-red-600" : "text-neutral-800"
-                                }`}
+            {/* Stock Search, View Switcher & Items Per Page Selector (Image 1 style) */}
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white p-3 border border-neutral-200/80 rounded-2xl shadow-2xs">
+              <div className="relative flex-1 max-w-md">
+                <IconSearch
+                  size={15}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                />
+                <input
+                  type="text"
+                  placeholder="স্টকে পণ্য খুঁজুন (নাম, কোড, ক্যাটাগরি)..."
+                  value={stockSearch}
+                  onChange={(e) => {
+                    setStockSearch(e.target.value);
+                    setStockCurrentPage(1);
+                  }}
+                  className="w-full pl-9 pr-8 py-2 text-xs border border-neutral-200 rounded-xl outline-none focus:border-obsidian focus:ring-1 focus:ring-obsidian transition"
+                />
+                {stockSearch && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStockSearch("");
+                      setStockCurrentPage(1);
+                    }}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xs font-bold"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2.5 self-end md:self-auto">
+                {/* View Switcher: Cards vs Table */}
+                <div className="flex items-center bg-neutral-100 p-1 rounded-xl border border-neutral-200/80">
+                  <button
+                    type="button"
+                    onClick={() => setStockViewMode("cards")}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                      stockViewMode === "cards"
+                        ? "bg-white text-obsidian shadow-2xs font-bold"
+                        : "text-neutral-500 hover:text-obsidian"
+                    }`}
+                    title="Cards Grid View"
+                  >
+                    <IconLayoutGrid size={14} />
+                    <span className="hidden sm:inline">Cards</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStockViewMode("table")}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                      stockViewMode === "table"
+                        ? "bg-white text-obsidian shadow-2xs font-bold"
+                        : "text-neutral-500 hover:text-obsidian"
+                    }`}
+                    title="Table View"
+                  >
+                    <IconList size={14} />
+                    <span className="hidden sm:inline">Table</span>
+                  </button>
+                </div>
+
+                {/* Items Per Page Selector */}
+                <div className="flex items-center gap-2 shrink-0 bg-white border border-neutral-300 rounded-xl px-2.5 py-1 shadow-2xs">
+                  <span className="text-xs font-semibold text-neutral-500 whitespace-nowrap">
+                    Show:
+                  </span>
+                  <CustomDropdown
+                    variant="compact"
+                    align="right"
+                    value={String(stockPerPage)}
+                    onChange={(val) => {
+                      setStockPerPage(Number(val));
+                      setStockCurrentPage(1);
+                    }}
+                    options={[
+                      { value: "10", label: "10 / page" },
+                      { value: "25", label: "25 / page", badge: "Default" },
+                      { value: "50", label: "50 / page" },
+                      { value: "100", label: "100 / page" },
+                      { value: "250", label: "250 / page" },
+                      { value: "1000", label: `All (${filteredStockProducts.length})` },
+                    ]}
+                    ariaLabel="Items to display per page"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Stock View: Modern Cards Grid OR Compact Table */}
+            {stockViewMode === "cards" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4.5">
+                {paginatedStockProducts.length === 0 ? (
+                  <div className="col-span-full py-16 text-center bg-white border border-neutral-200 rounded-2xl text-neutral-400 text-xs shadow-2xs">
+                    কোনো পণ্য পাওয়া যায়নি। ফিল্টার বা সার্চ পরিবর্তন করুন।
+                  </div>
+                ) : (
+                  paginatedStockProducts.map((p) => {
+                    const isLow = (p.stockBoxes ?? 0) <= (p.minStockThreshold ?? 20);
+                    const threshold = p.minStockThreshold ?? 15;
+                    const stock = p.stockBoxes ?? 0;
+                    const maxRef = Math.max(50, threshold * 3);
+                    const percent = Math.min(100, Math.round((stock / maxRef) * 100));
+
+                    return (
+                      <div
+                        key={p.id}
+                        className={`bg-white rounded-2xl border p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-[0_3px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-300 group ${
+                          isLow
+                            ? "border-red-200/90 hover:border-red-400"
+                            : "border-neutral-200/80 hover:border-gold/60"
+                        }`}
+                      >
+                        {/* Top: Image + Info */}
+                        <div className="flex gap-3.5 items-start">
+                          <div className="w-20 h-20 rounded-xl overflow-hidden relative shrink-0 border border-neutral-100 bg-[#FAF8F5] shadow-2xs">
+                            <Image
+                              src={p.image}
+                              alt={p.name}
+                              fill
+                              className="object-cover group-hover:scale-105 transition duration-500"
+                            />
+                            {isLow && (
+                              <div
+                                className="absolute top-1.5 left-1.5 bg-red-600 text-white rounded-md p-1 shadow-xs"
+                                title="Low stock alert"
                               >
-                                {p.stockBoxes}
-                              </span>{" "}
-                              <span className="text-[10px] text-neutral-500">
+                                <IconAlertTriangle size={12} stroke={2.5} />
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="min-w-0 flex-1 space-y-1">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] font-bold text-obsidian bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200">
+                                {p.category}
+                              </span>
+                              <span className="text-[10px] font-mono font-bold text-neutral-500 bg-neutral-50 px-1.5 py-0.5 rounded border border-neutral-200">
+                                {p.code}
+                              </span>
+                            </div>
+
+                            <p className="text-xs sm:text-sm font-serif font-bold text-obsidian line-clamp-1 group-hover:text-gold-dark transition-colors">
+                              {p.name}
+                            </p>
+                            <p className="text-[11px] text-neutral-400 truncate">
+                              {p.brand} {p.series ? `• ${p.series}` : ""}
+                            </p>
+                            <p className="text-xs font-extrabold text-gold-dark">
+                              ৳{p.price?.toLocaleString()}{" "}
+                              <span className="text-[10px] font-normal text-neutral-400">
                                 {p.priceUnit || "sq. ft."}
                               </span>
-                            </td>
-                            <td className="py-3 px-4">
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Middle: Stock Level & Progress Bar */}
+                        <div className="bg-[#FAF8F5] rounded-xl p-3 border border-neutral-200/70 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${
+                                isLow
+                                  ? "bg-red-100 text-red-700 border border-red-200"
+                                  : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                              }`}
+                            >
+                              {isLow ? (
+                                <>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+                                  Low Stock Alert
+                                </>
+                              ) : (
+                                <>
+                                  <IconCheck size={11} stroke={3} />
+                                  In Stock
+                                </>
+                              )}
+                            </span>
+
+                            <div className="text-right">
+                              <span className="text-[10px] text-neutral-500">Threshold: </span>
+                              <span className="text-[11px] font-bold text-obsidian">
+                                {threshold} Boxes
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-baseline justify-between pt-1">
+                            <span className="text-xs text-neutral-500 font-medium">Current Stock</span>
+                            <div className="flex items-baseline gap-1">
                               <span
-                                className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                                  isLow ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                                className={`text-2xl font-black ${
+                                  isLow ? "text-red-600" : "text-obsidian"
                                 }`}
                               >
-                                {isLow ? "Low Stock Alert" : "In Stock"}
+                                {stock}
                               </span>
-                            </td>
-                            <td className="py-3 px-4 text-right">
-                              <div className="flex items-center justify-end gap-1">
-                                <button
-                                  onClick={() => updateStock(p.id, (p.stockBoxes ?? 0) - 10)}
-                                  className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 text-obsidian font-bold rounded"
-                                  title="Decrease 10"
-                                >
-                                  -10
-                                </button>
-                                <button
-                                  onClick={() => updateStock(p.id, (p.stockBoxes ?? 0) + 10)}
-                                  className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 text-obsidian font-bold rounded"
-                                  title="Increase 10"
-                                >
-                                  +10
-                                </button>
-                                <button
-                                  onClick={() => updateStock(p.id, (p.stockBoxes ?? 0) + 50)}
-                                  className="px-2.5 py-1 bg-obsidian text-gold hover:bg-gold hover:text-obsidian font-bold rounded transition"
-                                  title="Add 50 boxes restock"
-                                >
-                                  +50
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
+                              <span className="text-xs text-neutral-500 font-semibold">
+                                {p.priceUnit ? "Boxes/Units" : "Boxes"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Level Progress Bar */}
+                          <div className="w-full bg-neutral-200/80 h-2 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 ${
+                                isLow
+                                  ? "bg-gradient-to-r from-red-500 to-rose-600"
+                                  : "bg-gradient-to-r from-emerald-500 to-teal-500"
+                              }`}
+                              style={{ width: `${Math.max(6, percent)}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Bottom: Quick Adjustment */}
+                        <div className="flex items-center gap-1.5 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => updateStock(p.id, Math.max(0, stock - 10))}
+                            className="flex-1 py-1.5 px-2 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-obsidian font-bold text-xs rounded-xl transition cursor-pointer flex items-center justify-center gap-1"
+                            title="Decrease 10 boxes"
+                          >
+                            <span>-10</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => updateStock(p.id, stock + 10)}
+                            className="flex-1 py-1.5 px-2 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-obsidian font-bold text-xs rounded-xl transition cursor-pointer flex items-center justify-center gap-1"
+                            title="Increase 10 boxes"
+                          >
+                            <span>+10</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => updateStock(p.id, stock + 50)}
+                            className="flex-1.5 py-1.5 px-3 bg-obsidian hover:bg-gold text-gold hover:text-obsidian active:scale-95 font-bold text-xs rounded-xl transition cursor-pointer shadow-2xs whitespace-nowrap flex items-center justify-center gap-1"
+                            title="Add 50 boxes restock"
+                          >
+                            <span>+50 Restock</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
+            ) : (
+              <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-2xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#FAF8F5] border-b border-neutral-200 text-neutral-500 uppercase text-[10px]">
+                      <tr>
+                        <th className="py-3 px-4">Product Code &amp; Name</th>
+                        <th className="py-3 px-4">Category</th>
+                        <th className="py-3 px-4">Threshold</th>
+                        <th className="py-3 px-4">Current Stock</th>
+                        <th className="py-3 px-4">Status</th>
+                        <th className="py-3 px-4 text-right">Quick Stock Adjustment</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-neutral-100">
+                      {paginatedStockProducts.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="py-8 text-center text-neutral-400">
+                            কোনো পণ্য পাওয়া যায়নি। ফিল্টার বা সার্চ পরিবর্তন করুন।
+                          </td>
+                        </tr>
+                      ) : (
+                        paginatedStockProducts.map((p) => {
+                          const isLow = (p.stockBoxes ?? 0) <= (p.minStockThreshold ?? 20);
+                          return (
+                            <tr key={p.id} className="hover:bg-neutral-50">
+                              <td className="py-3 px-4">
+                                <p className="font-bold text-obsidian">{p.name}</p>
+                                <p className="text-[10px] text-neutral-400 font-mono">{p.code}</p>
+                              </td>
+                              <td className="py-3 px-4">{p.category}</td>
+                              <td className="py-3 px-4 text-neutral-500">
+                                {p.minStockThreshold ?? 15} Boxes
+                              </td>
+                              <td className="py-3 px-4">
+                                <span
+                                  className={`text-sm font-extrabold ${
+                                    isLow ? "text-red-600" : "text-neutral-800"
+                                  }`}
+                                >
+                                  {p.stockBoxes}
+                                </span>{" "}
+                                <span className="text-[10px] text-neutral-500">
+                                  {p.priceUnit || "sq. ft."}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4">
+                                <span
+                                  className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                                    isLow ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                                  }`}
+                                >
+                                  {isLow ? "Low Stock Alert" : "In Stock"}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-right">
+                                <div className="flex items-center justify-end gap-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => updateStock(p.id, (p.stockBoxes ?? 0) - 10)}
+                                    className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 text-obsidian font-bold rounded cursor-pointer"
+                                    title="Decrease 10"
+                                  >
+                                    -10
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => updateStock(p.id, (p.stockBoxes ?? 0) + 10)}
+                                    className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 text-obsidian font-bold rounded cursor-pointer"
+                                    title="Increase 10"
+                                  >
+                                    +10
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => updateStock(p.id, (p.stockBoxes ?? 0) + 50)}
+                                    className="px-2.5 py-1 bg-obsidian text-gold hover:bg-gold hover:text-obsidian font-bold rounded transition cursor-pointer"
+                                    title="Add 50 boxes restock"
+                                  >
+                                    +50
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Stock Pagination Bar */}
+            <div className="px-4 py-3 bg-[#FAF8F5] border border-neutral-200/80 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-2xs">
+              <p className="text-neutral-500">
+                Showing{" "}
+                <strong className="text-obsidian font-bold">
+                  {filteredStockProducts.length === 0
+                    ? 0
+                    : (currentSafeStockPage - 1) * stockPerPage + 1}
+                </strong>{" "}
+                to{" "}
+                <strong className="text-obsidian font-bold">
+                  {Math.min(
+                    currentSafeStockPage * stockPerPage,
+                    filteredStockProducts.length
+                  )}
+                </strong>{" "}
+                of{" "}
+                <strong className="text-obsidian font-bold">
+                  {filteredStockProducts.length}
+                </strong>{" "}
+                products {filteredStockProducts.length > stockPerPage && `(Page ${currentSafeStockPage} of ${totalStockPages})`}
+              </p>
+
+              {totalStockPages > 1 && (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    disabled={currentSafeStockPage <= 1}
+                    onClick={() => setStockCurrentPage((p) => Math.max(1, p - 1))}
+                    className="px-2.5 py-1 text-xs rounded-lg border border-neutral-300 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-obsidian transition cursor-pointer"
+                  >
+                    Prev
+                  </button>
+
+                  {Array.from({ length: totalStockPages }, (_, i) => i + 1)
+                    .filter((pg) => {
+                      return (
+                        pg === 1 ||
+                        pg === totalStockPages ||
+                        Math.abs(pg - currentSafeStockPage) <= 1
+                      );
+                    })
+                    .map((pg, idx, arr) => {
+                      const prev = arr[idx - 1];
+                      const showEllipsis = prev && pg - prev > 1;
+                      return (
+                        <React.Fragment key={pg}>
+                          {showEllipsis && (
+                            <span className="px-1 text-neutral-400 select-none">...</span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setStockCurrentPage(pg)}
+                            className={`w-7 h-7 text-xs font-bold rounded-lg border transition cursor-pointer ${
+                              currentSafeStockPage === pg
+                                ? "bg-obsidian text-gold border-obsidian"
+                                : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-100"
+                            }`}
+                          >
+                            {pg}
+                          </button>
+                        </React.Fragment>
+                      );
+                    })}
+
+                  <button
+                    type="button"
+                    disabled={currentSafeStockPage >= totalStockPages}
+                    onClick={() => setStockCurrentPage((p) => Math.min(totalStockPages, p + 1))}
+                    className="px-2.5 py-1 text-xs rounded-lg border border-neutral-300 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-obsidian transition cursor-pointer"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {/* ===================================================================
-            VIEW 5: OFFERS & HOT SALE
+            VIEW 5: OFFERS & HOT SALE & FEATURED
            =================================================================== */}
         {(activeTab === "offers" || activeTab === "hot-sale" || activeTab === "featured") && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
-            <div className="border-b border-neutral-200 pb-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
-                SPECIAL PROMOTIONS &amp; STOREFRONT SHOWCASE
-              </span>
-              <h1 className="text-xl sm:text-2xl font-serif font-bold text-obsidian capitalize">
-                {activeTab === "offers"
-                  ? "Special Offers & Discounts"
-                  : activeTab === "hot-sale"
-                  ? "Hot Sale & Trending Products"
-                  : "Featured & Bestseller Showcase"}
-              </h1>
-              <p className="text-xs text-neutral-500">
-                এই পণ্যগুলো ওয়েবসাইটের হোমপেজে ব্যাজসহ বিশেষ গুরুত্ব দিয়ে প্রদর্শিত হচ্ছে।
-              </p>
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-200 pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
+                  SPECIAL PROMOTIONS &amp; STOREFRONT SHOWCASE
+                </span>
+                <h1 className="text-xl sm:text-2xl font-serif font-bold text-obsidian capitalize">
+                  {activeTab === "offers"
+                    ? "Special Offers & Discounts"
+                    : activeTab === "hot-sale"
+                    ? "Hot Sale & Trending Products"
+                    : "Featured & Bestseller Showcase"}
+                </h1>
+                <p className="text-xs text-neutral-500">
+                  {activeTab === "offers"
+                    ? "ওয়েবসাইটে স্পেশাল অফার এবং ডিসকাউন্টে প্রদর্শিত পণ্যসমূহ পরিচালনা করুন।"
+                    : activeTab === "hot-sale"
+                    ? "হট সেল ও ট্রেন্ডিং সেকশনে প্রদর্শিত আইটেমসমূহ পরিচালনা করুন।"
+                    : "হোমপেজের ফিচার্ড ও বেস্টসেলার শোকেসে প্রদর্শিত আইটেমসমূহ পরিচালনা করুন।"}
+                </p>
+              </div>
+
+              {/* Quick Filter tabs: Active in this section vs All Products */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPromoFilterMode("active");
+                    setPromoCurrentPage(1);
+                  }}
+                  className={`text-xs px-3 py-1.5 rounded-xl border font-semibold transition cursor-pointer ${
+                    promoFilterMode === "active"
+                      ? "bg-obsidian text-gold border-obsidian shadow-2xs"
+                      : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50"
+                  }`}
+                >
+                  Active ({promoActiveCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPromoFilterMode("all");
+                    setPromoCurrentPage(1);
+                  }}
+                  className={`text-xs px-3 py-1.5 rounded-xl border font-semibold transition cursor-pointer ${
+                    promoFilterMode === "all"
+                      ? "bg-obsidian text-gold border-obsidian shadow-2xs"
+                      : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50"
+                  }`}
+                >
+                  All Products ({products.length})
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((p) => (
-                <div
-                  key={p.id}
-                  className="bg-white border border-neutral-200 p-4 rounded shadow-2xs space-y-3 flex flex-col justify-between"
-                >
-                  <div className="flex gap-3">
-                    <div className="w-16 h-16 bg-neutral-100 relative shrink-0 border border-neutral-200">
-                      <Image src={p.image} alt={p.name} fill className="object-cover" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-obsidian truncate">{p.name}</p>
-                      <p className="text-[10px] text-neutral-400 font-mono">{p.code}</p>
-                      <p className="text-xs font-bold text-gold-dark mt-1">
-                        ৳{p.price} {p.priceUnit || "sq. ft."}
-                      </p>
-                    </div>
-                  </div>
+            {/* Promo Search & Items Per Page Selector (Image 1 style) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 border border-neutral-200/80 rounded-2xl shadow-2xs">
+              <div className="relative flex-1 max-w-md">
+                <IconSearch
+                  size={15}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                />
+                <input
+                  type="text"
+                  placeholder="পণ্য খুঁজুন (নাম, কোড, ক্যাটাগরি)..."
+                  value={promoSearch}
+                  onChange={(e) => {
+                    setPromoSearch(e.target.value);
+                    setPromoCurrentPage(1);
+                  }}
+                  className="w-full pl-9 pr-8 py-2 text-xs border border-neutral-200 rounded-xl outline-none focus:border-obsidian focus:ring-1 focus:ring-obsidian transition"
+                />
+                {promoSearch && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPromoSearch("");
+                      setPromoCurrentPage(1);
+                    }}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xs font-bold"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
 
-                  <div className="space-y-1.5 pt-2 border-t border-neutral-100 text-xs">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={p.isOffer ?? false}
-                        onChange={(e) => updateProduct(p.id, { isOffer: e.target.checked })}
-                        className="rounded"
-                      />
-                      <span>Special Offer (অফার)</span>
-                    </label>
+              {/* Items Per Page Selector */}
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto bg-white border border-neutral-300 rounded-xl px-2.5 py-1 shadow-2xs">
+                <span className="text-xs font-semibold text-neutral-500 whitespace-nowrap">
+                  Show:
+                </span>
+                <CustomDropdown
+                  variant="compact"
+                  align="right"
+                  value={String(promoPerPage)}
+                  onChange={(val) => {
+                    setPromoPerPage(Number(val));
+                    setPromoCurrentPage(1);
+                  }}
+                  options={[
+                    { value: "10", label: "10 / page" },
+                    { value: "25", label: "25 / page", badge: "Default" },
+                    { value: "50", label: "50 / page" },
+                    { value: "100", label: "100 / page" },
+                    { value: "250", label: "250 / page" },
+                    { value: "1000", label: `All (${filteredPromoProducts.length})` },
+                  ]}
+                  ariaLabel="Items to display per page"
+                />
+              </div>
+            </div>
 
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={p.isHotSale ?? false}
-                        onChange={(e) => updateProduct(p.id, { isHotSale: e.target.checked })}
-                        className="rounded"
-                      />
-                      <span>Hot Sale</span>
-                    </label>
-
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={p.isBestseller ?? false}
-                        onChange={(e) => updateProduct(p.id, { isBestseller: e.target.checked })}
-                        className="rounded"
-                      />
-                      <span>Homepage Bestseller</span>
-                    </label>
-
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={p.isNewArrival ?? false}
-                        onChange={(e) => updateProduct(p.id, { isNewArrival: e.target.checked })}
-                        className="rounded"
-                      />
-                      <span>New Arrival</span>
-                    </label>
-                  </div>
+            {/* Product Cards Grid: Ultra-Modern Redesign */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4.5">
+              {paginatedPromoProducts.length === 0 ? (
+                <div className="col-span-full py-16 text-center bg-white border border-neutral-200 rounded-2xl text-neutral-400 text-xs shadow-2xs">
+                  কোনো পণ্য পাওয়া যায়নি। &quot;All Products&quot; ফিল্টার নির্বাচন করে নতুন পণ্য যুক্ত করুন অথবা সার্চ ক্লিয়ার করুন।
                 </div>
-              ))}
+              ) : (
+                paginatedPromoProducts.map((p) => {
+                  const hasAnyPromo = p.isOffer || p.isHotSale || p.isBestseller || p.isNewArrival;
+
+                  return (
+                    <div
+                      key={p.id}
+                      className="bg-white rounded-2xl border border-neutral-200/85 hover:border-gold/60 p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-[0_3px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-300 group"
+                    >
+                      {/* Top Product Header */}
+                      <div className="space-y-3">
+                        <div className="flex gap-3.5 items-start">
+                          <div className="w-20 h-20 rounded-xl overflow-hidden relative shrink-0 border border-neutral-100 bg-[#FAF8F5] shadow-2xs">
+                            <Image
+                              src={p.image}
+                              alt={p.name}
+                              fill
+                              className="object-cover group-hover:scale-105 transition duration-500"
+                            />
+                          </div>
+
+                          <div className="min-w-0 flex-1 space-y-1">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] font-bold text-obsidian bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200">
+                                {p.category}
+                              </span>
+                              <span className="text-[10px] font-mono font-bold text-neutral-500 bg-neutral-50 px-1.5 py-0.5 rounded border border-neutral-200">
+                                {p.code}
+                              </span>
+                            </div>
+
+                            <p className="text-xs sm:text-sm font-serif font-bold text-obsidian line-clamp-1 group-hover:text-gold-dark transition-colors">
+                              {p.name}
+                            </p>
+                            <p className="text-[11px] text-neutral-400 truncate">
+                              {p.brand} {p.series ? `• ${p.series}` : ""}
+                            </p>
+                            <div className="flex items-baseline gap-1 pt-0.5">
+                              <span className="text-xs sm:text-sm font-extrabold text-gold-dark">
+                                ৳{p.price?.toLocaleString()}
+                              </span>
+                              <span className="text-[10px] text-neutral-400 font-normal">
+                                {p.priceUnit || "sq. ft."}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Active Promo Badges Preview Strip */}
+                        <div className="flex flex-wrap items-center gap-1.5 min-h-[22px] pt-1">
+                          {p.isOffer && (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200 shadow-2xs">
+                              <IconDiscount2 size={11} stroke={2.5} /> Offer
+                            </span>
+                          )}
+                          {p.isHotSale && (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200 shadow-2xs">
+                              <IconFlame size={11} stroke={2.5} /> Hot Sale
+                            </span>
+                          )}
+                          {p.isBestseller && (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200 shadow-2xs">
+                              <IconStarFilled size={10} /> Bestseller
+                            </span>
+                          )}
+                          {p.isNewArrival && (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs">
+                              <IconSparkles size={11} stroke={2.5} /> New Arrival
+                            </span>
+                          )}
+                          {!hasAnyPromo && (
+                            <span className="text-[10px] text-neutral-400 italic">
+                              কোনো প্রমোশন যুক্ত নেই (নিচে সিলেক্ট করুন)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Modern Toggle Switches in 2x2 Layout */}
+                      <div className="space-y-2 pt-3 border-t border-neutral-100">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {/* 1. Special Offer Toggle */}
+                          <button
+                            type="button"
+                            onClick={() => updateProduct(p.id, { isOffer: !p.isOffer })}
+                            className={`flex items-center justify-between px-2.5 py-2 rounded-xl border text-xs transition-all cursor-pointer ${
+                              p.isOffer
+                                ? "bg-purple-50/90 border-purple-300 text-purple-900 shadow-2xs"
+                                : "bg-neutral-50/60 hover:bg-neutral-100/80 border-neutral-200/80 text-neutral-600"
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <div
+                                className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                                  p.isOffer ? "bg-purple-600 text-white" : "bg-neutral-200 text-neutral-500"
+                                }`}
+                              >
+                                <IconDiscount2 size={12} stroke={2.4} />
+                              </div>
+                              <span className="font-semibold truncate text-[11px]">Special Offer</span>
+                            </div>
+                            <span
+                              className={`w-7 h-4 rounded-full p-0.5 flex items-center transition-colors shrink-0 ml-1.5 ${
+                                p.isOffer ? "bg-purple-600 justify-end" : "bg-neutral-300 justify-start"
+                              }`}
+                            >
+                              <span className="w-3 h-3 rounded-full bg-white shadow-xs" />
+                            </span>
+                          </button>
+
+                          {/* 2. Hot Sale Toggle */}
+                          <button
+                            type="button"
+                            onClick={() => updateProduct(p.id, { isHotSale: !p.isHotSale })}
+                            className={`flex items-center justify-between px-2.5 py-2 rounded-xl border text-xs transition-all cursor-pointer ${
+                              p.isHotSale
+                                ? "bg-rose-50/90 border-rose-300 text-rose-900 shadow-2xs"
+                                : "bg-neutral-50/60 hover:bg-neutral-100/80 border-neutral-200/80 text-neutral-600"
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <div
+                                className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                                  p.isHotSale ? "bg-rose-600 text-white" : "bg-neutral-200 text-neutral-500"
+                                }`}
+                              >
+                                <IconFlame size={12} stroke={2.4} />
+                              </div>
+                              <span className="font-semibold truncate text-[11px]">Hot Sale</span>
+                            </div>
+                            <span
+                              className={`w-7 h-4 rounded-full p-0.5 flex items-center transition-colors shrink-0 ml-1.5 ${
+                                p.isHotSale ? "bg-rose-600 justify-end" : "bg-neutral-300 justify-start"
+                              }`}
+                            >
+                              <span className="w-3 h-3 rounded-full bg-white shadow-xs" />
+                            </span>
+                          </button>
+
+                          {/* 3. Homepage Bestseller Toggle */}
+                          <button
+                            type="button"
+                            onClick={() => updateProduct(p.id, { isBestseller: !p.isBestseller })}
+                            className={`flex items-center justify-between px-2.5 py-2 rounded-xl border text-xs transition-all cursor-pointer ${
+                              p.isBestseller
+                                ? "bg-amber-50/90 border-amber-300 text-amber-950 shadow-2xs"
+                                : "bg-neutral-50/60 hover:bg-neutral-100/80 border-neutral-200/80 text-neutral-600"
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <div
+                                className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                                  p.isBestseller ? "bg-amber-500 text-white" : "bg-neutral-200 text-neutral-500"
+                                }`}
+                              >
+                                <IconStarFilled size={11} />
+                              </div>
+                              <span className="font-semibold truncate text-[11px]">Bestseller</span>
+                            </div>
+                            <span
+                              className={`w-7 h-4 rounded-full p-0.5 flex items-center transition-colors shrink-0 ml-1.5 ${
+                                p.isBestseller ? "bg-amber-500 justify-end" : "bg-neutral-300 justify-start"
+                              }`}
+                            >
+                              <span className="w-3 h-3 rounded-full bg-white shadow-xs" />
+                            </span>
+                          </button>
+
+                          {/* 4. New Arrival Toggle */}
+                          <button
+                            type="button"
+                            onClick={() => updateProduct(p.id, { isNewArrival: !p.isNewArrival })}
+                            className={`flex items-center justify-between px-2.5 py-2 rounded-xl border text-xs transition-all cursor-pointer ${
+                              p.isNewArrival
+                                ? "bg-emerald-50/90 border-emerald-300 text-emerald-950 shadow-2xs"
+                                : "bg-neutral-50/60 hover:bg-neutral-100/80 border-neutral-200/80 text-neutral-600"
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <div
+                                className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                                  p.isNewArrival ? "bg-emerald-600 text-white" : "bg-neutral-200 text-neutral-500"
+                                }`}
+                              >
+                                <IconSparkles size={12} stroke={2.4} />
+                              </div>
+                              <span className="font-semibold truncate text-[11px]">New Arrival</span>
+                            </div>
+                            <span
+                              className={`w-7 h-4 rounded-full p-0.5 flex items-center transition-colors shrink-0 ml-1.5 ${
+                                p.isNewArrival ? "bg-emerald-600 justify-end" : "bg-neutral-300 justify-start"
+                              }`}
+                            >
+                              <span className="w-3 h-3 rounded-full bg-white shadow-xs" />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Promo Pagination Bar */}
+            <div className="px-4 py-3 bg-white border border-neutral-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-2xs">
+              <p className="text-neutral-500">
+                Showing{" "}
+                <strong className="text-obsidian font-bold">
+                  {filteredPromoProducts.length === 0
+                    ? 0
+                    : (currentSafePromoPage - 1) * promoPerPage + 1}
+                </strong>{" "}
+                to{" "}
+                <strong className="text-obsidian font-bold">
+                  {Math.min(
+                    currentSafePromoPage * promoPerPage,
+                    filteredPromoProducts.length
+                  )}
+                </strong>{" "}
+                of{" "}
+                <strong className="text-obsidian font-bold">
+                  {filteredPromoProducts.length}
+                </strong>{" "}
+                products {filteredPromoProducts.length > promoPerPage && `(Page ${currentSafePromoPage} of ${totalPromoPages})`}
+              </p>
+
+              {totalPromoPages > 1 && (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    disabled={currentSafePromoPage <= 1}
+                    onClick={() => setPromoCurrentPage((p) => Math.max(1, p - 1))}
+                    className="px-2.5 py-1 text-xs rounded border border-neutral-300 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-obsidian transition cursor-pointer"
+                  >
+                    Prev
+                  </button>
+
+                  {Array.from({ length: totalPromoPages }, (_, i) => i + 1)
+                    .filter((pg) => {
+                      return (
+                        pg === 1 ||
+                        pg === totalPromoPages ||
+                        Math.abs(pg - currentSafePromoPage) <= 1
+                      );
+                    })
+                    .map((pg, idx, arr) => {
+                      const prev = arr[idx - 1];
+                      const showEllipsis = prev && pg - prev > 1;
+                      return (
+                        <React.Fragment key={pg}>
+                          {showEllipsis && (
+                            <span className="px-1 text-neutral-400 select-none">...</span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setPromoCurrentPage(pg)}
+                            className={`w-7 h-7 text-xs font-bold rounded border transition cursor-pointer ${
+                              currentSafePromoPage === pg
+                                ? "bg-obsidian text-gold border-obsidian"
+                                : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-100"
+                            }`}
+                          >
+                            {pg}
+                          </button>
+                        </React.Fragment>
+                      );
+                    })}
+
+                  <button
+                    type="button"
+                    disabled={currentSafePromoPage >= totalPromoPages}
+                    onClick={() => setPromoCurrentPage((p) => Math.min(totalPromoPages, p + 1))}
+                    className="px-2.5 py-1 text-xs rounded border border-neutral-300 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-obsidian transition cursor-pointer"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -2965,7 +3768,7 @@ export default function AdminPage() {
             VIEW 6: ORDERS MANAGEMENT
            =================================================================== */}
         {activeTab === "orders" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
@@ -3103,7 +3906,7 @@ export default function AdminPage() {
             VIEW 7: INVOICES & BILLING
            =================================================================== */}
         {activeTab === "invoices" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
@@ -3187,7 +3990,7 @@ export default function AdminPage() {
             VIEW 8: CUSTOMERS DIRECTORY
            =================================================================== */}
         {activeTab === "customers" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
             <div className="border-b border-neutral-200 pb-4">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
                 CUSTOMER RELATIONSHIP DIRECTORY
@@ -3252,7 +4055,7 @@ export default function AdminPage() {
             VIEW 9: PAYMENTS BREAKDOWN
            =================================================================== */}
         {activeTab === "payments" && (
-          <div className="p-4 sm:p-8 space-y-6 max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
             <div className="border-b border-neutral-200 pb-4">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
                 REVENUE &amp; COLLECTIONS

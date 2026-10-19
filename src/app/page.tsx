@@ -177,8 +177,10 @@ export default function HomePage() {
           </div>
         ))}
 
-        {/* Luxury Black-to-Transparent Gradient Overlay for crisp readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 z-15 pointer-events-none" />
+        {/* Multi-layered luxury overlays to guarantee 100% text contrast & legibility on ANY background */}
+        <div className="absolute inset-0 bg-black/35 z-12 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-transparent z-15 pointer-events-none w-full md:w-[75%] lg:w-[65%]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent z-15 pointer-events-none" />
 
         {/* Left & Right Carousel Arrows */}
         <button
@@ -216,24 +218,24 @@ export default function HomePage() {
         <div className="relative z-20 max-w-[1400px] mx-auto h-full px-5 sm:px-12 pb-9 sm:pb-20 flex flex-col justify-end">
           <div
             key={heroIndex}
-            className="animate-slide-left max-w-2xl space-y-2 sm:space-y-3"
+            className="animate-slide-left max-w-2xl space-y-2.5 sm:space-y-3.5"
           >
-            <span className="hidden sm:inline-block bg-obsidian/90 border border-gold text-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1">
+            <span className="inline-block bg-obsidian/95 border border-gold text-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1 shadow-md">
               {currentHero.badge}
             </span>
-            <h1 className="text-[28px] sm:text-4xl lg:text-5xl font-normal sm:font-light tracking-tight sm:tracking-wider uppercase text-white leading-[1.12]">
+            <h1 className="text-[28px] sm:text-4xl lg:text-5xl font-extrabold tracking-tight uppercase text-white leading-[1.14] drop-shadow-[0_4px_16px_rgba(0,0,0,1)] [text-shadow:_0_2px_12px_rgba(0,0,0,0.9),_0_4px_24px_rgba(0,0,0,0.85)]">
               {currentHero.title}
             </h1>
-            <p className="text-xs sm:text-sm text-white/90 max-w-sm sm:max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-base text-neutral-100 font-medium max-w-sm sm:max-w-xl leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
               {currentHero.subtitle}
             </p>
-            <p className="text-[11px] sm:text-sm text-gold/90 font-medium line-clamp-1">
+            <p className="text-xs sm:text-sm text-gold-light font-bold line-clamp-1 drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
               {currentHero.titleBn}
             </p>
             <div className="pt-1.5 sm:pt-3 flex flex-wrap items-center gap-3">
               <Link
                 href={currentHero.ctaLink}
-                className="bg-white hover:bg-gold text-obsidian text-xs sm:text-[11px] font-bold tracking-widest uppercase px-6 sm:px-7 py-3 sm:py-3.5 transition shadow-md inline-block"
+                className="bg-white hover:bg-gold text-obsidian text-xs sm:text-[11px] font-bold tracking-widest uppercase px-6 sm:px-7 py-3 sm:py-3.5 transition shadow-lg inline-block active:scale-98"
               >
                 {currentHero.ctaText}
               </Link>
@@ -241,7 +243,7 @@ export default function HomePage() {
                 href={BUSINESS_INFO.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex bg-obsidian/90 hover:bg-gold text-gold hover:text-obsidian border border-gold text-[11px] font-bold tracking-widest uppercase px-6 py-3.5 transition"
+                className="hidden sm:inline-flex bg-obsidian/95 hover:bg-gold text-gold hover:text-obsidian border border-gold text-[11px] font-bold tracking-widest uppercase px-6 py-3.5 transition shadow-lg active:scale-98"
               >
                 WHATSAPP: {BUSINESS_INFO.mainPhone}
               </a>
