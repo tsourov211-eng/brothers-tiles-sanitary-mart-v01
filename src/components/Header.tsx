@@ -436,15 +436,15 @@ export default function Header() {
 
         {/* Center-Right: Luxury Search Box + Language + Action Icons */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-end max-w-2xl">
-          {/* Redesigned Pill Search Form for Desktop/Tablet */}
+          {/* Reference Search Bar for Desktop/Tablet */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden sm:flex items-center w-full max-w-[280px] md:max-w-[340px] lg:max-w-[380px] bg-[#F7F6F2] hover:bg-[#F2F0EB] focus-within:bg-white border border-neutral-300/80 hover:border-gold/60 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/30 rounded-full px-3.5 py-1.5 sm:py-2 transition-all duration-300 shadow-2xs group"
+            className="hidden sm:flex items-center w-full max-w-[280px] md:max-w-[340px] lg:max-w-[400px] xl:max-w-[450px] h-9 sm:h-[39px] bg-white border border-neutral-300 hover:border-neutral-400 focus-within:border-[#BE8226] focus-within:ring-2 focus-within:ring-[#BE8226]/20 rounded-full pl-3.5 pr-0 overflow-hidden transition-all duration-200 shadow-2xs group"
           >
             <IconSearch
-              size={16}
-              stroke={2}
-              className="text-neutral-400 group-focus-within:text-gold-dark transition-colors shrink-0 mr-2"
+              size={17}
+              stroke={1.8}
+              className="text-neutral-500 shrink-0 mr-2.5 pointer-events-none"
             />
             <input
               type="text"
@@ -452,20 +452,29 @@ export default function Header() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={
                 lang === "bn"
-                  ? "টাইলস, বেসিন বা RAK কোড খুঁজুন..."
-                  : "Search 5,000+ Tiles, Basin, Commode, RAK..."
+                  ? "টাইলস, স্যানিটারি বা কোড খুঁজুন..."
+                  : "Search for tiles, sanitary ware..."
               }
-              className="w-full text-xs sm:text-[13px] text-obsidian placeholder:text-neutral-400 focus:outline-none bg-transparent"
+              className="w-full h-full text-xs sm:text-[13px] text-obsidian placeholder:text-neutral-400 placeholder:font-normal focus:outline-none bg-transparent"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="text-neutral-400 hover:text-obsidian p-0.5 rounded-full hover:bg-neutral-200/60 transition"
+                className="text-neutral-400 hover:text-obsidian p-1 mr-1 rounded-full transition shrink-0 cursor-pointer"
+                title="Clear"
               >
                 <IconX size={14} stroke={2} />
               </button>
             )}
+            <button
+              type="submit"
+              className="h-full w-11 sm:w-12 bg-[#BE8226] hover:bg-[#a86e1b] active:bg-[#946116] flex items-center justify-center shrink-0 transition-colors duration-150 cursor-pointer rounded-r-full"
+              aria-label="Search"
+              title="Search"
+            >
+              <IconSearch size={18} stroke={2.2} className="text-white" />
+            </button>
           </form>
 
           {/* Language Switcher Pill */}
@@ -557,29 +566,38 @@ export default function Header() {
       <div className="sm:hidden px-3.5 pb-2">
         <form
           onSubmit={handleSearchSubmit}
-          className="flex items-center w-full bg-[#F7F6F2] border border-neutral-300/90 rounded-full px-3 py-1.5 focus-within:border-gold focus-within:ring-1 focus-within:ring-gold/30 shadow-2xs"
+          className="flex items-center w-full h-[37px] bg-white border border-neutral-300 focus-within:border-[#BE8226] focus-within:ring-1 focus-within:ring-[#BE8226]/30 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs"
         >
-          <IconSearch size={15} stroke={2} className="text-neutral-400 mr-2 shrink-0" />
+          <IconSearch size={16} stroke={1.8} className="text-neutral-500 mr-2 shrink-0 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={
               lang === "bn"
-                ? "টাইলস, বেসিন বা RAK কোড খুঁজুন..."
-                : "Search 5,000+ Tiles, Basin, Commode..."
+                ? "টাইলস, স্যানিটারি বা কোড খুঁজুন..."
+                : "Search for tiles, sanitary ware..."
             }
-            className="w-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
+            className="w-full h-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="text-neutral-400 hover:text-obsidian p-0.5"
+              className="text-neutral-400 hover:text-obsidian p-1 mr-1 shrink-0"
+              title="Clear"
             >
               <IconX size={13} stroke={2} />
             </button>
           )}
+          <button
+            type="submit"
+            className="h-full w-10.5 bg-[#BE8226] hover:bg-[#a86e1b] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full"
+            aria-label="Search"
+            title="Search"
+          >
+            <IconSearch size={17} stroke={2.2} className="text-white" />
+          </button>
         </form>
       </div>
 
@@ -596,16 +614,39 @@ export default function Header() {
             />
             <span className="text-[10px] text-gold font-semibold uppercase">Showroom Menu</span>
           </div>
-          <form onSubmit={handleSearchSubmit} className="flex border border-gold/40 bg-obsidian-800 px-3 py-2">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex items-center w-full h-[38px] bg-white border border-neutral-300 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs"
+          >
+            <IconSearch size={16} stroke={1.8} className="text-neutral-500 mr-2 shrink-0 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search 5,000+ Tiles, Basin, Commode..."
-              className="w-full text-xs text-white placeholder-neutral-400 bg-transparent focus:outline-none"
+              placeholder={
+                lang === "bn"
+                  ? "টাইলস, স্যানিটারি বা কোড খুঁজুন..."
+                  : "Search for tiles, sanitary ware..."
+              }
+              className="w-full h-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
             />
-            <button type="submit" className="text-gold text-xs font-bold">
-              GO
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-neutral-400 hover:text-obsidian p-1 mr-1 shrink-0"
+                title="Clear"
+              >
+                <IconX size={13} stroke={2} />
+              </button>
+            )}
+            <button
+              type="submit"
+              className="h-full w-10.5 bg-[#BE8226] hover:bg-[#a86e1b] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full"
+              aria-label="Search"
+              title="Search"
+            >
+              <IconSearch size={17} stroke={2.2} className="text-white" />
             </button>
           </form>
           <div className="grid grid-cols-2 gap-2 text-xs font-medium pt-1">

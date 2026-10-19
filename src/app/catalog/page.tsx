@@ -540,11 +540,9 @@ function CatalogContent() {
               ariaLabel="Filter by brand"
             />
 
-            {/* Search Bar (Full width on mobile, compact on sm+) */}
-            <div className="relative w-full sm:w-48 lg:w-52 shrink-0">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none">
-                <IconSearch size={14} stroke={2} />
-              </span>
+            {/* Search Bar matching header design */}
+            <div className="relative flex items-center w-full sm:w-56 lg:w-64 h-[36px] bg-white border border-neutral-300 hover:border-neutral-400 focus-within:border-[#BE8226] focus-within:ring-2 focus-within:ring-[#BE8226]/20 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs transition shrink-0">
+              <IconSearch size={14} stroke={1.8} className="text-neutral-500 mr-2 shrink-0 pointer-events-none" />
               <input
                 type="text"
                 value={query}
@@ -552,8 +550,8 @@ function CatalogContent() {
                   setQuery(e.target.value);
                   setVisibleCount(36);
                 }}
-                placeholder="Search tiles, code..."
-                className="w-full pl-8 pr-7 py-1.5 sm:py-2 text-xs border border-neutral-300 rounded-full bg-neutral-50 hover:bg-white focus:bg-white focus:outline-none focus:border-obsidian focus:ring-1 focus:ring-obsidian transition shadow-2xs placeholder:text-neutral-400"
+                placeholder="Search tiles, sanitary..."
+                className="w-full h-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
               />
               {query.trim() && (
                 <button
@@ -562,12 +560,15 @@ function CatalogContent() {
                     setQuery("");
                     setVisibleCount(36);
                   }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-obsidian p-0.5 cursor-pointer"
+                  className="text-neutral-400 hover:text-obsidian p-1 mr-1 shrink-0 cursor-pointer"
                   title="Clear search"
                 >
                   <IconX size={13} stroke={2.5} />
                 </button>
               )}
+              <div className="h-full w-9 bg-[#BE8226] flex items-center justify-center shrink-0 rounded-r-full pointer-events-none">
+                <IconSearch size={15} stroke={2.2} className="text-white" />
+              </div>
             </div>
           </div>
 
