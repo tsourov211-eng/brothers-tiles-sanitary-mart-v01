@@ -413,7 +413,7 @@ export default function Header() {
       </div>
 
       {/* Tier 1: Brand Logo + Wide Search Bar + User/Wishlist/Bag Icons (Exact Tilebar Tier 1) */}
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 md:px-8 py-1 sm:py-1.5 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 md:px-8 py-1.5 sm:py-2 flex items-center justify-between gap-2.5 sm:gap-4">
         {/* Left: Brother's Tiles & Sanitary Mart Official Logo (Homepage Link) */}
         <Link
           href="/"
@@ -423,22 +423,22 @@ export default function Header() {
           <Image
             src="/images/logo/Brothers Tiles & Sanitary Logo.png"
             alt="Brother's Tiles & Sanitary Mart Logo"
-            width={240}
-            height={68}
+            width={260}
+            height={74}
             priority
-            className="h-7 sm:h-8.5 md:h-9.5 lg:h-[42px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            className="h-8 sm:h-10 md:h-11 lg:h-[50px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </Link>
 
         {/* Center-Right: Luxury Search Box + Language + Action Icons */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 flex-1 justify-end max-w-2xl">
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-end max-w-2xl">
           {/* Redesigned Pill Search Form for Desktop/Tablet */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden sm:flex items-center w-full max-w-[260px] md:max-w-[320px] lg:max-w-[360px] bg-[#F7F6F2] hover:bg-[#F2F0EB] focus-within:bg-white border border-neutral-300/80 hover:border-gold/60 focus-within:border-gold focus-within:ring-1 focus-within:ring-gold/30 rounded-full px-3 py-1 sm:py-1.5 transition-all duration-300 shadow-2xs group"
+            className="hidden sm:flex items-center w-full max-w-[280px] md:max-w-[340px] lg:max-w-[380px] bg-[#F7F6F2] hover:bg-[#F2F0EB] focus-within:bg-white border border-neutral-300/80 hover:border-gold/60 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/30 rounded-full px-3.5 py-1.5 sm:py-2 transition-all duration-300 shadow-2xs group"
           >
             <IconSearch
-              size={15}
+              size={16}
               stroke={2}
               className="text-neutral-400 group-focus-within:text-gold-dark transition-colors shrink-0 mr-2"
             />
@@ -451,7 +451,7 @@ export default function Header() {
                   ? "টাইলস, বেসিন বা RAK কোড খুঁজুন..."
                   : "Search 5,000+ Tiles, Basin, Commode, RAK..."
               }
-              className="w-full text-xs text-obsidian placeholder:text-neutral-400 focus:outline-none bg-transparent"
+              className="w-full text-xs sm:text-[13px] text-obsidian placeholder:text-neutral-400 focus:outline-none bg-transparent"
             />
             {searchQuery && (
               <button
@@ -459,7 +459,7 @@ export default function Header() {
                 onClick={() => setSearchQuery("")}
                 className="text-neutral-400 hover:text-obsidian p-0.5 rounded-full hover:bg-neutral-200/60 transition"
               >
-                <IconX size={13} stroke={2} />
+                <IconX size={14} stroke={2} />
               </button>
             )}
           </form>
@@ -467,35 +467,35 @@ export default function Header() {
           {/* Language Switcher Pill */}
           <button
             onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-            className="rounded-full bg-obsidian text-gold hover:text-white hover:bg-neutral-900 border border-gold/40 hover:border-gold px-2.5 py-1 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase shadow-xs flex items-center gap-1 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+            className="rounded-full bg-obsidian text-gold hover:text-white hover:bg-neutral-900 border border-gold/40 hover:border-gold px-3 py-1.5 text-[10.5px] sm:text-[11.5px] font-bold tracking-wider uppercase shadow-xs flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shrink-0"
             title="Switch Language"
           >
-            <IconLanguage size={12} stroke={2} className="text-gold" />
+            <IconLanguage size={13.5} stroke={2} className="text-gold" />
             <span className="font-sans">{lang === "bn" ? "EN" : "বাংলা"}</span>
           </button>
 
           {/* Action Icons Group */}
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Wishlist Button */}
             <Link
               href="/catalog?wishlist=true"
-              className="relative w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-rose-50 border border-neutral-200/90 hover:border-rose-300 text-obsidian hover:text-rose-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              className="relative w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-rose-50 border border-neutral-200/90 hover:border-rose-300 text-obsidian hover:text-rose-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
               title="Saved Favorites (পছন্দের তালিকা)"
             >
               {wishlist.length > 0 ? (
                 <IconHeartFilled
-                  size={15}
+                  size={16.5}
                   className="text-rose-600 group-hover:scale-110 transition-transform duration-200"
                 />
               ) : (
                 <IconHeart
-                  size={15}
+                  size={16.5}
                   stroke={1.8}
                   className="text-neutral-700 group-hover:text-rose-600 group-hover:scale-110 transition-all duration-200"
                 />
               )}
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[8.5px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {wishlist.length}
                 </span>
               )}
@@ -504,16 +504,16 @@ export default function Header() {
             {/* Sample & Wholesale Quote Bag Button */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="relative w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
+              className="relative w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
               title="Sample & Quotation List (কোটেশন ব্যাগ)"
             >
               <IconShoppingBag
-                size={15}
+                size={16.5}
                 stroke={1.8}
                 className="text-neutral-700 group-hover:text-gold-dark group-hover:scale-110 transition-all duration-200"
               />
               {quoteBag.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[8.5px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[9px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
                   {quoteBag.length}
                 </span>
               )}
@@ -522,12 +522,12 @@ export default function Header() {
             {/* Admin / Manager Portal Shortcut Button */}
             <Link
               href="/admin"
-              className="hidden sm:flex w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
+              className="hidden sm:flex w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
               title="Admin & Showroom Portal"
             >
               <span className="sr-only">Admin Portal</span>
               <IconUserShield
-                size={15}
+                size={16.5}
                 stroke={1.8}
                 className="group-hover:scale-110 transition-transform duration-200"
               />
@@ -536,13 +536,13 @@ export default function Header() {
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
+              className="md:hidden w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? (
-                <IconX size={16} stroke={2} />
+                <IconX size={17} stroke={2} />
               ) : (
-                <IconMenu2 size={16} stroke={2} />
+                <IconMenu2 size={17} stroke={2} />
               )}
             </button>
           </div>
