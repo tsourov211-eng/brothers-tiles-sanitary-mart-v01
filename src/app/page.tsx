@@ -442,50 +442,40 @@ export default function HomePage() {
 
         {/* Showroom 5 Core Product Lines Strip (Responsive across all devices) */}
         <div className="mt-8 sm:mt-10 bg-obsidian text-white border border-gold/40 p-4 sm:p-6 rounded-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gold/25">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 bg-white/10 border border-gold/40 p-1 flex items-center justify-center shrink-0">
-                <Image
-                  src="/images/logo/Brothers-emblem.png"
-                  alt="Brothers Emblem"
-                  width={40}
-                  height={40}
-                  className="h-9 w-auto object-contain"
-                />
-              </div>
-              <div>
-                <span className="text-[10px] uppercase tracking-widest text-gold font-bold">
-                  BROTHER&rsquo;S TILES &amp; SANITARY MART DEPARTMENTS
-                </span>
-                <h3 className="text-base sm:text-lg font-serif font-bold text-white">
-                  আমাদের ৫টি প্রধান প্রোডাক্ট ক্যাটাগরি — পাইকারি ও খুচরা
-                </h3>
-              </div>
+          <div className="flex items-center gap-3 pb-3 border-b border-gold/25">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 bg-white/10 border border-gold/40 p-1 flex items-center justify-center shrink-0">
+              <Image
+                src="/images/logo/Brothers-emblem.png"
+                alt="Brothers Emblem"
+                width={40}
+                height={40}
+                className="h-8 sm:h-9 w-auto object-contain"
+              />
             </div>
-            <span className="text-xs text-gold font-semibold">
-              হোম ডেলিভারি: {BUSINESS_INFO.homeDeliveryBn}
-            </span>
+            <h3 className="text-base sm:text-lg font-serif font-bold text-white">
+              আমাদের ৫টি প্রধান প্রোডাক্ট ক্যাটাগরি — পাইকারি ও খুচরা
+            </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3.5 pt-3.5">
             {SHOWROOM_DEPARTMENTS.map((dept) => (
               <Link
                 key={dept.id}
                 href={`/catalog?category=${encodeURIComponent(dept.id)}`}
-                className="group bg-obsidian-800 hover:bg-obsidian-700 active:bg-neutral-900 border border-gold/25 hover:border-gold px-3.5 py-2.5 sm:py-3 flex flex-col justify-center transition rounded-xs"
+                className="group bg-obsidian-800 hover:bg-neutral-800 active:bg-neutral-900 border border-neutral-700/80 hover:border-gold/60 px-3.5 py-2.5 sm:py-3 flex flex-col justify-center transition rounded-xs"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs sm:text-[13px] font-bold text-gold group-hover:text-amber-300 transition-colors truncate">
+                  <span className="text-xs sm:text-[13px] font-bold text-white group-hover:text-gold transition-colors truncate">
                     {dept.name}
                   </span>
-                  <span className="text-[9px] sm:text-[10px] bg-gold/15 text-gold px-1.5 py-0.5 rounded-2xs font-semibold shrink-0">
+                  <span className="text-[9px] sm:text-[10px] bg-white/10 text-neutral-300 group-hover:text-gold px-1.5 py-0.5 rounded-2xs font-medium shrink-0">
                     {dept.count}
                   </span>
                 </div>
                 <div className="flex items-center justify-between gap-1.5 mt-1">
-                  <p className="text-[10.5px] sm:text-[11px] text-neutral-300 group-hover:text-white transition-colors truncate">
+                  <p className="text-[10.5px] sm:text-[11px] text-neutral-400 group-hover:text-neutral-100 transition-colors truncate">
                     {(dept as any).mainPoints || dept.sizes}
                   </p>
-                  <span className="text-gold/50 group-hover:text-gold text-xs transition-transform group-hover:translate-x-0.5 shrink-0">
+                  <span className="text-neutral-500 group-hover:text-gold text-xs transition-transform group-hover:translate-x-0.5 shrink-0">
                     &rarr;
                   </span>
                 </div>
