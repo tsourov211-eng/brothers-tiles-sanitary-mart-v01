@@ -18,7 +18,21 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconBrandWhatsapp,
+  IconLayoutGrid,
+  IconDroplet,
+  IconBath,
+  IconShieldCheck,
+  IconSparkles,
+  Icon,
 } from "@tabler/icons-react";
+
+const DEPARTMENT_ICONS: Record<string, Icon> = {
+  Tiles: IconLayoutGrid,
+  Basin: IconDroplet,
+  Commode: IconBath,
+  Sanitary: IconShieldCheck,
+  "Bathroom Accessories": IconSparkles,
+};
 
 export default function HomePage() {
   const [heroIndex, setHeroIndex] = useState(0);
@@ -440,47 +454,91 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Showroom 5 Core Product Lines Strip (Responsive across all devices) */}
-        <div className="mt-8 sm:mt-10 bg-obsidian text-white border border-gold/40 p-4 sm:p-6 rounded-xs">
-          <div className="flex items-center gap-3 pb-3 border-b border-gold/25">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 bg-white/10 border border-gold/40 p-1 flex items-center justify-center shrink-0">
-              <Image
-                src="/images/logo/Brothers-emblem.png"
-                alt="Brothers Emblem"
-                width={40}
-                height={40}
-                className="h-8 sm:h-9 w-auto object-contain"
-              />
+        {/* Showroom 5 Core Product Lines Strip (Luxury Modern Glassmorphic Container) */}
+        <div className="relative mt-10 sm:mt-12 overflow-hidden rounded-2xl bg-gradient-to-b from-[#18181c] via-[#121215] to-[#0d0d0f] border border-gold/30 shadow-2xl shadow-black/80 p-4 sm:p-7">
+          {/* Subtle Ambient Gold Radial Glows */}
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gold/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
+
+          {/* Header Bar */}
+          <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-white/15 to-white/5 border border-gold/40 p-2 flex items-center justify-center shrink-0 shadow-sm shadow-gold/20 backdrop-blur-xs">
+                <Image
+                  src="/images/logo/Brothers-emblem.png"
+                  alt="Brothers Emblem"
+                  width={40}
+                  height={40}
+                  className="h-8 sm:h-9 w-auto object-contain"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-gold">
+                    FLAGSHIP SHOWROOM
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-xl font-bold text-white tracking-tight">
+                  আমাদের ৫টি প্রধান প্রোডাক্ট ক্যাটাগরি — পাইকারি ও খুচরা
+                </h3>
+              </div>
             </div>
-            <h3 className="text-base sm:text-lg font-serif font-bold text-white">
-              আমাদের ৫টি প্রধান প্রোডাক্ট ক্যাটাগরি — পাইকারি ও খুচরা
-            </h3>
+
+            <Link
+              href="/catalog"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-gold hover:text-amber-300 self-start sm:self-center transition-colors group/link"
+            >
+              <span>সকল ৫,০০০+ পণ্য দেখুন</span>
+              <span className="transition-transform group-hover/link:translate-x-1">&rarr;</span>
+            </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3.5 pt-3.5">
-            {SHOWROOM_DEPARTMENTS.map((dept) => (
-              <Link
-                key={dept.id}
-                href={`/catalog?category=${encodeURIComponent(dept.id)}`}
-                className="group bg-obsidian-800 hover:bg-neutral-800 active:bg-neutral-900 border border-neutral-700/80 hover:border-gold/60 px-3.5 py-2.5 sm:py-3 flex flex-col justify-center transition rounded-xs"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs sm:text-[13px] font-bold text-white group-hover:text-gold transition-colors truncate">
-                    {dept.name}
-                  </span>
-                  <span className="text-[9px] sm:text-[10px] bg-white/10 text-neutral-300 group-hover:text-gold px-1.5 py-0.5 rounded-2xs font-medium shrink-0">
-                    {dept.count}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-1.5 mt-1">
-                  <p className="text-[10.5px] sm:text-[11px] text-neutral-400 group-hover:text-neutral-100 transition-colors truncate">
-                    {(dept as any).mainPoints || dept.sizes}
-                  </p>
-                  <span className="text-neutral-500 group-hover:text-gold text-xs transition-transform group-hover:translate-x-0.5 shrink-0">
-                    &rarr;
-                  </span>
-                </div>
-              </Link>
-            ))}
+
+          {/* 5 Department Cards Grid */}
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-3.5 pt-4">
+            {SHOWROOM_DEPARTMENTS.map((dept) => {
+              const Icon = DEPARTMENT_ICONS[dept.id] || IconLayoutGrid;
+              return (
+                <Link
+                  key={dept.id}
+                  href={`/catalog?category=${encodeURIComponent(dept.id)}`}
+                  className="group relative overflow-hidden rounded-xl bg-gradient-to-b from-[#1f1f26] to-[#151518] hover:from-[#272730] hover:to-[#1a1a20] active:scale-[0.99] border border-neutral-700/60 hover:border-gold/70 p-3.5 sm:p-4 flex items-center gap-3 transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-gold/10"
+                >
+                  {/* Hover Sheen Animation */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* Category Luxury Icon */}
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-gold/20 via-gold/10 to-transparent border border-gold/30 text-gold flex items-center justify-center shrink-0 group-hover:scale-108 group-hover:bg-gold group-hover:text-obsidian group-hover:shadow-md group-hover:shadow-gold/30 transition-all duration-300">
+                    <Icon size={20} stroke={2.2} />
+                  </div>
+
+                  {/* 2-Line Content */}
+                  <div className="min-w-0 flex-1">
+                    {/* Line 1: Title & Badge */}
+                    <div className="flex items-center justify-between gap-1.5 mb-1">
+                      <span className="text-xs sm:text-[13.5px] font-bold text-white group-hover:text-gold transition-colors truncate">
+                        {dept.name}
+                      </span>
+                      <span className="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-gold/15 text-gold border border-gold/30 group-hover:bg-gold group-hover:text-obsidian transition-all shrink-0">
+                        {dept.count}
+                      </span>
+                    </div>
+
+                    {/* Line 2: Main points & Chevron */}
+                    <div className="flex items-center justify-between gap-1.5">
+                      <p className="text-[10.5px] sm:text-[11px] text-neutral-300 group-hover:text-neutral-100 transition-colors truncate">
+                        {(dept as any).mainPoints || dept.sizes}
+                      </p>
+                      <span className="text-neutral-500 group-hover:text-gold text-xs transition-transform group-hover:translate-x-0.5 shrink-0">
+                        &rarr;
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
