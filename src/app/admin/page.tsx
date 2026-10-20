@@ -55,6 +55,11 @@ import {
   IconPhone,
   IconMapPin,
   IconFileText,
+  IconCash,
+  IconBuildingBank,
+  IconCopy,
+  IconReceipt,
+  IconCircleCheck,
 } from "@tabler/icons-react";
 import CustomDropdown, { DropdownOption } from "@/components/CustomDropdown";
 
@@ -253,6 +258,10 @@ export default function AdminPage() {
   const [productCategoryFilter, setProductCategoryFilter] = useState("All");
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>("All");
   const [orderSearch, setOrderSearch] = useState("");
+  const [invoiceSearch, setInvoiceSearch] = useState("");
+  const [invoicePaymentFilter, setInvoicePaymentFilter] = useState("All");
+  const [paymentSearch, setPaymentSearch] = useState("");
+  const [paymentChannelFilter, setPaymentChannelFilter] = useState("All");
   const [stockFilter, setStockFilter] = useState<"All" | "Low" | "Out">("All");
 
   // Products Management pagination states (default 25 per user request)
@@ -533,6 +542,188 @@ export default function AdminPage() {
         return 0;
       });
   }, [customers, customerSearch, customerFilter, customerSort]);
+
+  // =========================================================================
+  // INVOICE & PAYMENT METRICS & FILTERS
+  // =========================================================================
+  const [invoiceStatusFilter, setInvoiceStatusFilter] = useState<"All" | "Paid" | "Due">("All");
+  const [copiedBkash, setCopiedBkash] = useState(false);
+
+  const handleCopyBkash = () => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText("01756998277");
+      setCopiedBkash(true);
+      setTimeout(() => setCopiedBkash(false), 2200);
+    }
+  };
+
+  const getInvoiceWhatsAppUrl = (inv: InvoiceRecord) => {
+    const rawDigits = inv.customerPhone.replace(/\D/g, "");
+    let phoneNum = rawDigits;
+    if (rawDigits.length === 11 && rawDigits.startsWith("01")) {
+      phoneNum = "88" + rawDigits;
+    } else if (rawDigits.startsWith("8801")) {
+      phoneNum = rawDigits;
+    } else {
+      phoneNum = BUSINESS_INFO.mainPhoneClean;
+    }
+    const msg =
+      `*BROTHER'S TILES & SANITARY MART*\n` +
+      `*INVOICE RECEIPT:* ${inv.invoiceNo}\n` +
+      `─────────────────────────\n` +
+      `Date: ${inv.date}\n` +
+      `Customer: ${inv.customerName}\n` +
+      `Contact: ${inv.customerPhone}\n` +
+      `Grand Total: ৳${inv.grandTotal.toLocaleString("en-US")}\n` +
+      `Paid Amount: ৳${inv.paidAmount.toLocaleString("en-US")}\n` +
+      (inv.dueAmount > 0
+        ? `*Due Balance:* ৳${inv.dueAmount.toLocaleString("en-US")}\n`
+        : `*Status:* Fully Paid (Settled)\n`) +
+      `Payment Method: ${inv.paymentMethod}\n` +
+      `─────────────────────────\n` +
+      `Showroom: ${BUSINESS_INFO.addressExact}\n` +
+      `Hotline: ${BUSINESS_INFO.mainPhone}`;
+    return `https://wa.me/${phoneNum}?text=${encodeURIComponent(msg)}`;
+  };
+
+  const filteredInvoices = useMemo(() => {
+    return invoices.filter((inv) => {
+      if (invoicePaymentFilter !== "All" && inv.paymentMethod !== invoicePaymentFilter) {
+        return false;
+      }
+      if (invoiceStatusFilter === "Paid" && (inv.dueAmount || 0) > 0) return false;
+      if (invoiceStatusFilter === "Due" && (inv.dueAmount || 0) <= 0) return false;
+      if (invoiceSearch.trim()) {
+        const q = invoiceSearch.toLowerCase();
+        return (
+          inv.invoiceNo.toLowerCase().includes(q) ||
+          inv.customerName.toLowerCase().includes(q) ||
+          inv.customerPhone.toLowerCase().includes(q) ||
+          (inv.customerAddress && inv.customerAddress.toLowerCase().includes(q)) ||
+          inv.paymentMethod.toLowerCase().includes(q) ||
+          (inv.salesPerson && inv.salesPerson.toLowerCase().includes(q)) ||
+          (inv.notes && inv.notes.toLowerCase().includes(q))
+        );
+      }
+      return true;
+    });
+  }, [invoices, invoicePaymentFilter, invoiceStatusFilter, invoiceSearch]);
+
+  const invoiceMetrics = useMemo(() => {
+    const totalCount = invoices.length;
+    const totalBilled = invoices.reduce((acc, inv) => acc + (inv.grandTotal || 0), 0);
+    const totalPaid = invoices.reduce((acc, inv) => acc + (inv.paidAmount || 0), 0);
+    const totalDue = invoices.reduce((acc, inv) => acc + (inv.dueAmount || 0), 0);
+    const paidCount = invoices.filter((inv) => (inv.dueAmount || 0) === 0).length;
+    const dueCount = invoices.filter((inv) => (inv.dueAmount || 0) > 0).length;
+    return {
+      totalCount,
+      totalBilled,
+      totalPaid,
+      totalDue,
+      paidCount,
+      dueCount,
+    };
+  }, [invoices]);
+
+  interface PaymentTransaction {
+    id: string;
+    refNo: string;
+    type: "Showroom Invoice" | "Customer Order";
+    customerName: string;
+    customerPhone: string;
+    channel: PaymentMethod;
+    amount: number;
+    date: string;
+    status: "Settled" | "Verified";
+    relatedId: string;
+    invoice?: InvoiceRecord;
+    order?: OrderRecord;
+  }
+
+  const allPaymentTransactions = useMemo<PaymentTransaction[]>(() => {
+    const list: PaymentTransaction[] = [];
+    invoices.forEach((inv) => {
+      if ((inv.paidAmount || 0) > 0) {
+        list.push({
+          id: `pay-inv-${inv.invoiceNo}`,
+          refNo: `REC-${inv.invoiceNo.replace(/^INV-/, "")}`,
+          type: "Showroom Invoice",
+          customerName: inv.customerName,
+          customerPhone: inv.customerPhone,
+          channel: inv.paymentMethod,
+          amount: inv.paidAmount,
+          date: inv.date,
+          status: "Settled",
+          relatedId: inv.invoiceNo,
+          invoice: inv,
+        });
+      }
+    });
+
+    const invoiceCustomerPhones = new Set(invoices.map((i) => i.customerPhone.trim()));
+    orders.forEach((ord) => {
+      if (ord.paymentStatus === "Paid" || ord.paymentStatus === "Partial") {
+        if (!invoiceCustomerPhones.has(ord.customerPhone.trim()) || ord.source === "Website Quote") {
+          list.push({
+            id: `pay-ord-${ord.id}`,
+            refNo: `REC-${ord.id.replace(/^ORD-/, "")}`,
+            type: "Customer Order",
+            customerName: ord.customerName,
+            customerPhone: ord.customerPhone,
+            channel: ord.paymentMethod,
+            amount: ord.totalAmount,
+            date: ord.date,
+            status: "Verified",
+            relatedId: ord.id,
+            order: ord,
+          });
+        }
+      }
+    });
+
+    return list;
+  }, [invoices, orders]);
+
+  const paymentMetrics = useMemo(() => {
+    const totalCollected = allPaymentTransactions.reduce((acc, t) => acc + (t.amount || 0), 0);
+    const cashTotal = allPaymentTransactions
+      .filter((t) => t.channel === "Cash")
+      .reduce((acc, t) => acc + (t.amount || 0), 0);
+    const bkashTotal = allPaymentTransactions
+      .filter((t) => t.channel === "bKash" || t.channel === "Nagad")
+      .reduce((acc, t) => acc + (t.amount || 0), 0);
+    const bankTotal = allPaymentTransactions
+      .filter((t) => t.channel === "Bank Transfer" || t.channel === "Cheque")
+      .reduce((acc, t) => acc + (t.amount || 0), 0);
+
+    return {
+      totalCollected,
+      cashTotal,
+      bkashTotal,
+      bankTotal,
+      txCount: allPaymentTransactions.length,
+    };
+  }, [allPaymentTransactions]);
+
+  const filteredPaymentTransactions = useMemo(() => {
+    return allPaymentTransactions.filter((tx) => {
+      if (paymentChannelFilter !== "All" && tx.channel !== paymentChannelFilter) {
+        return false;
+      }
+      if (paymentSearch.trim()) {
+        const q = paymentSearch.toLowerCase();
+        return (
+          tx.refNo.toLowerCase().includes(q) ||
+          tx.customerName.toLowerCase().includes(q) ||
+          tx.customerPhone.toLowerCase().includes(q) ||
+          tx.channel.toLowerCase().includes(q) ||
+          tx.relatedId.toLowerCase().includes(q)
+        );
+      }
+      return true;
+    });
+  }, [allPaymentTransactions, paymentChannelFilter, paymentSearch]);
 
   // =========================================================================
   // HANDLERS
@@ -4499,85 +4690,434 @@ export default function AdminPage() {
         })()}
 
         {/* ===================================================================
-            VIEW 7: INVOICES & BILLING
+            VIEW 7: INVOICES & BILLING (MODERN LUXURY & MOBILE RESPONSIVE)
            =================================================================== */}
         {activeTab === "invoices" && (
           <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-200 pb-4">
+            {/* Header Strip */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
-                  OFFICIAL INVOICES &amp; BILLS
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] flex items-center gap-1.5">
+                  <IconFileInvoice size={14} className="text-gold" />
+                  OFFICIAL INVOICES &amp; BILLING
                 </span>
-                <h1 className="text-xl sm:text-2xl font-serif font-bold text-obsidian">
-                  Showroom Invoices ({invoices.length})
+                <h1 className="text-xl sm:text-2xl font-serif font-bold text-obsidian tracking-tight mt-1">
+                  Showroom Invoices &amp; Receipts ({invoices.length})
                 </h1>
-                <p className="text-xs text-neutral-500">
-                  ইনভয়েস ভিউ, প্রিন্ট ও কাস্টমারকে ডিজিটাল রিসিট প্রদান করুন।
+                <p className="text-xs text-neutral-500 mt-0.5">
+                  VAT-compliant showroom sales invoices, print receipts &amp; instant WhatsApp customer delivery.
                 </p>
               </div>
 
-              <button
-                onClick={() => setActiveTab("new-sale")}
-                className="bg-obsidian hover:bg-gold text-gold hover:text-obsidian font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded transition shadow cursor-pointer"
-              >
-                + Create New Invoice
-              </button>
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={() => setActiveTab("new-sale")}
+                  className="inline-flex items-center gap-2 bg-obsidian hover:bg-gold text-gold hover:text-obsidian font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all duration-200 shadow-sm cursor-pointer"
+                >
+                  <IconPlus size={16} stroke={2.2} />
+                  <span>Create New Invoice</span>
+                </button>
+              </div>
             </div>
 
-            <div className="bg-white border border-neutral-200 rounded overflow-hidden shadow-2xs">
+            {/* 4 KPI Metrics Strip */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    Total Invoices
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                    <IconFileInvoice size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-obsidian tracking-tight font-serif">
+                    {invoiceMetrics.totalCount}
+                  </p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    {invoiceMetrics.paidCount} Fully Paid • {invoiceMetrics.dueCount} With Due
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    Gross Billed
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-stonebg text-obsidian flex items-center justify-center">
+                    <IconCoins size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-obsidian tracking-tight font-serif">
+                    ৳{invoiceMetrics.totalBilled.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    Showroom Gross Billed Volume
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    Collected (Paid)
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                    <IconCircleCheck size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-emerald-800 tracking-tight font-serif">
+                    ৳{invoiceMetrics.totalPaid.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[11px] text-emerald-600 font-medium mt-0.5">
+                    Cleared Cash &amp; Bank Revenue
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    Outstanding Due
+                  </span>
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${invoiceMetrics.totalDue > 0 ? "bg-red-50 text-red-600" : "bg-neutral-100 text-neutral-400"}`}>
+                    <IconAlertTriangle size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className={`text-2xl sm:text-3xl font-extrabold tracking-tight font-serif ${invoiceMetrics.totalDue > 0 ? "text-red-600" : "text-neutral-700"}`}>
+                    ৳{invoiceMetrics.totalDue.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    {invoiceMetrics.totalDue > 0 ? "Pending Customer Receivables" : "Zero Pending Dues"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter and Search Bar */}
+            <div className="bg-white border border-neutral-200/80 rounded-2xl p-3 sm:p-4 shadow-xs space-y-3">
+              <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+                {/* Search Box */}
+                <div className="relative flex-1">
+                  <IconSearch
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400"
+                  />
+                  <input
+                    type="text"
+                    value={invoiceSearch}
+                    onChange={(e) => setInvoiceSearch(e.target.value)}
+                    placeholder="Search by Invoice #, customer name, phone, salesperson..."
+                    className="w-full pl-9 pr-9 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-gold focus:outline-none transition"
+                  />
+                  {invoiceSearch && (
+                    <button
+                      onClick={() => setInvoiceSearch("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-obsidian"
+                    >
+                      <IconX size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Filter Controls */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Payment Method Filter */}
+                  <div className="flex items-center bg-neutral-100 p-1 rounded-xl text-xs">
+                    {(["All", "Cash", "bKash", "Bank Transfer"] as const).map((method) => (
+                      <button
+                        key={method}
+                        onClick={() => setInvoicePaymentFilter(method)}
+                        className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer text-[11px] ${
+                          invoicePaymentFilter === method
+                            ? "bg-white text-obsidian font-bold shadow-xs"
+                            : "text-neutral-600 hover:text-obsidian"
+                        }`}
+                      >
+                        {method}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Payment Status Filter */}
+                  <div className="flex items-center bg-neutral-100 p-1 rounded-xl text-xs">
+                    {(["All", "Paid", "Due"] as const).map((st) => (
+                      <button
+                        key={st}
+                        onClick={() => setInvoiceStatusFilter(st)}
+                        className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer text-[11px] ${
+                          invoiceStatusFilter === st
+                            ? "bg-obsidian text-gold font-bold shadow-xs"
+                            : "text-neutral-600 hover:text-obsidian"
+                        }`}
+                      >
+                        {st === "All" ? "All Status" : st === "Paid" ? "Paid (0 Due)" : "Has Due"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Counter / Active filter summary */}
+              <div className="flex items-center justify-between text-[11px] text-neutral-500 pt-1 border-t border-neutral-100">
+                <span>
+                  Showing <strong className="text-obsidian">{filteredInvoices.length}</strong> of {invoices.length} invoices
+                </span>
+                {(invoiceSearch || invoicePaymentFilter !== "All" || invoiceStatusFilter !== "All") && (
+                  <button
+                    onClick={() => {
+                      setInvoiceSearch("");
+                      setInvoicePaymentFilter("All");
+                      setInvoiceStatusFilter("All");
+                    }}
+                    className="text-gold font-bold hover:underline cursor-pointer"
+                  >
+                    Reset Filters
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* DESKTOP TABLE VIEW (hidden on mobile, visible on md and up) */}
+            <div className="hidden md:block bg-white border border-neutral-200/80 rounded-2xl overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#FAF8F5] border-b border-neutral-200 text-neutral-500 uppercase text-[10px]">
+                  <thead className="bg-[#FAF8F5] border-b border-neutral-200 text-neutral-500 uppercase text-[10px] tracking-wider font-bold">
                     <tr>
-                      <th className="py-3 px-4">Invoice No</th>
-                      <th className="py-3 px-4">Date</th>
-                      <th className="py-3 px-4">Customer Name</th>
-                      <th className="py-3 px-4">Subtotal</th>
-                      <th className="py-3 px-4">Discount</th>
-                      <th className="py-3 px-4">Grand Total</th>
-                      <th className="py-3 px-4">Payment</th>
-                      <th className="py-3 px-4 text-right">Print / View</th>
+                      <th className="py-3.5 px-4">Invoice #</th>
+                      <th className="py-3.5 px-4">Date</th>
+                      <th className="py-3.5 px-4">Customer</th>
+                      <th className="py-3.5 px-4">Items Billed</th>
+                      <th className="py-3.5 px-4">Amount</th>
+                      <th className="py-3.5 px-4">Paid / Due</th>
+                      <th className="py-3.5 px-4">Channel</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100">
-                    {invoices.map((inv) => (
-                      <tr key={inv.invoiceNo} className="hover:bg-neutral-50">
-                        <td className="py-3 px-4 font-mono font-bold text-obsidian">
-                          {inv.invoiceNo}
-                        </td>
-                        <td className="py-3 px-4 text-neutral-500">{inv.date}</td>
-                        <td className="py-3 px-4">
-                          <p className="font-bold text-obsidian">{inv.customerName}</p>
-                          <p className="text-[10px] text-neutral-400">{inv.customerPhone}</p>
-                        </td>
-                        <td className="py-3 px-4 text-neutral-600">
-                          ৳{inv.subtotal.toLocaleString("en-US")}
-                        </td>
-                        <td className="py-3 px-4 text-red-600">
-                          {inv.discount > 0 ? `-৳${inv.discount.toLocaleString("en-US")}` : "৳0"}
-                        </td>
-                        <td className="py-3 px-4 font-bold text-obsidian">
-                          ৳{inv.grandTotal.toLocaleString("en-US")}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded">
-                            {inv.paymentMethod}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <button
-                            onClick={() => setSelectedInvoiceForPrint(inv)}
-                            className="inline-flex items-center gap-1.5 bg-obsidian text-gold hover:bg-gold hover:text-obsidian px-3 py-1.5 text-xs font-bold transition rounded cursor-pointer"
-                          >
-                            <IconPrinter size={15} stroke={1.8} />
-                            <span>View &amp; Print</span>
-                          </button>
+                    {filteredInvoices.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="py-12 text-center text-neutral-400">
+                          <IconFileInvoice size={36} className="mx-auto mb-2 opacity-30" />
+                          <p className="font-medium text-sm text-neutral-600">No invoices matched your filters</p>
+                          <p className="text-xs text-neutral-400 mt-1">Try adjusting your search terms or filters</p>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredInvoices.map((inv) => (
+                        <tr key={inv.invoiceNo} className="hover:bg-neutral-50/80 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <button
+                              onClick={() => setSelectedInvoiceForPrint(inv)}
+                              className="font-mono font-bold text-obsidian bg-stonebg hover:bg-gold/20 hover:text-[#9A731E] px-2.5 py-1 rounded-md border border-neutral-200 transition cursor-pointer text-xs inline-block"
+                              title="Click to preview & print"
+                            >
+                              {inv.invoiceNo}
+                            </button>
+                          </td>
+                          <td className="py-3.5 px-4 text-neutral-600 whitespace-nowrap">
+                            {inv.date}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-obsidian to-neutral-800 text-gold flex items-center justify-center font-bold text-xs shrink-0">
+                                {inv.customerName.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="font-bold text-obsidian truncate">{inv.customerName}</p>
+                                <p className="text-[11px] text-neutral-500 font-mono flex items-center gap-1">
+                                  <IconPhone size={10} className="text-neutral-400" />
+                                  {inv.customerPhone}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 text-neutral-600">
+                            <span className="inline-flex items-center gap-1 bg-neutral-100 px-2 py-0.5 rounded text-[11px] font-medium text-neutral-700">
+                              {inv.items.length} {inv.items.length === 1 ? "Product" : "Products"}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <p className="font-bold text-obsidian font-serif text-sm">
+                              ৳{inv.grandTotal.toLocaleString("en-US")}
+                            </p>
+                            {inv.discount > 0 && (
+                              <p className="text-[10px] text-red-500">
+                                Disc: -৳{inv.discount.toLocaleString("en-US")}
+                              </p>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <p className="text-emerald-700 font-bold text-xs">
+                              ৳{inv.paidAmount.toLocaleString("en-US")}
+                            </p>
+                            {inv.dueAmount > 0 ? (
+                              <span className="text-[10px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded inline-block mt-0.5">
+                                Due: ৳{inv.dueAmount.toLocaleString("en-US")}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-emerald-600 font-medium inline-block mt-0.5">
+                                Settled
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`text-[10px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${
+                                inv.paymentMethod === "bKash"
+                                  ? "bg-pink-50 text-pink-700 border-pink-200"
+                                  : inv.paymentMethod === "Cash"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : "bg-blue-50 text-blue-700 border-blue-200"
+                              }`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  inv.paymentMethod === "bKash"
+                                    ? "bg-pink-600"
+                                    : inv.paymentMethod === "Cash"
+                                    ? "bg-emerald-600"
+                                    : "bg-blue-600"
+                                }`}
+                              />
+                              {inv.paymentMethod}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="inline-flex items-center gap-1.5">
+                              <button
+                                onClick={() => setSelectedInvoiceForPrint(inv)}
+                                className="inline-flex items-center gap-1 bg-obsidian text-gold hover:bg-gold hover:text-obsidian px-3 py-1.5 text-xs font-bold transition rounded-lg cursor-pointer shadow-2xs"
+                                title="Preview & Print Official Invoice"
+                              >
+                                <IconPrinter size={14} stroke={1.8} />
+                                <span>Print</span>
+                              </button>
+                              <a
+                                href={getInvoiceWhatsAppUrl(inv)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white transition border border-emerald-200"
+                                title="Send Invoice Receipt via WhatsApp"
+                              >
+                                <IconBrandWhatsapp size={16} stroke={1.8} />
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* MOBILE CARDS VIEW (visible on mobile, hidden on md and up) */}
+            <div className="block md:hidden space-y-3">
+              {filteredInvoices.length === 0 ? (
+                <div className="bg-white border border-neutral-200 rounded-2xl p-8 text-center text-neutral-400">
+                  <IconFileInvoice size={36} className="mx-auto mb-2 opacity-30" />
+                  <p className="font-medium text-sm text-neutral-600">No invoices matched your filters</p>
+                  <p className="text-xs text-neutral-400 mt-1">Try resetting search or filter options</p>
+                </div>
+              ) : (
+                filteredInvoices.map((inv) => (
+                  <div
+                    key={inv.invoiceNo}
+                    className="bg-white border border-neutral-200/90 rounded-2xl p-4 shadow-xs space-y-3.5 transition hover:border-gold/40"
+                  >
+                    {/* Top Row: Invoice # + Channel Badge + Date */}
+                    <div className="flex items-center justify-between gap-2 border-b border-neutral-100 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-obsidian bg-stonebg px-2.5 py-1 rounded-md border border-neutral-200 text-xs">
+                          {inv.invoiceNo}
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${
+                            inv.paymentMethod === "bKash"
+                              ? "bg-pink-50 text-pink-700 border-pink-200"
+                              : inv.paymentMethod === "Cash"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-blue-50 text-blue-700 border-blue-200"
+                          }`}
+                        >
+                          {inv.paymentMethod}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-neutral-400">{inv.date}</span>
+                    </div>
+
+                    {/* Customer Info */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-bold text-obsidian text-sm">{inv.customerName}</p>
+                        <a
+                          href={`tel:${inv.customerPhone}`}
+                          className="text-xs text-neutral-500 font-mono flex items-center gap-1 mt-0.5 hover:text-gold"
+                        >
+                          <IconPhone size={12} className="text-neutral-400" />
+                          {inv.customerPhone}
+                        </a>
+                        {inv.customerAddress && (
+                          <p className="text-[11px] text-neutral-400 mt-0.5 line-clamp-1">
+                            {inv.customerAddress}
+                          </p>
+                        )}
+                      </div>
+                      <span className="text-[11px] bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded font-medium shrink-0">
+                        {inv.items.length} {inv.items.length === 1 ? "Item" : "Items"}
+                      </span>
+                    </div>
+
+                    {/* Financial Summary Box */}
+                    <div className="bg-[#FAF8F5] border border-neutral-200/70 rounded-xl p-3 space-y-1.5 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-neutral-500 font-medium">Grand Total:</span>
+                        <span className="font-bold text-obsidian font-serif text-sm">
+                          ৳{inv.grandTotal.toLocaleString("en-US")}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-neutral-600 border-t border-neutral-200/50 pt-1.5">
+                        <span className="text-emerald-700 font-semibold">
+                          Paid: ৳{inv.paidAmount.toLocaleString("en-US")}
+                        </span>
+                        {inv.dueAmount > 0 ? (
+                          <span className="text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded">
+                            Due: ৳{inv.dueAmount.toLocaleString("en-US")}
+                          </span>
+                        ) : (
+                          <span className="text-emerald-600 font-medium">Fully Settled</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        onClick={() => setSelectedInvoiceForPrint(inv)}
+                        className="inline-flex items-center justify-center gap-1.5 bg-obsidian hover:bg-gold text-gold hover:text-obsidian font-bold text-xs py-2 rounded-xl transition shadow-2xs cursor-pointer"
+                      >
+                        <IconPrinter size={15} stroke={1.8} />
+                        <span>View / Print</span>
+                      </button>
+                      <a
+                        href={getInvoiceWhatsAppUrl(inv)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-xl transition shadow-2xs"
+                      >
+                        <IconBrandWhatsapp size={15} stroke={1.8} />
+                        <span>WhatsApp</span>
+                      </a>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
@@ -4920,41 +5460,484 @@ export default function AdminPage() {
         )}
 
         {/* ===================================================================
-            VIEW 9: PAYMENTS BREAKDOWN
+            VIEW 9: PAYMENTS & COLLECTIONS LEDGER (MODERN LUXURY & MOBILE RESPONSIVE)
            =================================================================== */}
         {activeTab === "payments" && (
           <div className="w-full max-w-7xl mx-auto p-4 sm:p-8 space-y-6">
-            <div className="border-b border-neutral-200 pb-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] block">
-                REVENUE &amp; COLLECTIONS
-              </span>
-              <h1 className="text-xl sm:text-2xl font-serif font-bold text-obsidian">
-                Payment Records &amp; Breakdown
-              </h1>
-              <p className="text-xs text-neutral-500">নগদ, বিকাশ ও ব্যাংক ট্রান্সফারের সারসংক্ষেপ।</p>
+            {/* Header Strip */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58928] flex items-center gap-1.5">
+                  <IconCreditCard size={14} className="text-gold" />
+                  FINANCIAL RECONCILIATION &amp; LEDGER
+                </span>
+                <h1 className="text-xl sm:text-2xl font-serif font-bold text-obsidian tracking-tight mt-1">
+                  Revenue &amp; Payment Collections
+                </h1>
+                <p className="text-xs text-neutral-500 mt-0.5">
+                  Real-time payment records, cash desk receipts, bKash MFS &amp; corporate bank settlements.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setActiveTab("invoices")}
+                  className="inline-flex items-center gap-2 bg-stonebg hover:bg-neutral-200 text-obsidian font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-xl border border-neutral-300 transition shadow-2xs cursor-pointer"
+                >
+                  <IconFileInvoice size={15} stroke={1.8} />
+                  <span>View All Invoices</span>
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white border border-neutral-200 p-5 rounded shadow-2xs">
-                <span className="text-[11px] text-neutral-500 uppercase font-bold">Total Paid Revenue</span>
-                <p className="text-2xl sm:text-3xl font-extrabold text-obsidian mt-1">
-                  ৳{totalPaidRevenue.toLocaleString("en-US")}
+            {/* 4 Financial KPI Metric Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    Total Collections
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-gold/15 text-[#9A731E] flex items-center justify-center">
+                    <IconCoins size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-obsidian tracking-tight font-serif">
+                    ৳{paymentMetrics.totalCollected.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    {paymentMetrics.txCount} Reconciled Transactions
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    Cash in Counter
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                    <IconCash size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-emerald-800 tracking-tight font-serif">
+                    ৳{paymentMetrics.cashTotal.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[11px] text-emerald-600 font-medium mt-0.5">
+                    Counter Cash Drawer Intake
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    bKash / MFS Wallet
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-pink-50 text-pink-700 flex items-center justify-center">
+                    <IconCreditCard size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-pink-800 tracking-tight font-serif">
+                    ৳{paymentMetrics.bkashTotal.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[11px] text-pink-600 font-medium mt-0.5">
+                    Merchant Mobile Payments
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-neutral-400">
+                    Bank Transfers
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                    <IconBuildingBank size={18} stroke={1.8} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-900 tracking-tight font-serif">
+                    ৳{paymentMetrics.bankTotal.toLocaleString("en-US")}
+                  </p>
+                  <p className="text-[11px] text-blue-600 font-medium mt-0.5">
+                    Direct Corporate Wire / Cheque
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Showroom Accounts & Settlement Desks Strip */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* bKash Merchant Card */}
+              <div className="bg-gradient-to-br from-pink-50/60 via-white to-white border border-pink-200/80 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-[#E2136E]" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#E2136E]">
+                      bKash Merchant Account
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold bg-pink-100 text-pink-800 px-2 py-0.5 rounded-full">
+                    Active Desk
+                  </span>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-500 font-medium">Showroom Merchant Number:</p>
+                  <div className="flex items-center justify-between gap-2 mt-1 bg-white border border-pink-200 rounded-xl px-3 py-2">
+                    <span className="font-mono font-bold text-sm sm:text-base text-obsidian tracking-wide">
+                      +880 1756-998277
+                    </span>
+                    <button
+                      onClick={handleCopyBkash}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold bg-pink-50 hover:bg-[#E2136E] text-[#E2136E] hover:text-white px-2.5 py-1 rounded-lg transition cursor-pointer"
+                    >
+                      {copiedBkash ? (
+                        <>
+                          <IconCheck size={12} stroke={2.5} />
+                          <span>Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <IconCopy size={12} stroke={2} />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+                <p className="text-[11px] text-neutral-500">
+                  Customer payment via QR code or Merchant Payment option. Instant SMS verification.
                 </p>
               </div>
 
-              <div className="bg-white border border-neutral-200 p-5 rounded shadow-2xs">
-                <span className="text-[11px] text-neutral-500 uppercase font-bold">Total Invoices</span>
-                <p className="text-2xl sm:text-3xl font-extrabold text-obsidian mt-1">
-                  {invoices.length}
+              {/* Showroom Counter Cash Desk */}
+              <div className="bg-gradient-to-br from-emerald-50/60 via-white to-white border border-emerald-200/80 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-emerald-600" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                      Showroom Cash Desk
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                    Counter #01
+                  </span>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-500 font-medium">Drawer Location:</p>
+                  <div className="mt-1 bg-white border border-emerald-200 rounded-xl px-3 py-2">
+                    <span className="font-bold text-sm sm:text-base text-obsidian">
+                      Bhabanipur Main Counter
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-neutral-500">
+                  Walk-in cash sales, advance token payments, and instant printed VAT money receipts.
                 </p>
               </div>
 
-              <div className="bg-white border border-neutral-200 p-5 rounded shadow-2xs">
-                <span className="text-[11px] text-neutral-500 uppercase font-bold">bKash Merchant Account</span>
-                <p className="text-sm font-bold text-pink-700 mt-1">
-                  +880 1756-998277
+              {/* Bank Settlement Desk */}
+              <div className="bg-gradient-to-br from-blue-50/60 via-white to-white border border-blue-200/80 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-blue-600" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
+                      Bank Settlement Desk
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                    Corporate Account
+                  </span>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-500 font-medium">Bank Clearing:</p>
+                  <div className="mt-1 bg-white border border-blue-200 rounded-xl px-3 py-2">
+                    <span className="font-bold text-sm sm:text-base text-obsidian">
+                      City Bank / DBBL Current
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-neutral-500">
+                  Project client wire transfers, RTGS/NPSB instant clearing, and account-payee cheques.
                 </p>
               </div>
+            </div>
+
+            {/* Filter and Search Bar for Ledger */}
+            <div className="bg-white border border-neutral-200/80 rounded-2xl p-3 sm:p-4 shadow-xs space-y-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                {/* Search Box */}
+                <div className="relative flex-1">
+                  <IconSearch
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400"
+                  />
+                  <input
+                    type="text"
+                    value={paymentSearch}
+                    onChange={(e) => setPaymentSearch(e.target.value)}
+                    placeholder="Search by receipt #, customer name, phone, channel..."
+                    className="w-full pl-9 pr-9 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-gold focus:outline-none transition"
+                  />
+                  {paymentSearch && (
+                    <button
+                      onClick={() => setPaymentSearch("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-obsidian"
+                    >
+                      <IconX size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Channel Filter Pills */}
+                <div className="flex items-center bg-neutral-100 p-1 rounded-xl text-xs overflow-x-auto">
+                  {(["All", "Cash", "bKash", "Bank Transfer"] as const).map((channel) => (
+                    <button
+                      key={channel}
+                      onClick={() => setPaymentChannelFilter(channel)}
+                      className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer text-[11px] whitespace-nowrap ${
+                        paymentChannelFilter === channel
+                          ? "bg-white text-obsidian font-bold shadow-xs"
+                          : "text-neutral-600 hover:text-obsidian"
+                      }`}
+                    >
+                      {channel}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status bar */}
+              <div className="flex items-center justify-between text-[11px] text-neutral-500 pt-1 border-t border-neutral-100">
+                <span>
+                  Showing <strong className="text-obsidian">{filteredPaymentTransactions.length}</strong> payment transactions
+                </span>
+                {(paymentSearch || paymentChannelFilter !== "All") && (
+                  <button
+                    onClick={() => {
+                      setPaymentSearch("");
+                      setPaymentChannelFilter("All");
+                    }}
+                    className="text-gold font-bold hover:underline cursor-pointer"
+                  >
+                    Reset Filter
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* DESKTOP TABLE VIEW (hidden on mobile, visible on md and up) */}
+            <div className="hidden md:block bg-white border border-neutral-200/80 rounded-2xl overflow-hidden shadow-xs">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#FAF8F5] border-b border-neutral-200 text-neutral-500 uppercase text-[10px] tracking-wider font-bold">
+                    <tr>
+                      <th className="py-3.5 px-4">Receipt Ref</th>
+                      <th className="py-3.5 px-4">Date</th>
+                      <th className="py-3.5 px-4">Customer (Payer)</th>
+                      <th className="py-3.5 px-4">Channel / Method</th>
+                      <th className="py-3.5 px-4">Linked Document</th>
+                      <th className="py-3.5 px-4">Amount Received</th>
+                      <th className="py-3.5 px-4">Reconciliation</th>
+                      <th className="py-3.5 px-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100">
+                    {filteredPaymentTransactions.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="py-12 text-center text-neutral-400">
+                          <IconCreditCard size={36} className="mx-auto mb-2 opacity-30" />
+                          <p className="font-medium text-sm text-neutral-600">No payment records found</p>
+                          <p className="text-xs text-neutral-400 mt-1">Try clearing search or filter</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredPaymentTransactions.map((tx) => (
+                        <tr key={tx.id} className="hover:bg-neutral-50/80 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <span className="font-mono font-bold text-obsidian bg-stonebg px-2.5 py-1 rounded-md border border-neutral-200 text-xs inline-block">
+                              {tx.refNo}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-neutral-600 whitespace-nowrap">
+                            {tx.date}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <p className="font-bold text-obsidian">{tx.customerName}</p>
+                            <p className="text-[11px] text-neutral-500 font-mono flex items-center gap-1">
+                              <IconPhone size={10} className="text-neutral-400" />
+                              {tx.customerPhone}
+                            </p>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`text-[10px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${
+                                tx.channel === "bKash"
+                                  ? "bg-pink-50 text-pink-700 border-pink-200"
+                                  : tx.channel === "Cash"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : "bg-blue-50 text-blue-700 border-blue-200"
+                              }`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  tx.channel === "bKash"
+                                    ? "bg-pink-600"
+                                    : tx.channel === "Cash"
+                                    ? "bg-emerald-600"
+                                    : "bg-blue-600"
+                                }`}
+                              />
+                              {tx.channel}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            {tx.invoice ? (
+                              <button
+                                onClick={() => setSelectedInvoiceForPrint(tx.invoice!)}
+                                className="font-mono text-xs font-bold text-gold hover:underline flex items-center gap-1 cursor-pointer"
+                              >
+                                <span>{tx.relatedId}</span>
+                                <IconReceipt size={12} />
+                              </button>
+                            ) : (
+                              <span className="font-mono text-xs text-neutral-600 font-medium">
+                                {tx.relatedId}
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span className="text-sm font-extrabold text-emerald-800 font-serif">
+                              ৳{tx.amount.toLocaleString("en-US")}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              <IconCheck size={11} stroke={2.5} />
+                              <span>{tx.status}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            {tx.invoice ? (
+                              <button
+                                onClick={() => setSelectedInvoiceForPrint(tx.invoice!)}
+                                className="inline-flex items-center gap-1 bg-obsidian text-gold hover:bg-gold hover:text-obsidian px-2.5 py-1 text-xs font-bold transition rounded-lg cursor-pointer shadow-2xs"
+                              >
+                                <IconPrinter size={13} stroke={1.8} />
+                                <span>Invoice</span>
+                              </button>
+                            ) : (
+                              <span className="text-neutral-400 text-xs italic">POS Order</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* MOBILE CARDS VIEW (visible on mobile, hidden on md and up) */}
+            <div className="block md:hidden space-y-3">
+              {filteredPaymentTransactions.length === 0 ? (
+                <div className="bg-white border border-neutral-200 rounded-2xl p-8 text-center text-neutral-400">
+                  <IconCreditCard size={36} className="mx-auto mb-2 opacity-30" />
+                  <p className="font-medium text-sm text-neutral-600">No payment records found</p>
+                  <p className="text-xs text-neutral-400 mt-1">Try resetting search or filter</p>
+                </div>
+              ) : (
+                filteredPaymentTransactions.map((tx) => (
+                  <div
+                    key={tx.id}
+                    className="bg-white border border-neutral-200/90 rounded-2xl p-4 shadow-xs space-y-3 transition hover:border-gold/40"
+                  >
+                    {/* Top Row: Ref # + Channel Badge + Date */}
+                    <div className="flex items-center justify-between gap-2 border-b border-neutral-100 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-obsidian bg-stonebg px-2.5 py-1 rounded-md border border-neutral-200 text-xs">
+                          {tx.refNo}
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${
+                            tx.channel === "bKash"
+                              ? "bg-pink-50 text-pink-700 border-pink-200"
+                              : tx.channel === "Cash"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-blue-50 text-blue-700 border-blue-200"
+                          }`}
+                        >
+                          {tx.channel}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-neutral-400">{tx.date}</span>
+                    </div>
+
+                    {/* Customer & Linked Doc */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-bold text-obsidian text-sm">{tx.customerName}</p>
+                        <a
+                          href={`tel:${tx.customerPhone}`}
+                          className="text-xs text-neutral-500 font-mono flex items-center gap-1 mt-0.5 hover:text-gold"
+                        >
+                          <IconPhone size={12} className="text-neutral-400" />
+                          {tx.customerPhone}
+                        </a>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-neutral-400 block uppercase font-medium">
+                          Linked To
+                        </span>
+                        {tx.invoice ? (
+                          <button
+                            onClick={() => setSelectedInvoiceForPrint(tx.invoice!)}
+                            className="font-mono text-xs font-bold text-gold hover:underline cursor-pointer"
+                          >
+                            {tx.relatedId}
+                          </button>
+                        ) : (
+                          <span className="font-mono text-xs text-neutral-600 font-medium">
+                            {tx.relatedId}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Amount & Status Bottom Bar */}
+                    <div className="bg-[#FAF8F5] border border-neutral-200/70 rounded-xl p-3 flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-neutral-400 block">
+                          Amount Received
+                        </span>
+                        <p className="text-lg font-extrabold text-emerald-800 font-serif">
+                          ৳{tx.amount.toLocaleString("en-US")}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          <IconCheck size={11} stroke={2.5} />
+                          <span>{tx.status}</span>
+                        </span>
+
+                        {tx.invoice && (
+                          <button
+                            onClick={() => setSelectedInvoiceForPrint(tx.invoice!)}
+                            className="inline-flex items-center gap-1 bg-obsidian text-gold hover:bg-gold hover:text-obsidian px-2.5 py-1 text-xs font-bold transition rounded-lg cursor-pointer"
+                          >
+                            <IconPrinter size={13} stroke={1.8} />
+                            <span>Invoice</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
@@ -5439,27 +6422,41 @@ export default function AdminPage() {
       )}
 
       {/* =====================================================================
-          MODAL 3: OFFICIAL PRINTABLE INVOICE MODAL
+          MODAL 3: OFFICIAL PRINTABLE INVOICE MODAL (MOBILE RESPONSIVE)
          ===================================================================== */}
       {selectedInvoiceForPrint && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto print:p-0">
-          <div className="bg-white max-w-2xl w-full border border-neutral-300 rounded shadow-2xl p-6 sm:p-8 space-y-6 my-auto print:border-none print:shadow-none print:p-0">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto print:p-0">
+          <div className="bg-white max-w-3xl w-full border border-neutral-300 rounded-2xl shadow-2xl p-4 sm:p-8 space-y-6 my-auto print:border-none print:shadow-none print:p-0 print:rounded-none">
             {/* Action Bar (Hidden on print) */}
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-3 print:hidden">
-              <span className="text-xs font-mono font-bold text-neutral-500">
-                Official Invoice Preview
-              </span>
+            <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-neutral-200 pb-3 print:hidden">
               <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold text-neutral-500 uppercase">
+                  Invoice Preview:
+                </span>
+                <span className="font-mono font-bold text-xs bg-stonebg text-obsidian px-2 py-0.5 rounded border border-neutral-200">
+                  {selectedInvoiceForPrint.invoiceNo}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <a
+                  href={getInvoiceWhatsAppUrl(selectedInvoiceForPrint)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 text-xs font-bold rounded-xl transition cursor-pointer shadow-xs"
+                >
+                  <IconBrandWhatsapp size={15} stroke={2} />
+                  <span>Send WhatsApp</span>
+                </a>
                 <button
                   onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 bg-obsidian text-gold hover:bg-gold hover:text-obsidian px-4 py-1.5 text-xs font-bold uppercase rounded transition cursor-pointer shadow-sm"
+                  className="inline-flex items-center gap-1.5 bg-obsidian text-gold hover:bg-gold hover:text-obsidian px-3.5 py-1.5 text-xs font-bold uppercase rounded-xl transition cursor-pointer shadow-xs"
                 >
                   <IconPrinter size={15} stroke={1.8} />
                   <span>Print Invoice</span>
                 </button>
                 <button
                   onClick={() => setSelectedInvoiceForPrint(null)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-neutral-600 hover:text-obsidian border border-neutral-300 rounded cursor-pointer"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-neutral-600 hover:text-obsidian border border-neutral-300 hover:border-neutral-400 rounded-xl cursor-pointer"
                 >
                   <IconX size={14} stroke={2} />
                   <span>Close</span>
@@ -5470,7 +6467,7 @@ export default function AdminPage() {
             {/* Official Invoice Body */}
             <div className="space-y-6">
               {/* Invoice Letterhead Header */}
-              <div className="flex items-start justify-between border-b-2 border-obsidian pb-4">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-3 border-b-2 border-obsidian pb-4">
                 <div className="space-y-1">
                   <h2 className="text-lg font-serif font-bold text-obsidian tracking-wide">
                     BROTHER&rsquo;S TILES &amp; SANITARY MART
@@ -5484,7 +6481,7 @@ export default function AdminPage() {
                   </p>
                 </div>
 
-                <div className="text-right space-y-1">
+                <div className="text-left sm:text-right space-y-1">
                   <span className="text-xs font-mono font-bold uppercase bg-stonebg px-2.5 py-1 border border-neutral-300 inline-block">
                     INVOICE
                   </span>
@@ -5496,7 +6493,7 @@ export default function AdminPage() {
               </div>
 
               {/* Bill To */}
-              <div className="grid grid-cols-2 gap-4 text-xs bg-neutral-50 p-3 border border-neutral-200 rounded">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs bg-neutral-50 p-3.5 border border-neutral-200 rounded-xl">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-neutral-400 block mb-0.5">
                     Customer Details (বিল প্রাপক)
@@ -5507,7 +6504,7 @@ export default function AdminPage() {
                   <p className="text-neutral-600 font-mono">{selectedInvoiceForPrint.customerPhone}</p>
                   <p className="text-neutral-500">{selectedInvoiceForPrint.customerAddress}</p>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right">
                   <span className="text-[10px] uppercase font-bold text-neutral-400 block mb-0.5">
                     Sales Representative
                   </span>
@@ -5516,40 +6513,42 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Items Table */}
-              <table className="w-full text-left text-xs border border-neutral-200">
-                <thead className="bg-[#FAF8F5] border-b border-neutral-200 uppercase text-[10px] text-neutral-600">
-                  <tr>
-                    <th className="py-2 px-3">#</th>
-                    <th className="py-2 px-3">Description</th>
-                    <th className="py-2 px-3">Qty</th>
-                    <th className="py-2 px-3">Rate</th>
-                    <th className="py-2 px-3 text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-200">
-                  {selectedInvoiceForPrint.items.map((item, idx) => (
-                    <tr key={idx}>
-                      <td className="py-2 px-3 font-mono text-neutral-400">{idx + 1}</td>
-                      <td className="py-2 px-3">
-                        <p className="font-bold text-obsidian">{item.name}</p>
-                        <p className="text-[10px] text-neutral-400 font-mono">{item.code}</p>
-                      </td>
-                      <td className="py-2 px-3 font-medium">
-                        {item.quantity} {item.priceUnit === "Piece" ? "Pcs" : "Boxes"}
-                      </td>
-                      <td className="py-2 px-3 text-neutral-600">৳{item.unitPrice}</td>
-                      <td className="py-2 px-3 font-bold text-right text-obsidian">
-                        ৳{item.subtotal.toLocaleString("en-US")}
-                      </td>
+              {/* Items Table with Mobile Horizontal Scroll */}
+              <div className="overflow-x-auto -mx-1 sm:mx-0 border border-neutral-200 rounded-lg">
+                <table className="w-full text-left text-xs min-w-[500px]">
+                  <thead className="bg-[#FAF8F5] border-b border-neutral-200 uppercase text-[10px] text-neutral-600">
+                    <tr>
+                      <th className="py-2.5 px-3">#</th>
+                      <th className="py-2.5 px-3">Description</th>
+                      <th className="py-2.5 px-3">Qty</th>
+                      <th className="py-2.5 px-3">Rate</th>
+                      <th className="py-2.5 px-3 text-right">Total</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-200">
+                    {selectedInvoiceForPrint.items.map((item, idx) => (
+                      <tr key={idx}>
+                        <td className="py-2.5 px-3 font-mono text-neutral-400">{idx + 1}</td>
+                        <td className="py-2.5 px-3">
+                          <p className="font-bold text-obsidian">{item.name}</p>
+                          <p className="text-[10px] text-neutral-400 font-mono">{item.code}</p>
+                        </td>
+                        <td className="py-2.5 px-3 font-medium">
+                          {item.quantity} {item.priceUnit === "Piece" ? "Pcs" : "Boxes"}
+                        </td>
+                        <td className="py-2.5 px-3 text-neutral-600">৳{item.unitPrice}</td>
+                        <td className="py-2.5 px-3 font-bold text-right text-obsidian">
+                          ৳{item.subtotal.toLocaleString("en-US")}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
               {/* Invoice Summary */}
-              <div className="flex justify-between items-start text-xs pt-2">
-                <div className="max-w-xs text-[11px] text-neutral-500 space-y-1">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 text-xs pt-2">
+                <div className="w-full sm:max-w-xs text-[11px] text-neutral-500 space-y-1">
                   <p>• বিক্রিত মাল ফেরত নেওয়া হয় না।</p>
                   <p>• টাইলস লাগানোর পূর্বে শেড ও সাইজ যাচাই করে নিন।</p>
                   {selectedInvoiceForPrint.notes && (
@@ -5559,7 +6558,7 @@ export default function AdminPage() {
                   )}
                 </div>
 
-                <div className="w-56 space-y-1.5 text-right">
+                <div className="w-full sm:w-60 space-y-1.5 text-right bg-neutral-50/70 p-3 rounded-xl border border-neutral-200/60 sm:bg-transparent sm:p-0 sm:border-none">
                   <div className="flex justify-between text-neutral-600">
                     <span>Subtotal:</span>
                     <span>৳{selectedInvoiceForPrint.subtotal.toLocaleString("en-US")}</span>
@@ -5570,7 +6569,7 @@ export default function AdminPage() {
                       <span>-৳{selectedInvoiceForPrint.discount.toLocaleString("en-US")}</span>
                     </div>
                   )}
-                  <div className="flex justify-between font-extrabold text-sm text-obsidian border-t border-b border-neutral-300 py-1">
+                  <div className="flex justify-between font-extrabold text-sm text-obsidian border-t border-b border-neutral-300 py-1.5">
                     <span>Grand Total:</span>
                     <span>৳{selectedInvoiceForPrint.grandTotal.toLocaleString("en-US")}</span>
                   </div>
@@ -5588,9 +6587,9 @@ export default function AdminPage() {
               </div>
 
               {/* Signatures */}
-              <div className="pt-8 flex justify-between text-xs text-neutral-500 border-t border-dashed border-neutral-300">
+              <div className="pt-8 flex flex-col sm:flex-row justify-between items-center sm:items-start gap-6 sm:gap-0 text-xs text-neutral-500 border-t border-dashed border-neutral-300">
                 <div className="text-center">
-                  <div className="w-32 border-b border-neutral-400 mb-1" />
+                  <div className="w-36 border-b border-neutral-400 mb-1" />
                   <span>Customer Signature</span>
                 </div>
                 <div className="text-center">
