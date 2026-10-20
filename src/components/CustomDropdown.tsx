@@ -144,6 +144,8 @@ export default function CustomDropdown({
     <div
       ref={containerRef}
       className={`relative inline-block text-left ${
+        isOpen ? "z-50" : "z-10"
+      } ${
         variant === "pill" || variant === "compact" ? "w-auto" : "w-full"
       }`}
       onKeyDown={handleKeyDown}

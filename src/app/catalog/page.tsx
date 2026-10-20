@@ -521,9 +521,9 @@ function CatalogContent() {
         </div>
       </div>
 
-      {/* Sticky Filter Bar (Static on mobile for maximum browsing viewport, snaps directly beneath navbar on desktop) */}
-      <div className="static md:sticky md:top-[var(--header-height,172px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs py-3 sm:py-3.5 transition-all">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-4">
+      {/* Sticky Filter Bar (Snaps directly beneath sticky category navbar across both mobile and desktop) */}
+      <div className="sticky top-[var(--header-height,42px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs py-2.5 sm:py-3.5 transition-all">
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-8 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
           {/* Left: Filter Dropdowns with expanded spacing */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-3.5 lg:gap-4">
             {/* Color Custom Dropdown */}
