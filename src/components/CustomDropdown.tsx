@@ -6,6 +6,7 @@ import { IconChevronDown, IconCheck } from "@tabler/icons-react";
 export interface DropdownOption {
   value: string;
   label: string;
+  mobileLabel?: string;
   subLabel?: string;
   badge?: string;
   colorSwatch?: string;
@@ -42,11 +43,30 @@ export default function CustomDropdown({
   ariaLabel,
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [menuCoords, setMenuCoords] = useState<{ top: number; left: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
 
   // Selected option details
   const selectedOption = options.find((opt) => opt.value === value);
+
+  const updateMenuCoords = () => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const menuWidth = Math.min(230, window.innerWidth - 16);
+    let left = align === "right" ? rect.right - menuWidth : rect.left;
+    left = Math.max(8, Math.min(window.innerWidth - menuWidth - 8, left));
+    const top = rect.bottom + 6;
+    setMenuCoords({ top, left });
+  };
+
+  const handleToggle = () => {
+    if (disabled) return;
+    if (!isOpen) {
+      updateMenuCoords();
+    }
+    setIsOpen((prev) => !prev);
+  };
 
   // Close when clicking outside
   useEffect(() => {
@@ -67,6 +87,21 @@ export default function CustomDropdown({
     };
   }, [isOpen]);
 
+  // Recalculate menu position on scroll/resize
+  useEffect(() => {
+    if (!isOpen) return;
+    updateMenuCoords();
+    const handleScrollOrResize = () => {
+      updateMenuCoords();
+    };
+    window.addEventListener("scroll", handleScrollOrResize, true);
+    window.addEventListener("resize", handleScrollOrResize);
+    return () => {
+      window.removeEventListener("scroll", handleScrollOrResize, true);
+      window.removeEventListener("resize", handleScrollOrResize);
+    };
+  }, [isOpen, align]);
+
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return;
@@ -76,6 +111,7 @@ export default function CustomDropdown({
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (!isOpen) {
+        updateMenuCoords();
         setIsOpen(true);
       } else {
         const currentIndex = options.findIndex((opt) => opt.value === value);
@@ -86,6 +122,7 @@ export default function CustomDropdown({
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (!isOpen) {
+        updateMenuCoords();
         setIsOpen(true);
       } else {
         const currentIndex = options.findIndex((opt) => opt.value === value);
@@ -95,6 +132,7 @@ export default function CustomDropdown({
       }
     } else if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
+      if (!isOpen) updateMenuCoords();
       setIsOpen((prev) => !prev);
     }
   };
@@ -107,7 +145,7 @@ export default function CustomDropdown({
     const isFiltered = isPill && value && value !== "All" && value !== "popular";
 
     if (isPill) {
-      return `flex items-center justify-between gap-2 px-3.5 py-1.5 sm:py-2 text-xs font-semibold rounded-full border transition-all duration-200 cursor-pointer shadow-2xs select-none ${
+      return `flex items-center justify-between gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full border transition-all duration-200 cursor-pointer shadow-2xs select-none shrink-0 whitespace-nowrap ${
         isFiltered
           ? "bg-obsidian text-gold border-gold/80 shadow-sm ring-1 ring-gold/40"
           : isOpen
@@ -117,7 +155,7 @@ export default function CustomDropdown({
     }
 
     if (isDark) {
-      return `w-full flex items-center justify-between gap-2 px-3.5 py-2.5 text-xs font-medium rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+      return `w-full flex items-center justify-between gap-2 px-3.5 py-2.5 text-xs font-medium rounded-xl border transition-all duration-200 cursor-pointer select-none shrink-0 ${
         isOpen
           ? "bg-[#1f1f1f] text-white border-gold ring-2 ring-gold/20"
           : "bg-[#141414] hover:bg-[#1a1a1a] text-neutral-100 border-white/10 hover:border-gold/50"
@@ -125,7 +163,7 @@ export default function CustomDropdown({
     }
 
     if (isCompact) {
-      return `flex items-center justify-between gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border transition-all duration-200 cursor-pointer select-none ${
+      return `flex items-center justify-between gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border transition-all duration-200 cursor-pointer select-none shrink-0 whitespace-nowrap ${
         isOpen
           ? "bg-white border-obsidian ring-1 ring-gold/30"
           : "bg-white hover:bg-neutral-50 border-neutral-300 hover:border-gold/60 text-obsidian"
@@ -160,7 +198,7 @@ export default function CustomDropdown({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={handleToggle}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={ariaLabel || label || placeholder}
@@ -169,7 +207,7 @@ export default function CustomDropdown({
           disabled ? "opacity-50 cursor-not-allowed" : ""
         } ${className}`}
       >
-        <span className="flex items-center gap-2 truncate">
+        <span className="flex items-center gap-1.5 sm:gap-2 truncate">
           {prefixIcon && <span className="shrink-0">{prefixIcon}</span>}
           {selectedOption?.colorSwatch && (
             <span
@@ -181,17 +219,30 @@ export default function CustomDropdown({
             <span className="shrink-0">{selectedOption.icon}</span>
           )}
           <span className="truncate">
-            {selectedOption ? selectedOption.label : placeholder}
+            {selectedOption ? (
+              <>
+                {selectedOption.mobileLabel ? (
+                  <>
+                    <span className="inline sm:hidden">{selectedOption.mobileLabel}</span>
+                    <span className="hidden sm:inline">{selectedOption.label}</span>
+                  </>
+                ) : (
+                  selectedOption.label
+                )}
+              </>
+            ) : (
+              placeholder
+            )}
           </span>
           {selectedOption?.badge && (
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-gold/20 text-gold-dark font-bold">
+            <span className="hidden sm:inline-block text-[10px] px-1.5 py-0.2 rounded bg-gold/20 text-gold-dark font-bold">
               {selectedOption.badge}
             </span>
           )}
         </span>
 
         <IconChevronDown
-          size={variant === "compact" ? 13 : 15}
+          size={variant === "compact" || variant === "pill" ? 13 : 15}
           stroke={2}
           className={`shrink-0 transition-transform duration-200 ${
             isOpen ? "rotate-180 text-gold" : "text-neutral-400"
@@ -205,10 +256,10 @@ export default function CustomDropdown({
           id={listboxId}
           role="listbox"
           tabIndex={-1}
-          className={`absolute top-full mt-1.5 z-50 min-w-[200px] max-w-[calc(100vw-2rem)] max-h-72 overflow-y-auto overscroll-contain rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl shadow-2xl p-1.5 transition-all duration-150 animate-in fade-in zoom-in-95 focus:outline-none ${
-            align === "right" ? "right-0" : "left-0"
-          } ${menuClassName}`}
+          className={`fixed z-50 min-w-[200px] max-w-[calc(100vw-1rem)] max-h-72 overflow-y-auto overscroll-contain rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl shadow-2xl p-1.5 transition-all duration-150 animate-in fade-in zoom-in-95 focus:outline-none ${menuClassName}`}
           style={{
+            top: menuCoords ? `${menuCoords.top}px` : "auto",
+            left: menuCoords ? `${menuCoords.left}px` : "auto",
             boxShadow:
               "0 20px 35px -10px rgba(0, 0, 0, 0.15), 0 8px 16px -6px rgba(0, 0, 0, 0.08)",
           }}

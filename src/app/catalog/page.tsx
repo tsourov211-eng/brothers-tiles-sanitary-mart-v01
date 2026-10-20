@@ -79,75 +79,75 @@ function normalizeSizeForComparison(s: string): string {
 }
 
 const COLOR_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Color" },
-  { value: "white-gold", label: "White & Gold", colorSwatch: "#F3F4F6", subLabel: "সাদা ও সোনালি মার্বেল" },
-  { value: "black", label: "Black & Charcoal", colorSwatch: "#1F2937", subLabel: "কালো গ্রাফাইট" },
-  { value: "grey", label: "Grey & Silver", colorSwatch: "#9CA3AF", subLabel: "ধূসর স্ল্যাব" },
-  { value: "wood", label: "Wood & Brown", colorSwatch: "#B45309", subLabel: "কাঠের টেক্সচার" },
-  { value: "terracotta", label: "Terracotta & Brick", colorSwatch: "#9E5B40", subLabel: "টেরাকোটা ও কপার" },
-  { value: "blue", label: "Blue & Oceanic", colorSwatch: "#2563EB", subLabel: "নীল গ্লেজড" },
-  { value: "green", label: "Green & Emerald", colorSwatch: "#3E5A4C", subLabel: "সবুজ ও এমারেল্ড" },
+  { value: "All", label: "Color", mobileLabel: "Color" },
+  { value: "white-gold", label: "White & Gold", mobileLabel: "White", colorSwatch: "#F3F4F6", subLabel: "সাদা ও সোনালি মার্বেল" },
+  { value: "black", label: "Black & Charcoal", mobileLabel: "Black", colorSwatch: "#1F2937", subLabel: "কালো গ্রাফাইট" },
+  { value: "grey", label: "Grey & Silver", mobileLabel: "Grey", colorSwatch: "#9CA3AF", subLabel: "ধূসর স্ল্যাব" },
+  { value: "wood", label: "Wood & Brown", mobileLabel: "Wood", colorSwatch: "#B45309", subLabel: "কাঠের টেক্সচার" },
+  { value: "terracotta", label: "Terracotta & Brick", mobileLabel: "Terracotta", colorSwatch: "#9E5B40", subLabel: "টেরাকোটা ও কপার" },
+  { value: "blue", label: "Blue & Oceanic", mobileLabel: "Blue", colorSwatch: "#2563EB", subLabel: "নীল গ্লেজড" },
+  { value: "green", label: "Green & Emerald", mobileLabel: "Green", colorSwatch: "#3E5A4C", subLabel: "সবুজ ও এমারেল্ড" },
 ];
 
 const CATEGORY_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Category" },
-  { value: "Tiles", label: "All Tiles (টাইলস)", subLabel: "সকল টাইলস (৯৯২টি)" },
-  { value: "Floor Tiles", label: "Floor Tiles", subLabel: "ফ্লোর টাইলস ও স্ল্যাব" },
-  { value: "Wall Tiles", label: "Wall Tiles", subLabel: "ওয়াল টাইলস" },
-  { value: "01 - Ceramic Wall Tiles", label: "Ceramic Wall Tiles (478)", subLabel: "সিরামিক ওয়াল" },
-  { value: "02 - Ceramic Cladding Tiles", label: "Ceramic Cladding (7)", subLabel: "ক্লাডিং এক্সটেরিয়র" },
-  { value: "03 - Porcelain Wall & Floor Tiles", label: "Porcelain Wall & Floor (122)", subLabel: "পোরসেলিন ৩০x৬০" },
-  { value: "04 - Porcelain Floor Tiles", label: "Porcelain Floor & Slabs (312)", subLabel: "গ্র্যান্ড স্ল্যাব" },
-  { value: "05 - Porcelain Industrial, Step & Parking Tiles", label: "Industrial, Step & Parking (55)", subLabel: "সিঁড়ি ও পার্কিং" },
-  { value: "Basin", label: "Basin (বেসিন)", subLabel: "বেসিন ও ভ্যানিটি" },
-  { value: "Commode", label: "Commode (কমোড)", subLabel: "কমোড ও প্যান" },
-  { value: "Sanitary", label: "Sanitary Ware", subLabel: "স্যানিটারি পণ্য" },
-  { value: "Bathroom Accessories", label: "Bathroom Accessories", subLabel: "বাথরুম ফিটিংস" },
-  { value: "Stair & Parking", label: "Stair & Parking", subLabel: "সিঁড়ি ও পার্কিং" },
+  { value: "All", label: "Category", mobileLabel: "Category" },
+  { value: "Tiles", label: "All Tiles (টাইলস)", mobileLabel: "Tiles", subLabel: "সকল টাইলস (৯৯২টি)" },
+  { value: "Floor Tiles", label: "Floor Tiles", mobileLabel: "Floor", subLabel: "ফ্লোর টাইলস ও স্ল্যাব" },
+  { value: "Wall Tiles", label: "Wall Tiles", mobileLabel: "Wall", subLabel: "ওয়াল টাইলস" },
+  { value: "01 - Ceramic Wall Tiles", label: "Ceramic Wall Tiles (478)", mobileLabel: "Ceramic Wall", subLabel: "সিরামিক ওয়াল" },
+  { value: "02 - Ceramic Cladding Tiles", label: "Ceramic Cladding (7)", mobileLabel: "Cladding", subLabel: "ক্লাডিং এক্সটেরিয়র" },
+  { value: "03 - Porcelain Wall & Floor Tiles", label: "Porcelain Wall & Floor (122)", mobileLabel: "Porcelain", subLabel: "পোরসেলিন ৩০x৬০" },
+  { value: "04 - Porcelain Floor Tiles", label: "Porcelain Floor & Slabs (312)", mobileLabel: "Slabs", subLabel: "গ্র্যান্ড স্ল্যাব" },
+  { value: "05 - Porcelain Industrial, Step & Parking Tiles", label: "Industrial, Step & Parking (55)", mobileLabel: "Step/Parking", subLabel: "সিঁড়ি ও পার্কিং" },
+  { value: "Basin", label: "Basin (বেসিন)", mobileLabel: "Basin", subLabel: "বেসিন ও ভ্যানিটি" },
+  { value: "Commode", label: "Commode (কমোড)", mobileLabel: "Commode", subLabel: "কমোড ও প্যান" },
+  { value: "Sanitary", label: "Sanitary Ware", mobileLabel: "Sanitary", subLabel: "স্যানিটারি পণ্য" },
+  { value: "Bathroom Accessories", label: "Bathroom Accessories", mobileLabel: "Accessories", subLabel: "বাথরুম ফিটিংস" },
+  { value: "Stair & Parking", label: "Stair & Parking", mobileLabel: "Parking", subLabel: "সিঁড়ি ও পার্কিং" },
 ];
 
 const SIZE_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Tile Size" },
-  { value: "60x120", label: "60x120 cm (24x48″ Slab)", badge: "Flagship" },
-  { value: "80x80", label: "80x80 cm (32x32″ Royal)", badge: "Popular" },
-  { value: "60x60", label: "60x60 cm (24x24″ Grand)", badge: "Standard" },
-  { value: "30x90", label: "30x90 cm (12x36″ Wall)", badge: "Premija" },
-  { value: "30x60", label: "30x60 cm (12x24″ Wall/Floor)" },
-  { value: "30x50.5", label: "30x50.5 cm (12x20″ Vivid)" },
-  { value: "25x70", label: "25x70 cm (10x28″ Paris)" },
-  { value: "25x40", label: "25x40 cm (10x16″ Wall)" },
-  { value: "20x30", label: "20x30 cm (8x12″ Wall)" },
-  { value: "40x40", label: "40x40 cm (16x16″ Parking)" },
-  { value: "30.5x30.5", label: "30.5x30.5 cm (Step/Tread)" },
-  { value: "30x30", label: "30x30 cm (Parking/Rustic)" },
-  { value: "20x7.5", label: "20x7.5 cm (Cladding)" },
-  { value: "30.5x7.5", label: "30.5x7.5 cm (Border)" },
+  { value: "All", label: "Tile Size", mobileLabel: "Size" },
+  { value: "60x120", label: "60x120 cm (24x48″ Slab)", mobileLabel: "60x120", badge: "Flagship" },
+  { value: "80x80", label: "80x80 cm (32x32″ Royal)", mobileLabel: "80x80", badge: "Popular" },
+  { value: "60x60", label: "60x60 cm (24x24″ Grand)", mobileLabel: "60x60", badge: "Standard" },
+  { value: "30x90", label: "30x90 cm (12x36″ Wall)", mobileLabel: "30x90", badge: "Premija" },
+  { value: "30x60", label: "30x60 cm (12x24″ Wall/Floor)", mobileLabel: "30x60" },
+  { value: "30x50.5", label: "30x50.5 cm (12x20″ Vivid)", mobileLabel: "30x50.5" },
+  { value: "25x70", label: "25x70 cm (10x28″ Paris)", mobileLabel: "25x70" },
+  { value: "25x40", label: "25x40 cm (10x16″ Wall)", mobileLabel: "25x40" },
+  { value: "20x30", label: "20x30 cm (8x12″ Wall)", mobileLabel: "20x30" },
+  { value: "40x40", label: "40x40 cm (16x16″ Parking)", mobileLabel: "40x40" },
+  { value: "30.5x30.5", label: "30.5x30.5 cm (Step/Tread)", mobileLabel: "30.5x30.5" },
+  { value: "30x30", label: "30x30 cm (Parking/Rustic)", mobileLabel: "30x30" },
+  { value: "20x7.5", label: "20x7.5 cm (Cladding)", mobileLabel: "20x7.5" },
+  { value: "30.5x7.5", label: "30.5x7.5 cm (Border)", mobileLabel: "30.5x7.5" },
 ];
 
 const FINISH_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Finish" },
-  { value: "glossy", label: "Glossy / Mirror Polish", subLabel: "চকচকে মিরর পলিশ" },
-  { value: "matte", label: "Matte / Satin / Rustic", subLabel: "ম্যাট ও রাস্টিক ফিনিশ" },
-  { value: "sugar", label: "Sugar Glazed / Carving", subLabel: "সুগার গ্লেজড ও কার্ভিং" },
+  { value: "All", label: "Finish", mobileLabel: "Finish" },
+  { value: "glossy", label: "Glossy / Mirror Polish", mobileLabel: "Glossy", subLabel: "চকচকে মিরর পলিশ" },
+  { value: "matte", label: "Matte / Satin / Rustic", mobileLabel: "Matte", subLabel: "ম্যাট ও রাস্টিক ফিনিশ" },
+  { value: "sugar", label: "Sugar Glazed / Carving", mobileLabel: "Sugar", subLabel: "সুগার গ্লেজড ও কার্ভিং" },
 ];
 
 const BRAND_OPTIONS: DropdownOption[] = [
-  { value: "All", label: "Brand" },
-  { value: "RAK Ceramics", label: "RAK Ceramics", badge: "Flagship" },
-  { value: "Akij Ceramics", label: "Akij Ceramics" },
-  { value: "DBL Ceramics", label: "DBL Ceramics" },
-  { value: "Fu-Wang Ceramic", label: "Fu-Wang Ceramic" },
-  { value: "Fresh Ceramics", label: "Fresh Ceramics" },
-  { value: "Mir Ceramic", label: "Mir Ceramic" },
-  { value: "Abul Khair Ceramic", label: "Abul Khair Ceramic" },
+  { value: "All", label: "Brand", mobileLabel: "Brand" },
+  { value: "RAK Ceramics", label: "RAK Ceramics", mobileLabel: "RAK", badge: "Flagship" },
+  { value: "Akij Ceramics", label: "Akij Ceramics", mobileLabel: "Akij" },
+  { value: "DBL Ceramics", label: "DBL Ceramics", mobileLabel: "DBL" },
+  { value: "Fu-Wang Ceramic", label: "Fu-Wang Ceramic", mobileLabel: "Fu-Wang" },
+  { value: "Fresh Ceramics", label: "Fresh Ceramics", mobileLabel: "Fresh" },
+  { value: "Mir Ceramic", label: "Mir Ceramic", mobileLabel: "Mir" },
+  { value: "Abul Khair Ceramic", label: "Abul Khair Ceramic", mobileLabel: "Abul Khair" },
 ];
 
 const SORT_OPTIONS: DropdownOption[] = [
-  { value: "popular", label: "Most Popular", badge: "Hot" },
-  { value: "page-asc", label: "Catalog PDF Page (P007 - P114)" },
-  { value: "price-low", label: "Price: Low to High" },
-  { value: "price-high", label: "Price: High to Low" },
-  { value: "newest", label: "Newest Arrivals", badge: "New" },
+  { value: "popular", label: "Most Popular", mobileLabel: "Popular", badge: "Hot" },
+  { value: "page-asc", label: "Catalog PDF Page (P007 - P114)", mobileLabel: "Catalog" },
+  { value: "price-low", label: "Price: Low to High", mobileLabel: "Price: Low" },
+  { value: "price-high", label: "Price: High to Low", mobileLabel: "Price: High" },
+  { value: "newest", label: "Newest Arrivals", mobileLabel: "Newest", badge: "New" },
 ];
 
 function CatalogContent() {
@@ -521,103 +521,118 @@ function CatalogContent() {
         </div>
       </div>
 
-      {/* Sticky Filter Bar (Snaps directly beneath sticky category navbar across both mobile and desktop) */}
-      <div className="sticky top-[var(--header-height,42px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs py-2.5 sm:py-3.5 transition-all">
-        <div className="max-w-[1400px] mx-auto px-3 sm:px-8 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
-          {/* Left: Filter Dropdowns with expanded spacing */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-3.5 lg:gap-4">
-            {/* Color Custom Dropdown */}
-            <CustomDropdown
-              variant="pill"
-              value={color}
-              onChange={handleColorChange}
-              options={COLOR_OPTIONS}
-              ariaLabel="Filter by color"
-            />
-
-            {/* Category Custom Dropdown */}
-            <CustomDropdown
-              variant="pill"
-              value={category}
-              onChange={handleCategoryChange}
-              options={CATEGORY_OPTIONS}
-              ariaLabel="Filter by category"
-            />
-
-            {/* Size Custom Dropdown */}
-            <CustomDropdown
-              variant="pill"
-              value={size}
-              onChange={handleSizeChange}
-              options={SIZE_OPTIONS}
-              ariaLabel="Filter by size"
-            />
-
-            {/* Finish Custom Dropdown */}
-            <CustomDropdown
-              variant="pill"
-              value={finish}
-              onChange={handleFinishChange}
-              options={FINISH_OPTIONS}
-              ariaLabel="Filter by finish"
-            />
-
-            {/* Brand Custom Dropdown */}
-            <CustomDropdown
-              variant="pill"
-              value={brand}
-              onChange={handleBrandChange}
-              options={BRAND_OPTIONS}
-              ariaLabel="Filter by brand"
-            />
-          </div>
-
-          {/* Right: Wishlist, Reset & Sort By with increased spacing */}
-          <div className="flex items-center justify-between lg:justify-end gap-2.5 sm:gap-3 lg:gap-3.5 shrink-0 w-full lg:w-auto">
-            <button
-              onClick={() => {
-                setOnlyWishlist(!onlyWishlist);
-                setVisibleCount(36);
-              }}
-              className={`py-1.5 sm:py-2 px-3 sm:px-3.5 text-xs font-semibold rounded-full border transition cursor-pointer flex items-center gap-1.5 shadow-2xs ${
-                onlyWishlist
-                  ? "bg-obsidian text-gold border-gold"
-                  : "bg-white text-obsidian border-neutral-300 hover:border-obsidian"
-              }`}
-            >
-              {onlyWishlist ? (
-                <IconHeartFilled size={13} className="text-gold" />
-              ) : (
-                <IconHeart size={13} stroke={2} className="text-red-500" />
-              )}
-              <span className="hidden sm:inline">Wishlist</span>
-              <span>({wishlist.length})</span>
-            </button>
-
-            <button
-              onClick={resetFilters}
-              className={`py-1.5 sm:py-2 px-3 sm:px-3.5 text-xs font-semibold rounded-full border transition cursor-pointer flex items-center gap-1.5 shadow-2xs ${
-                activeFiltersCount > 0
-                  ? "border-gold bg-gold/10 text-obsidian font-bold hover:bg-gold/20"
-                  : "border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-700"
-              }`}
-              title="Reset all filters"
-            >
-              <IconRotate size={13} stroke={2} />
-              <span className="hidden sm:inline">Reset</span>
-              {activeFiltersCount > 0 && <span>({activeFiltersCount})</span>}
-            </button>
-
-            <div className="flex items-center gap-1 text-xs text-neutral-600">
-              <span className="text-neutral-500 hidden xl:inline">Sort:</span>
+      {/* Sticky Filter Bar (Single Horizontal Line on Mobile, Responsive Bar on Desktop) */}
+      <div className="sticky top-[var(--header-height,42px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs py-2 sm:py-3 transition-all">
+        <div className="max-w-[1400px] mx-auto px-2.5 sm:px-8">
+          {/* Unified bar: single horizontal scrolling line on mobile, justified two-sided on desktop */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 flex-nowrap lg:justify-between lg:overflow-visible">
+            {/* Filter Dropdowns */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3.5 shrink-0 flex-nowrap">
+              {/* Color Custom Dropdown */}
               <CustomDropdown
                 variant="pill"
-                align="right"
-                value={sortBy}
-                onChange={handleSortChange}
-                options={SORT_OPTIONS}
-                ariaLabel="Sort products"
+                value={color}
+                onChange={handleColorChange}
+                options={COLOR_OPTIONS}
+                placeholder="Color"
+                ariaLabel="Filter by color"
               />
+
+              {/* Category Custom Dropdown */}
+              <CustomDropdown
+                variant="pill"
+                value={category}
+                onChange={handleCategoryChange}
+                options={CATEGORY_OPTIONS}
+                placeholder="Category"
+                ariaLabel="Filter by category"
+              />
+
+              {/* Size Custom Dropdown */}
+              <CustomDropdown
+                variant="pill"
+                value={size}
+                onChange={handleSizeChange}
+                options={SIZE_OPTIONS}
+                placeholder="Size"
+                ariaLabel="Filter by size"
+              />
+
+              {/* Finish Custom Dropdown */}
+              <CustomDropdown
+                variant="pill"
+                value={finish}
+                onChange={handleFinishChange}
+                options={FINISH_OPTIONS}
+                placeholder="Finish"
+                ariaLabel="Filter by finish"
+              />
+
+              {/* Brand Custom Dropdown */}
+              <CustomDropdown
+                variant="pill"
+                value={brand}
+                onChange={handleBrandChange}
+                options={BRAND_OPTIONS}
+                placeholder="Brand"
+                ariaLabel="Filter by brand"
+              />
+            </div>
+
+            {/* Subtle Divider between filters and actions on mobile */}
+            <div className="h-5 w-[1px] bg-neutral-200 shrink-0 lg:hidden" />
+
+            {/* Right: Wishlist, Reset & Sort By */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 shrink-0 flex-nowrap">
+              <button
+                type="button"
+                onClick={() => {
+                  setOnlyWishlist(!onlyWishlist);
+                  setVisibleCount(36);
+                }}
+                className={`py-1.5 px-2.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold rounded-full border transition cursor-pointer flex items-center gap-1 shadow-2xs shrink-0 whitespace-nowrap ${
+                  onlyWishlist
+                    ? "bg-obsidian text-gold border-gold"
+                    : "bg-white text-obsidian border-neutral-300 hover:border-obsidian"
+                }`}
+                title="Wishlist items"
+              >
+                {onlyWishlist ? (
+                  <IconHeartFilled size={13} className="text-gold" />
+                ) : (
+                  <IconHeart size={13} stroke={2} className="text-red-500" />
+                )}
+                <span className="hidden sm:inline">Wishlist</span>
+                <span>({wishlist.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={resetFilters}
+                className={`py-1.5 px-2.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold rounded-full border transition cursor-pointer flex items-center gap-1 shadow-2xs shrink-0 whitespace-nowrap ${
+                  activeFiltersCount > 0
+                    ? "border-gold bg-gold/10 text-obsidian font-bold hover:bg-gold/20"
+                    : "border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-700"
+                }`}
+                title="Reset all filters"
+              >
+                <IconRotate size={13} stroke={2} />
+                <span className="hidden sm:inline">Reset</span>
+                {activeFiltersCount > 0 && <span>({activeFiltersCount})</span>}
+              </button>
+
+              <div className="flex items-center gap-1 text-[11px] sm:text-xs text-neutral-600 shrink-0">
+                <span className="text-neutral-500 hidden xl:inline">Sort:</span>
+                <CustomDropdown
+                  variant="pill"
+                  align="right"
+                  value={sortBy}
+                  onChange={handleSortChange}
+                  options={SORT_OPTIONS}
+                  placeholder="Sort"
+                  ariaLabel="Sort products"
+                />
+              </div>
             </div>
           </div>
         </div>

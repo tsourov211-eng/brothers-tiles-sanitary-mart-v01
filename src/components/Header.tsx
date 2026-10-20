@@ -36,11 +36,11 @@ const CATEGORY_NAV_ITEMS = [
 ];
 
 const MOBILE_CATEGORY_NAV_ITEMS = [
-  { id: "new", label: "NEW ARRIVALS", href: "/catalog?filter=new" },
-  { id: "tiles", label: "WALL & FLOOR TILES", href: "/catalog?category=Tiles" },
+  { id: "new", label: "NEW", href: "/catalog?filter=new" },
+  { id: "tiles", label: "TILES", href: "/catalog?category=Tiles" },
   { id: "basin", label: "BASIN", href: "/catalog?category=Basin" },
   { id: "commode", label: "COMMODE", href: "/catalog?category=Commode" },
-  { id: "all", label: "VIEW ALL", href: "/catalog" },
+  { id: "all", label: "ALL", href: "/catalog" },
 ];
 
 const VIEW_ALL_DROPDOWN_CATEGORIES = [
