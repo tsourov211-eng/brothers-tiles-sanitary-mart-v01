@@ -395,44 +395,52 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Exact 2-Column Large Square/Portrait Cards from tilebarLandingPage.jpg */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* 2-Column Cards across both Mobile and Desktop */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 md:gap-6">
           {EDITORIAL_CATEGORIES.map((cat) => (
-            <div key={cat.id} className="group">
-              <Link href={`/catalog?category=${encodeURIComponent(cat.filterCategory)}`}>
-                <div className="relative aspect-[4/3.6] w-full bg-stonebg overflow-hidden border border-neutral-200 group-hover:border-gold transition">
-                  <Image
-                    src={cat.image}
-                    alt={cat.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-1.5">
-                    {cat.sizes.map((sz) => (
-                      <span
-                        key={sz}
-                        className="text-[10px] bg-obsidian/90 text-gold border border-gold/40 px-2 py-0.5 font-medium"
-                      >
-                        {sz}
-                      </span>
-                    ))}
+            <div key={cat.id} className="group flex flex-col justify-between">
+              <div>
+                <Link href={`/catalog?category=${encodeURIComponent(cat.filterCategory)}`}>
+                  <div className="relative aspect-[4/3.6] w-full bg-stonebg overflow-hidden border border-neutral-200 group-hover:border-gold transition">
+                    <Image
+                      src={cat.image}
+                      alt={cat.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 flex flex-wrap gap-1 sm:gap-1.5">
+                      {cat.sizes.map((sz) => (
+                        <span
+                          key={sz}
+                          className="text-[8px] sm:text-[10px] bg-obsidian/90 text-gold border border-gold/40 px-1 sm:px-2 py-0.5 font-medium leading-none"
+                        >
+                          {sz}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+                </Link>
+                <div className="pt-2 sm:pt-3.5 space-y-1 sm:space-y-1.5">
+                  <h3 className="text-xs sm:text-base font-bold text-obsidian leading-snug sm:leading-normal">
+                    {cat.title}
+                  </h3>
+                  <p className="text-[10px] sm:text-xs text-neutral-600 line-clamp-1 sm:line-clamp-none">
+                    {cat.titleBn}
+                  </p>
+                  <p className="text-[9.5px] sm:text-[11px] text-neutral-500 line-clamp-2 sm:line-clamp-none leading-tight sm:leading-relaxed">
+                    {cat.subtitle}
+                  </p>
                 </div>
-              </Link>
-              <div className="pt-3.5 space-y-1.5">
-                <h3 className="text-sm sm:text-base font-bold text-obsidian">{cat.title}</h3>
-                <p className="text-xs text-neutral-600">{cat.titleBn}</p>
-                <p className="text-[11px] sm:text-xs text-neutral-500">{cat.subtitle}</p>
-                <div className="pt-2">
-                  <Link
-                    href={`/catalog?category=${encodeURIComponent(cat.filterCategory)}`}
-                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase text-obsidian border-b-2 border-obsidian hover:text-gold-dark hover:border-gold-dark pb-1 transition group/btn"
-                  >
-                    <span>SHOP NOW</span>
-                    <span className="text-sm font-bold transition-transform group-hover/btn:translate-x-1.5">&rarr;</span>
-                  </Link>
-                </div>
+              </div>
+              <div className="pt-2 sm:pt-2.5">
+                <Link
+                  href={`/catalog?category=${encodeURIComponent(cat.filterCategory)}`}
+                  className="inline-flex items-center gap-1 sm:gap-2 text-[10.5px] sm:text-sm font-bold tracking-wider sm:tracking-widest uppercase text-obsidian border-b-2 border-obsidian hover:text-gold-dark hover:border-gold-dark pb-0.5 sm:pb-1 transition group/btn"
+                >
+                  <span>SHOP NOW</span>
+                  <span className="text-xs sm:text-sm font-bold transition-transform group-hover/btn:translate-x-1 sm:group-hover/btn:translate-x-1.5">&rarr;</span>
+                </Link>
               </div>
             </div>
           ))}
