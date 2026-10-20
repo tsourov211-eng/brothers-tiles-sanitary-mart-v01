@@ -62,20 +62,14 @@ function SanitaryIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
 
 function InstagramGradientIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <defs>
-        <linearGradient id="igSunsetGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#f09433" />
-          <stop offset="25%" stopColor="#e6683c" />
-          <stop offset="50%" stopColor="#dc2743" />
-          <stop offset="75%" stopColor="#cc2366" />
-          <stop offset="100%" stopColor="#bc1888" />
-        </linearGradient>
-      </defs>
-      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="url(#igSunsetGrad)" strokeWidth="2.2" />
-      <circle cx="12" cy="12" r="4.2" stroke="url(#igSunsetGrad)" strokeWidth="2.2" />
-      <circle cx="17.2" cy="6.8" r="1.3" fill="url(#igSunsetGrad)" />
-    </svg>
+    <Image
+      src="/images/icons/instagram-gradient.svg"
+      alt="Instagram"
+      width={22}
+      height={22}
+      className={`${className} object-contain`}
+      unoptimized
+    />
   );
 }
 
