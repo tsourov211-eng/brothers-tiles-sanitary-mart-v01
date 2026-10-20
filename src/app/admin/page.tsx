@@ -1596,10 +1596,10 @@ export default function AdminPage() {
                     onClick={() =>
                       setPosItems([...posItems, { productId: products[0]?.id || "", quantity: 1 }])
                     }
-                    className="px-2.5 py-1 bg-white hover:bg-[#fbf5e6] border border-[#d6a53b] text-[#b58928] text-xs font-bold rounded-lg flex items-center gap-1 transition shadow-2xs cursor-pointer"
+                    className="px-2.5 py-1 bg-white hover:bg-[#fbf5e6] border border-[#d6a53b] text-[#b58928] text-xs font-bold rounded-lg flex items-center gap-1 transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <IconPlus size={13} stroke={2.5} />
-                    <span>Add Another Item</span>
+                    <span>Add Items</span>
                   </button>
                 </div>
 
