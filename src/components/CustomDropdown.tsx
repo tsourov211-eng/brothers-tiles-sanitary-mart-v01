@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useId } from "react";
+import React, { useState, useRef, useEffect, useId, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { IconChevronDown, IconCheck } from "@tabler/icons-react";
 
 export interface DropdownOption {
@@ -43,37 +44,75 @@ export default function CustomDropdown({
   ariaLabel,
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [menuCoords, setMenuCoords] = useState<{ top: number; left: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [menuCoords, setMenuCoords] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
 
   // Selected option details
   const selectedOption = options.find((opt) => opt.value === value);
 
-  const updateMenuCoords = () => {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const updateMenuCoords = useCallback(() => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const menuWidth = Math.min(230, window.innerWidth - 16);
+
+    // If trigger button is not visible or scrolled off viewport, close it
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+      setIsOpen(false);
+      return;
+    }
+
+    const minWidth = Math.max(rect.width, 220);
+    const menuWidth = Math.min(Math.max(minWidth, 230), window.innerWidth - 16);
+
+    // Horizontal position:
     let left = align === "right" ? rect.right - menuWidth : rect.left;
     left = Math.max(8, Math.min(window.innerWidth - menuWidth - 8, left));
-    const top = rect.bottom + 6;
-    setMenuCoords({ top, left });
-  };
+
+    // Vertical positioning:
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const menuHeight = menuRef.current?.offsetHeight || Math.min(options.length * 40 + 16, 280);
+
+    let top: number;
+    if (spaceBelow < menuHeight + 10 && spaceAbove > spaceBelow) {
+      top = Math.max(8, rect.top - 6 - menuHeight);
+    } else {
+      top = rect.bottom + 6;
+    }
+
+    setMenuCoords({ top, left, width: menuWidth });
+  }, [align, options.length]);
 
   const handleToggle = () => {
     if (disabled) return;
     if (!isOpen) {
       updateMenuCoords();
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
     }
-    setIsOpen((prev) => !prev);
   };
 
   // Close when clicking outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      const target = event.target as Node;
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        !containerRef.current.contains(target) &&
+        menuRef.current &&
+        !menuRef.current.contains(target)
       ) {
         setIsOpen(false);
       }
@@ -81,9 +120,11 @@ export default function CustomDropdown({
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -91,16 +132,18 @@ export default function CustomDropdown({
   useEffect(() => {
     if (!isOpen) return;
     updateMenuCoords();
+
     const handleScrollOrResize = () => {
       updateMenuCoords();
     };
+
     window.addEventListener("scroll", handleScrollOrResize, true);
     window.addEventListener("resize", handleScrollOrResize);
     return () => {
       window.removeEventListener("scroll", handleScrollOrResize, true);
       window.removeEventListener("resize", handleScrollOrResize);
     };
-  }, [isOpen, align]);
+  }, [isOpen, updateMenuCoords]);
 
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -250,16 +293,18 @@ export default function CustomDropdown({
         />
       </button>
 
-      {/* Floating Modern Custom Menu */}
-      {isOpen && (
+      {/* Floating Modern Custom Menu rendered via Portal into document.body */}
+      {mounted && isOpen && typeof document !== "undefined" && createPortal(
         <div
+          ref={menuRef}
           id={listboxId}
           role="listbox"
           tabIndex={-1}
-          className={`fixed z-50 min-w-[200px] max-w-[calc(100vw-1rem)] max-h-72 overflow-y-auto overscroll-contain rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl shadow-2xl p-1.5 transition-all duration-150 animate-in fade-in zoom-in-95 focus:outline-none ${menuClassName}`}
+          className={`fixed z-[9999] max-w-[calc(100vw-1rem)] max-h-72 overflow-y-auto overscroll-contain rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl shadow-2xl p-1.5 focus:outline-none transition-opacity duration-150 animate-in fade-in zoom-in-95 ${menuClassName}`}
           style={{
             top: menuCoords ? `${menuCoords.top}px` : "auto",
             left: menuCoords ? `${menuCoords.left}px` : "auto",
+            width: menuCoords ? `${menuCoords.width}px` : "230px",
             boxShadow:
               "0 20px 35px -10px rgba(0, 0, 0, 0.15), 0 8px 16px -6px rgba(0, 0, 0, 0.08)",
           }}
@@ -340,7 +385,8 @@ export default function CustomDropdown({
               );
             })}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
