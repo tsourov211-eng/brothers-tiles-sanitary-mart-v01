@@ -44,13 +44,13 @@ export default function ProductCard({ product, className = "" }: ProductCardProp
         {/* ==============================================================
             IMAGE CONTAINER (4:3 aspect ratio, badges, wishlist, hover zoom)
            ============================================================== */}
-        <div className="relative aspect-[4/3] bg-stonebg-card overflow-hidden">
+        <div className="relative aspect-[4/3] bg-stonebg-card overflow-hidden rounded-t-2xl">
           <Link href={productHref} className="block relative w-full h-full">
             <Image
               src={product.image}
               alt={shortTitle}
               fill
-              className="object-cover group-hover:scale-105 transition duration-500"
+              className="object-cover group-hover:scale-105 transition duration-500 rounded-t-2xl"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </Link>
