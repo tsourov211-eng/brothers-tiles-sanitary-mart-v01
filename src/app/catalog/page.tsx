@@ -92,6 +92,7 @@ const COLOR_OPTIONS: DropdownOption[] = [
 const CATEGORY_OPTIONS: DropdownOption[] = [
   { value: "All", label: "Category", mobileLabel: "Category" },
   { value: "Tiles", label: "All Tiles (টাইলস)", mobileLabel: "Tiles", subLabel: "সকল টাইলস (৯৯২টি)" },
+  { value: "Ceramics", label: "Ceramics (সিরামিকস)", mobileLabel: "Ceramics", subLabel: "সিরামিক কালেকশন" },
   { value: "Floor Tiles", label: "Floor Tiles", mobileLabel: "Floor", subLabel: "ফ্লোর টাইলস ও স্ল্যাব" },
   { value: "Wall Tiles", label: "Wall Tiles", mobileLabel: "Wall", subLabel: "ওয়াল টাইলস" },
   { value: "01 - Ceramic Wall Tiles", label: "Ceramic Wall Tiles (478)", mobileLabel: "Ceramic Wall", subLabel: "সিরামিক ওয়াল" },
@@ -289,6 +290,15 @@ function CatalogContent() {
             p.category === "Stair & Parking" ||
             Boolean(p.pdfCategory);
           if (!isTile) return false;
+        } else if (category === "Ceramics") {
+          const isCeramic =
+            p.pdfCategory === "01 - Ceramic Wall Tiles" ||
+            p.pdfCategory === "02 - Ceramic Cladding Tiles" ||
+            p.category === "Wall Tiles" ||
+            (p.subCategory && p.subCategory.toLowerCase().includes("ceramic")) ||
+            (p.finish && p.finish.toLowerCase().includes("ceramic")) ||
+            (p.brand && p.brand.toLowerCase().includes("ceramic"));
+          if (!isCeramic) return false;
         } else if (category === "Floor Tiles") {
           const isFloor =
             p.category === "Floor Tiles" ||

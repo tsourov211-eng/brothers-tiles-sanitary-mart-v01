@@ -29,6 +29,7 @@ import {
 const CATEGORY_NAV_ITEMS = [
   { id: "new", label: "NEW ARRIVALS", href: "/catalog?filter=new" },
   { id: "tiles", label: "WALL & FLOOR TILES", href: "/catalog?category=Tiles" },
+  { id: "ceramics", label: "CERAMICS", href: "/catalog?category=Ceramics" },
   { id: "basin", label: "BASIN", href: "/catalog?category=Basin" },
   { id: "commode", label: "COMMODE", href: "/catalog?category=Commode" },
   { id: "sanitary", label: "SANITARY", href: "/catalog?category=Sanitary" },
@@ -38,6 +39,7 @@ const CATEGORY_NAV_ITEMS = [
 const MOBILE_CATEGORY_NAV_ITEMS = [
   { id: "new", label: "NEW", href: "/catalog?filter=new" },
   { id: "tiles", label: "TILES", href: "/catalog?category=Tiles" },
+  { id: "ceramics", label: "CERAMICS", href: "/catalog?category=Ceramics" },
   { id: "basin", label: "BASIN", href: "/catalog?category=Basin" },
   { id: "commode", label: "COMMODE", href: "/catalog?category=Commode" },
   { id: "all", label: "ALL", href: "/catalog" },
@@ -78,13 +80,14 @@ function isItemActive(
   itemId: string,
   pathname: string,
   currentCategory: string | null,
-  currentFilter: string | null
+  currentFilter: string | null,
+  currentBrand?: string | null
 ): boolean {
   if (pathname !== "/catalog") return false;
 
   switch (itemId) {
     case "all":
-      return !currentCategory && !currentFilter;
+      return !currentCategory && !currentFilter && !currentBrand;
     case "new":
       return currentFilter === "new";
     case "tiles":
@@ -92,6 +95,14 @@ function isItemActive(
         currentCategory === "Tiles" ||
         currentCategory === "Floor Tiles" ||
         currentCategory === "Wall Tiles"
+      );
+    case "ceramics":
+      return (
+        currentCategory === "Ceramics" ||
+        currentCategory === "01 - Ceramic Wall Tiles" ||
+        currentCategory === "02 - Ceramic Cladding Tiles" ||
+        currentBrand === "RAK" ||
+        currentBrand === "RAK Ceramics"
       );
     case "basin":
       return currentCategory === "Basin";
@@ -132,6 +143,7 @@ function CategoryNavLinks({
           pathname={pathname}
           currentCategory={null}
           currentFilter={null}
+          currentBrand={null}
         />
       }
     >
@@ -149,12 +161,14 @@ function CategoryNavLinksWithParams(props: CategoryNavLinksProps) {
   const searchParams = useSearchParams();
   const currentCategory = searchParams ? searchParams.get("category") : null;
   const currentFilter = searchParams ? searchParams.get("filter") : null;
+  const currentBrand = searchParams ? searchParams.get("brand") : null;
 
   return (
     <CategoryNavLinksContent
       {...props}
       currentCategory={currentCategory}
       currentFilter={currentFilter}
+      currentBrand={currentBrand}
     />
   );
 }
@@ -166,9 +180,11 @@ function CategoryNavLinksContent({
   pathname,
   currentCategory,
   currentFilter,
+  currentBrand,
 }: CategoryNavLinksProps & {
   currentCategory: string | null;
   currentFilter: string | null;
+  currentBrand?: string | null;
 }) {
   const [isViewAllOpen, setIsViewAllOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -176,7 +192,7 @@ function CategoryNavLinksContent({
   // Automatically close dropdown on navigation or filter changes
   useEffect(() => {
     setIsViewAllOpen(false);
-  }, [pathname, currentCategory, currentFilter]);
+  }, [pathname, currentCategory, currentFilter, currentBrand]);
 
   // Close dropdown on Escape key
   useEffect(() => {
@@ -195,7 +211,7 @@ function CategoryNavLinksContent({
         <div className="flex items-center space-x-0.5 lg:space-x-1 xl:space-x-1.5 shrink-0">
           {CATEGORY_NAV_ITEMS.map((item) => {
             const isHovered = activeMegaMenu === item.id;
-            const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
+            const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter, currentBrand);
             return (
               <div
                 key={item.id}
@@ -281,9 +297,9 @@ function CategoryNavLinksContent({
       </div>
 
       {/* Mobile Category Rail - Fixed single row without scrolling, clean text links without gray shadow background */}
-      <div className="md:hidden flex items-center justify-between px-3 sm:px-4 py-1.5 bg-white border-t border-neutral-100 text-xs sm:text-[13px] font-bold tracking-normal uppercase whitespace-nowrap">
+      <div className="md:hidden flex items-center justify-between px-2.5 sm:px-4 py-1.5 bg-white border-t border-neutral-100 text-[11px] min-[390px]:text-xs sm:text-[13px] font-bold tracking-tight sm:tracking-normal uppercase whitespace-nowrap overflow-x-auto no-scrollbar gap-1 sm:gap-2">
         {MOBILE_CATEGORY_NAV_ITEMS.map((item) => {
-          const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
+          const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter, currentBrand);
 
           if (item.id === "all") {
             return (

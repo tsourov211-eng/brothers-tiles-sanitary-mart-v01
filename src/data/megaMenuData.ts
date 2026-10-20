@@ -171,6 +171,59 @@ export const MEGA_MENU_DATA: Record<string, MegaMenuCategory> = {
     ],
   },
 
+  ceramics: {
+    id: "ceramics",
+    label: "CERAMICS",
+    href: "/catalog?category=Ceramics",
+    columns: [
+      {
+        title: "CERAMIC WALL COLLECTIONS",
+        titleBn: "সিরামিক ওয়াল কালেকশন",
+        items: [
+          { name: "30x90 cm Premija Luxury Wall (30x90)", href: "/catalog?size=30x90+cm", badge: "FLAGSHIP" },
+          { name: "30x60 cm Standard Ceramic Wall", href: "/catalog?size=30x60+cm", badge: "POPULAR" },
+          { name: "25x70 cm European Format Cladding", href: "/catalog?size=25x70+cm" },
+          { name: "25x40 cm Kitchen & Bath Ceramic", href: "/catalog?size=25x40+cm" },
+          { name: "20x30 cm Classic Ceramic Subway", href: "/catalog?size=20x30+cm" },
+        ],
+        viewAll: { name: "All Ceramic Wall Tiles →", href: "/catalog?category=Ceramics" },
+      },
+      {
+        title: "CERAMIC CLADDING & SPECIALS",
+        titleBn: "এক্সটেরিয়র ও ক্ল্যাডিং",
+        items: [
+          { name: "02 - Ceramic Cladding Exterior", href: "/catalog?category=02+-+Ceramic+Cladding+Tiles", badge: "NEW" },
+          { name: "Rustic 3D Stone Ceramic Facade", href: "/catalog?q=Rustic" },
+          { name: "Glazed Decorative Border Series", href: "/catalog?q=Border" },
+          { name: "Kitchen Backsplash Ceramic Mosaic", href: "/catalog?q=Mosaic" },
+        ],
+        viewAll: { name: "All Ceramic Cladding →", href: "/catalog?category=Ceramics" },
+      },
+      {
+        title: "TOP CERAMIC BRANDS",
+        titleBn: "শীর্ষ সিরামিকস ব্র্যান্ড",
+        items: [
+          { name: "RAK Ceramics (Official Flagship)", href: "/catalog?brand=RAK", badge: "OFFICIAL" },
+          { name: "Akij Ceramics", href: "/catalog?brand=Akij" },
+          { name: "DBL Ceramics", href: "/catalog?brand=DBL" },
+          { name: "Fresh Ceramics", href: "/catalog?brand=Fresh" },
+          { name: "Fu-Wang Ceramic", href: "/catalog?brand=Fu-Wang" },
+        ],
+        viewAll: { name: "Explore All Brands →", href: "/catalog?brand=RAK" },
+      },
+      {
+        title: "SHOWROOM ASSISTANCE",
+        titleBn: "শোরুম সহায়তা ও সার্ভিস",
+        items: [
+          { name: "Free Tile Calculator & Sizing", href: "/calculator", isBold: true },
+          { name: "Gazipur Bhawanipur Showroom Map", href: "/contact", isBold: true },
+          { name: "Direct WhatsApp Quotation Support", href: "https://wa.me/8801625073614" },
+        ],
+        viewAll: { name: "Showroom Map & Contact →", href: "/contact" },
+      },
+    ],
+  },
+
   basin: {
     id: "basin",
     label: "BASIN",
