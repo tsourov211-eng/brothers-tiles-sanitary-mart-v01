@@ -17,6 +17,7 @@ import {
   IconX,
   IconChevronLeft,
   IconChevronRight,
+  IconChevronDown,
   IconLanguage,
   IconHome,
   IconCategory,
@@ -42,6 +43,96 @@ const MOBILE_CATEGORY_NAV_ITEMS = [
   { id: "all", label: "VIEW ALL", href: "/catalog" },
   { id: "sanitary", label: "SANITARY", href: "/catalog?category=Sanitary" },
   { id: "accessories", label: "BATHROOM ACCESSORIES", href: "/catalog?category=Bathroom+Accessories" },
+];
+
+const VIEW_ALL_DROPDOWN_CATEGORIES = [
+  {
+    id: "tiles",
+    label: "Wall & Floor Tiles",
+    labelBn: "ওয়াল ও ফ্লোর টাইলস",
+    href: "/catalog?category=Tiles",
+    badge: "3500+",
+  },
+  {
+    id: "basin",
+    label: "Basin Collection",
+    labelBn: "বেসিন ও ভ্যানিটি",
+    href: "/catalog?category=Basin",
+    badge: "450+",
+  },
+  {
+    id: "commode",
+    label: "Commode & WC",
+    labelBn: "কমোড ও স্মার্ট টয়লেট",
+    href: "/catalog?category=Commode",
+    badge: "Popular",
+  },
+  {
+    id: "sanitary",
+    label: "Sanitary Ware",
+    labelBn: "স্যানিটারি পণ্য ও প্যান",
+    href: "/catalog?category=Sanitary",
+  },
+  {
+    id: "bathroom",
+    label: "Bath & Shower",
+    labelBn: "বাথরুম টাইলস ও শাওয়ার",
+    href: "/catalog?category=Bathroom",
+  },
+  {
+    id: "accessories",
+    label: "Bathroom Fittings",
+    labelBn: "কল, মিক্সার ও ফিটিংস",
+    href: "/catalog?category=Bathroom+Accessories",
+  },
+  {
+    id: "stair",
+    label: "Stair & Parking",
+    labelBn: "সিঁড়ি ও পার্কিং টাইলস",
+    href: "/catalog?category=Stair+%26+Parking",
+  },
+  {
+    id: "new",
+    label: "New Arrivals",
+    labelBn: "নতুন কালেকশন ২০২৫–২৬",
+    href: "/catalog?filter=new",
+    badge: "NEW",
+  },
+  {
+    id: "bestseller",
+    label: "Bestsellers",
+    labelBn: "গ্রাহকদের সেরা পছন্দ",
+    href: "/catalog?filter=bestseller",
+    badge: "HOT",
+  },
+  {
+    id: "rak",
+    label: "RAK Ceramics",
+    labelBn: "আরএকে অনুমোদিত শোরুম",
+    href: "/catalog?brand=RAK",
+    badge: "OFFICIAL",
+  },
+];
+
+const VIEW_ALL_QUICK_LINKS = [
+  {
+    label: "Tile Calculator",
+    labelBn: "ফ্রি টাইলস মাপ ও খরচের হিসাব",
+    href: "/calculator",
+    icon: IconCalculator,
+  },
+  {
+    label: "Showroom & RAK Specs",
+    labelBn: "শোরুম বিবরণ ও স্পেসিফিকেশন",
+    href: "/about",
+    icon: IconBuildingStore,
+  },
+  {
+    label: "Showroom Map & Contact",
+    labelBn: "গাজীপুর ভবানীপুর শোরুম ও ম্যাপ",
+    href: "/contact",
+    icon: IconMapPin,
+  },
 ];
 
 function isItemActive(
@@ -140,6 +231,23 @@ function CategoryNavLinksContent({
   currentCategory: string | null;
   currentFilter: string | null;
 }) {
+  const [isViewAllOpen, setIsViewAllOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Automatically close dropdown on navigation or filter changes
+  useEffect(() => {
+    setIsViewAllOpen(false);
+  }, [pathname, currentCategory, currentFilter]);
+
+  // Close dropdown on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsViewAllOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <>
       {/* Desktop Category Navigation */}
@@ -237,6 +345,33 @@ function CategoryNavLinksContent({
       <div className="md:hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar px-2.5 py-1 bg-white border-t border-neutral-100 text-[10.5px] font-bold tracking-tight uppercase whitespace-nowrap">
         {MOBILE_CATEGORY_NAV_ITEMS.map((item) => {
           const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
+
+          if (item.id === "all") {
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setIsViewAllOpen((prev) => !prev)}
+                className={`px-2 py-0.5 rounded-full transition-all shrink-0 inline-flex items-center gap-1 cursor-pointer ${
+                  isViewAllOpen || isActive
+                    ? "bg-obsidian text-gold shadow-xs ring-1 ring-gold/40"
+                    : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
+                }`}
+                aria-expanded={isViewAllOpen}
+                aria-label="View All Categories Dropdown"
+              >
+                <span>{item.label}</span>
+                <IconChevronDown
+                  size={12}
+                  stroke={2.5}
+                  className={`transition-transform duration-200 ${
+                    isViewAllOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            );
+          }
+
           return (
             <Link
               key={item.id}
@@ -282,6 +417,136 @@ function CategoryNavLinksContent({
           CONTACT
         </Link>
       </div>
+
+      {/* Mobile "VIEW ALL" Dropdown Sheet */}
+      {isViewAllOpen && (
+        <>
+          {/* Backdrop overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-2xs animate-in fade-in duration-150"
+            onClick={() => setIsViewAllOpen(false)}
+          />
+
+          {/* Dropdown panel */}
+          <div
+            ref={dropdownRef}
+            className="absolute top-full left-0 right-0 w-full bg-white border-t border-b-2 border-gold shadow-2xl z-50 md:hidden max-h-[78vh] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200"
+          >
+            <div className="p-3.5 space-y-3.5">
+              {/* Header Bar */}
+              <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+                  <span className="text-xs font-bold text-obsidian uppercase tracking-wider">
+                    সকল ক্যাটাগরি ও অপশন
+                  </span>
+                  <span className="text-[10px] bg-gold/20 text-gold-dark font-bold px-1.5 py-0.5 rounded-xs">
+                    5,000+
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsViewAllOpen(false)}
+                  className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center cursor-pointer transition"
+                  aria-label="Close"
+                >
+                  <IconX size={15} stroke={2.2} />
+                </button>
+              </div>
+
+              {/* Main "VIEW ALL 5,000+ PRODUCTS" Banner Link */}
+              <Link
+                href="/catalog"
+                onClick={() => setIsViewAllOpen(false)}
+                className="w-full bg-gradient-to-r from-obsidian via-neutral-900 to-obsidian hover:from-gold hover:to-gold-dark text-white hover:text-obsidian p-3 rounded-md flex items-center justify-between shadow-xs transition-all group"
+              >
+                <div>
+                  <div className="text-xs font-bold tracking-wider uppercase text-gold group-hover:text-obsidian">
+                    VIEW ALL 5,000+ PRODUCTS
+                  </div>
+                  <div className="text-[11px] text-neutral-300 group-hover:text-obsidian/80">
+                    আমাদের সম্পূর্ণ শোরুম কালেকশন এক সাথে দেখুন
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-gold group-hover:text-obsidian transition-transform group-hover:translate-x-1">
+                  &rarr;
+                </span>
+              </Link>
+
+              {/* Grid of Categories (2 Columns on Mobile) */}
+              <div>
+                <div className="text-[10.5px] font-bold text-neutral-500 uppercase tracking-wider mb-2">
+                  ক্যাটাগরি অনুযায়ী নির্বাচন করুন:
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {VIEW_ALL_DROPDOWN_CATEGORIES.map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={cat.href}
+                      onClick={() => setIsViewAllOpen(false)}
+                      className="p-2.5 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/80 hover:border-gold/60 rounded-md flex flex-col justify-between transition-colors group"
+                    >
+                      <div className="flex items-center justify-between gap-1 mb-1">
+                        <span className="text-[11px] font-bold text-obsidian group-hover:text-gold-dark truncate">
+                          {cat.label}
+                        </span>
+                        {cat.badge && (
+                          <span className="text-[8.5px] font-bold bg-gold/15 text-gold-dark px-1 py-0.2 rounded-2xs shrink-0">
+                            {cat.badge}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-neutral-500 truncate">
+                          {cat.labelBn}
+                        </span>
+                        <span className="text-neutral-400 group-hover:text-gold-dark text-xs transition-transform group-hover:translate-x-0.5">
+                          &rarr;
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Showroom Quick Services (Calculator, Showroom Specs, Contact) */}
+              <div className="pt-1 border-t border-neutral-100">
+                <div className="text-[10.5px] font-bold text-neutral-500 uppercase tracking-wider mb-2">
+                  শোরুম সার্ভিস ও হেল্প:
+                </div>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {VIEW_ALL_QUICK_LINKS.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setIsViewAllOpen(false)}
+                        className="p-2 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/70 hover:border-gold/50 rounded-md flex items-center justify-between transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Icon size={16} className="text-gold-dark shrink-0" stroke={1.8} />
+                          <div className="min-w-0">
+                            <span className="text-[11px] font-bold text-obsidian group-hover:text-gold-dark block truncate">
+                              {link.label}
+                            </span>
+                            <span className="text-[9.5px] text-neutral-500 block truncate">
+                              {link.labelBn}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-neutral-400 group-hover:text-gold-dark text-xs transition-transform group-hover:translate-x-0.5 shrink-0 ml-1">
+                          &rarr;
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
