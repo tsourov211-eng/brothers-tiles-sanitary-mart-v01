@@ -44,90 +44,31 @@ const MOBILE_CATEGORY_NAV_ITEMS = [
 ];
 
 const VIEW_ALL_DROPDOWN_CATEGORIES = [
-  {
-    id: "tiles",
-    label: "Wall & Floor Tiles",
-    labelBn: "ওয়াল ও ফ্লোর টাইলস",
-    href: "/catalog?category=Tiles",
-    badge: "3500+",
-  },
-  {
-    id: "basin",
-    label: "Basin Collection",
-    labelBn: "বেসিন ও ভ্যানিটি",
-    href: "/catalog?category=Basin",
-    badge: "450+",
-  },
-  {
-    id: "commode",
-    label: "Commode & WC",
-    labelBn: "কমোড ও স্মার্ট টয়লেট",
-    href: "/catalog?category=Commode",
-    badge: "Popular",
-  },
-  {
-    id: "sanitary",
-    label: "Sanitary Ware",
-    labelBn: "স্যানিটারি পণ্য ও প্যান",
-    href: "/catalog?category=Sanitary",
-  },
-  {
-    id: "bathroom",
-    label: "Bath & Shower",
-    labelBn: "বাথরুম টাইলস ও শাওয়ার",
-    href: "/catalog?category=Bathroom",
-  },
-  {
-    id: "accessories",
-    label: "Bathroom Fittings",
-    labelBn: "কল, মিক্সার ও ফিটিংস",
-    href: "/catalog?category=Bathroom+Accessories",
-  },
-  {
-    id: "stair",
-    label: "Stair & Parking",
-    labelBn: "সিঁড়ি ও পার্কিং টাইলস",
-    href: "/catalog?category=Stair+%26+Parking",
-  },
-  {
-    id: "new",
-    label: "New Arrivals",
-    labelBn: "নতুন কালেকশন ২০২৫–২৬",
-    href: "/catalog?filter=new",
-    badge: "NEW",
-  },
-  {
-    id: "bestseller",
-    label: "Bestsellers",
-    labelBn: "গ্রাহকদের সেরা পছন্দ",
-    href: "/catalog?filter=bestseller",
-    badge: "HOT",
-  },
-  {
-    id: "rak",
-    label: "RAK Ceramics",
-    labelBn: "আরএকে অনুমোদিত শোরুম",
-    href: "/catalog?brand=RAK",
-    badge: "OFFICIAL",
-  },
+  { id: "tiles", label: "Wall & Floor Tiles", href: "/catalog?category=Tiles" },
+  { id: "basin", label: "Basin Collection", href: "/catalog?category=Basin" },
+  { id: "commode", label: "Commode & WC", href: "/catalog?category=Commode" },
+  { id: "sanitary", label: "Sanitary Ware", href: "/catalog?category=Sanitary" },
+  { id: "bathroom", label: "Bath & Shower", href: "/catalog?category=Bathroom" },
+  { id: "accessories", label: "Bathroom Fittings", href: "/catalog?category=Bathroom+Accessories" },
+  { id: "stair", label: "Stair & Parking", href: "/catalog?category=Stair+%26+Parking" },
+  { id: "new", label: "New Arrivals", href: "/catalog?filter=new" },
+  { id: "bestseller", label: "Bestsellers", href: "/catalog?filter=bestseller" },
+  { id: "rak", label: "RAK Ceramics", href: "/catalog?brand=RAK" },
 ];
 
 const VIEW_ALL_QUICK_LINKS = [
   {
     label: "Tile Calculator",
-    labelBn: "ফ্রি টাইলস মাপ ও খরচের হিসাব",
     href: "/calculator",
     icon: IconCalculator,
   },
   {
-    label: "Showroom & RAK Specs",
-    labelBn: "শোরুম বিবরণ ও স্পেসিফিকেশন",
+    label: "Showroom Details & Specs",
     href: "/about",
     icon: IconBuildingStore,
   },
   {
     label: "Showroom Map & Contact",
-    labelBn: "গাজীপুর ভবানীপুর শোরুম ও ম্যাপ",
     href: "/contact",
     icon: IconMapPin,
   },
@@ -414,12 +355,9 @@ function CategoryNavLinksContent({
               {/* Header Bar */}
               <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+                  <IconCategory size={16} className="text-gold-dark" stroke={2} />
                   <span className="text-xs font-bold text-obsidian uppercase tracking-wider">
-                    সকল ক্যাটাগরি ও অপশন
-                  </span>
-                  <span className="text-[10px] bg-gold/20 text-gold-dark font-bold px-1.5 py-0.5 rounded-xs">
-                    5,000+
+                    Categories &amp; Services
                   </span>
                 </div>
                 <button
@@ -436,15 +374,13 @@ function CategoryNavLinksContent({
               <Link
                 href="/catalog"
                 onClick={() => setIsViewAllOpen(false)}
-                className="w-full bg-gradient-to-r from-obsidian via-neutral-900 to-obsidian hover:from-gold hover:to-gold-dark text-white hover:text-obsidian p-3 rounded-md flex items-center justify-between shadow-xs transition-all group"
+                className="w-full h-10.5 bg-gradient-to-r from-obsidian via-neutral-900 to-obsidian hover:from-gold hover:to-gold-dark text-white hover:text-obsidian px-3.5 rounded-lg flex items-center justify-between shadow-xs transition-all group"
               >
-                <div>
-                  <div className="text-xs font-bold tracking-wider uppercase text-gold group-hover:text-obsidian">
-                    VIEW ALL 5,000+ PRODUCTS
-                  </div>
-                  <div className="text-[11px] text-neutral-300 group-hover:text-obsidian/80">
-                    আমাদের সম্পূর্ণ শোরুম কালেকশন এক সাথে দেখুন
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gold group-hover:bg-obsidian animate-pulse" />
+                  <span className="text-xs font-bold tracking-wider uppercase text-gold group-hover:text-obsidian">
+                    View All 5,000+ Products
+                  </span>
                 </div>
                 <span className="text-sm font-bold text-gold group-hover:text-obsidian transition-transform group-hover:translate-x-1">
                   &rarr;
@@ -453,45 +389,27 @@ function CategoryNavLinksContent({
 
               {/* Grid of Categories (2 Columns on Mobile) */}
               <div>
-                <div className="text-[10.5px] font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                  ক্যাটাগরি অনুযায়ী নির্বাচন করুন:
-                </div>
                 <div className="grid grid-cols-2 gap-2">
                   {VIEW_ALL_DROPDOWN_CATEGORIES.map((cat) => (
                     <Link
                       key={cat.id}
                       href={cat.href}
                       onClick={() => setIsViewAllOpen(false)}
-                      className="p-2.5 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/80 hover:border-gold/60 rounded-md flex flex-col justify-between transition-colors group"
+                      className="h-10 px-3 bg-neutral-50/80 hover:bg-amber-50/60 active:bg-amber-50 border border-neutral-200/90 hover:border-gold/60 rounded-lg flex items-center justify-between transition-colors group"
                     >
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="text-[11px] font-bold text-obsidian group-hover:text-gold-dark truncate">
-                          {cat.label}
-                        </span>
-                        {cat.badge && (
-                          <span className="text-[8.5px] font-bold bg-gold/15 text-gold-dark px-1 py-0.2 rounded-2xs shrink-0">
-                            {cat.badge}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-neutral-500 truncate">
-                          {cat.labelBn}
-                        </span>
-                        <span className="text-neutral-400 group-hover:text-gold-dark text-xs transition-transform group-hover:translate-x-0.5">
-                          &rarr;
-                        </span>
-                      </div>
+                      <span className="text-[11.5px] font-bold text-neutral-800 group-hover:text-gold-dark truncate">
+                        {cat.label}
+                      </span>
+                      <span className="text-neutral-400 group-hover:text-gold-dark text-sm transition-transform group-hover:translate-x-0.5 shrink-0 ml-1">
+                        &rsaquo;
+                      </span>
                     </Link>
                   ))}
                 </div>
               </div>
 
               {/* Showroom Quick Services (Calculator, Showroom Specs, Contact) */}
-              <div className="pt-1 border-t border-neutral-100">
-                <div className="text-[10.5px] font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                  শোরুম সার্ভিস ও হেল্প:
-                </div>
+              <div className="pt-2 border-t border-neutral-100">
                 <div className="grid grid-cols-1 gap-1.5">
                   {VIEW_ALL_QUICK_LINKS.map((link) => {
                     const Icon = link.icon;
@@ -500,21 +418,16 @@ function CategoryNavLinksContent({
                         key={link.href}
                         href={link.href}
                         onClick={() => setIsViewAllOpen(false)}
-                        className="p-2 bg-neutral-50 hover:bg-amber-50/70 border border-neutral-200/70 hover:border-gold/50 rounded-md flex items-center justify-between transition-colors group"
+                        className="h-10 px-3 bg-neutral-50/80 hover:bg-amber-50/60 border border-neutral-200/70 hover:border-gold/50 rounded-lg flex items-center justify-between transition-colors group"
                       >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Icon size={16} className="text-gold-dark shrink-0" stroke={1.8} />
-                          <div className="min-w-0">
-                            <span className="text-[11px] font-bold text-obsidian group-hover:text-gold-dark block truncate">
-                              {link.label}
-                            </span>
-                            <span className="text-[9.5px] text-neutral-500 block truncate">
-                              {link.labelBn}
-                            </span>
-                          </div>
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <Icon size={16} className="text-gold-dark shrink-0" stroke={2} />
+                          <span className="text-[11.5px] font-bold text-neutral-800 group-hover:text-gold-dark truncate">
+                            {link.label}
+                          </span>
                         </div>
-                        <span className="text-neutral-400 group-hover:text-gold-dark text-xs transition-transform group-hover:translate-x-0.5 shrink-0 ml-1">
-                          &rarr;
+                        <span className="text-neutral-400 group-hover:text-gold-dark text-sm transition-transform group-hover:translate-x-0.5 shrink-0 ml-1">
+                          &rsaquo;
                         </span>
                       </Link>
                     );
