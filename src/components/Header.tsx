@@ -830,7 +830,7 @@ export default function Header() {
           </button>
 
           {/* Action Icons Group */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1.5 min-[380px]:gap-2 sm:gap-2.5 shrink-0">
             {/* Mobile Quick Search Toggle Button (Placed directly to the left of Love / Wishlist icon) */}
             <button
               type="button"
@@ -890,12 +890,12 @@ export default function Header() {
               )}
             </button>
 
-            {/* Admin / Manager Portal Shortcut Button with Dropdown Tab on Yellow Line */}
-            <div className="relative hidden sm:flex items-center justify-center">
+            {/* Admin / Manager Portal Shortcut Button (Directly to the right of Bag icon) */}
+            <div className="relative flex items-center justify-center">
               <Link
                 href="/admin"
                 className="w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group flex"
-                title="Admin & Showroom Portal"
+                title="Admin & Showroom Portal (অ্যাডমিন লগইন)"
               >
                 <span className="sr-only">Admin Portal</span>
                 <IconUserShield
@@ -905,12 +905,12 @@ export default function Header() {
                 />
               </Link>
 
-              {/* Scrolled Down: Dropdown Toggle Tab on Yellow Line directly below Admin Icon (Image match) */}
+              {/* Scrolled Down: Dropdown Toggle Tab on Yellow Line directly below Admin Icon (Desktop) */}
               {isScrolledDown && (
                 <button
                   type="button"
                   onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
-                  className="absolute top-full mt-[14px] left-1/2 -translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer z-50 group/tab"
+                  className="hidden sm:flex absolute top-full mt-[14px] left-1/2 -translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer z-50 group/tab"
                   title={
                     lang === "bn"
                       ? (isCategoryBarExpanded ? "মেনু ও ফিল্টার বন্ধ করুন" : "মেনু ও ফিল্টার খুলুন")
