@@ -524,6 +524,8 @@ export default function Header() {
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
@@ -612,12 +614,23 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isCategoryBarExpanded]);
 
-  // Close expanded category bar on pathname change
+  // Close expanded category bar and mobile search on pathname change
   useEffect(() => {
+    setIsMobileSearchOpen(false);
     if (isScrolledDown) {
       setIsCategoryBarExpanded(false);
     }
   }, [pathname]);
+
+  // Auto-focus mobile search input when opened
+  useEffect(() => {
+    if (isMobileSearchOpen) {
+      const timer = setTimeout(() => {
+        mobileSearchInputRef.current?.focus();
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [isMobileSearchOpen]);
 
   // Recalculate --header-height CSS variable after expand/collapse animation completes
   useEffect(() => {
@@ -634,7 +647,7 @@ export default function Header() {
     updateHeaderHeight();
     const timeout = setTimeout(updateHeaderHeight, 320);
     return () => clearTimeout(timeout);
-  }, [isScrolledDown, isCategoryBarExpanded]);
+  }, [isScrolledDown, isCategoryBarExpanded, isMobileSearchOpen]);
 
   // Auto-play announcement carousel every 4 seconds
   useEffect(() => {
@@ -689,6 +702,7 @@ export default function Header() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsMobileSearchOpen(false);
     if (searchQuery.trim()) {
       router.push(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
     } else {
@@ -801,10 +815,10 @@ export default function Header() {
             </button>
           </form>
 
-          {/* Language Switcher Pill */}
+          {/* Language Switcher Pill (Desktop/Tablet Only) */}
           <button
             onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-            className="rounded-full bg-obsidian text-gold hover:text-white hover:bg-neutral-900 border border-gold/40 hover:border-gold px-3 py-1.5 text-[10.5px] sm:text-[11.5px] font-bold tracking-wider uppercase shadow-xs flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+            className="hidden sm:flex rounded-full bg-obsidian text-gold hover:text-white hover:bg-neutral-900 border border-gold/40 hover:border-gold px-3 py-1.5 text-[10.5px] sm:text-[11.5px] font-bold tracking-wider uppercase shadow-xs items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shrink-0"
             title="Switch Language"
           >
             <IconLanguage size={13.5} stroke={2} className="text-gold" />
@@ -813,6 +827,22 @@ export default function Header() {
 
           {/* Action Icons Group */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Mobile Quick Search Toggle Button (Placed directly to the left of Love / Wishlist icon) */}
+            <button
+              type="button"
+              onClick={() => setIsMobileSearchOpen((prev) => !prev)}
+              className={`sm:hidden relative w-9.5 h-9.5 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs cursor-pointer ${
+                isMobileSearchOpen
+                  ? "bg-[#BE8226] text-white border border-[#BE8226]"
+                  : "bg-[#F7F6F2] hover:bg-neutral-200 border border-neutral-200/90 text-neutral-700 hover:text-obsidian"
+              }`}
+              title={lang === "bn" ? "পণ্য খুঁজুন" : "Search Products"}
+              aria-label="Toggle Search"
+              aria-expanded={isMobileSearchOpen}
+            >
+              <IconSearch size={18} stroke={2.2} />
+            </button>
+
             {/* Wishlist Button */}
             <Link
               href="/catalog?wishlist=true"
@@ -838,10 +868,10 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Sample & Wholesale Quote Bag Button */}
+            {/* Sample & Wholesale Quote Bag Button (Desktop/Tablet Only) */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="relative w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
+              className="hidden sm:flex relative w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
               title="Sample & Quotation List (কোটেশন ব্যাগ)"
             >
               <IconShoppingBag
@@ -915,7 +945,7 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
-                  className="sm:hidden absolute top-full mt-2 left-1/2 -translate-x-1/2 w-7.5 h-4.5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-all duration-200 cursor-pointer z-50 group/tab"
+                  className="sm:hidden absolute top-full mt-1.5 left-1/2 -translate-x-1/2 w-7.5 h-4.5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-all duration-200 cursor-pointer z-50 group/tab"
                   title={isCategoryBarExpanded ? "Close" : "Open"}
                   aria-expanded={isCategoryBarExpanded}
                   aria-label="Toggle category and filter navigation"
@@ -934,44 +964,48 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Quick Search Bar (visible only on small screens) */}
-      <div className="sm:hidden px-2.5 sm:px-3.5 pb-2">
-        <form
-          onSubmit={handleSearchSubmit}
-          className="flex items-center w-full h-[37px] bg-white border border-neutral-300 focus-within:border-[#BE8226] focus-within:ring-1 focus-within:ring-[#BE8226]/30 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs"
-        >
-          <IconSearch size={16} stroke={1.8} className="text-neutral-500 mr-2 shrink-0 pointer-events-none" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={
-              lang === "bn"
-                ? "টাইলস, স্যানিটারি বা কোড খুঁজুন..."
-                : "Search for tiles, sanitary ware..."
-            }
-            className="w-full h-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="text-neutral-400 hover:text-obsidian p-1 mr-1 shrink-0"
-              title="Clear"
-            >
-              <IconX size={13} stroke={2} />
-            </button>
-          )}
-          <button
-            type="submit"
-            className="h-full w-14 bg-[#BE8226] hover:bg-[#a86e1b] active:bg-[#946116] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full transition-colors"
-            aria-label="Search"
-            title="Search"
+      {/* Mobile Expandable Search Bar (Toggled by Search icon on mobile, deleted from default view) */}
+      {isMobileSearchOpen && (
+        <div className="sm:hidden px-3 pb-2.5 pt-1 border-t border-neutral-100 animate-in fade-in slide-in-from-top-1 duration-200">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex items-center w-full h-[37px] bg-white border border-neutral-300 focus-within:border-[#BE8226] focus-within:ring-1 focus-within:ring-[#BE8226]/30 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs"
           >
-            <IconSearch size={17} stroke={2.2} className="text-white" />
-          </button>
-        </form>
-      </div>
+            <IconSearch size={16} stroke={1.8} className="text-neutral-500 mr-2 shrink-0 pointer-events-none" />
+            <input
+              ref={mobileSearchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={
+                lang === "bn"
+                  ? "টাইলস, স্যানিটারি বা কোড খুঁজুন..."
+                  : "Search for tiles, sanitary ware..."
+              }
+              className="w-full h-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
+              autoFocus
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-neutral-400 hover:text-obsidian p-1 mr-1 shrink-0 cursor-pointer"
+                title="Clear"
+              >
+                <IconX size={13} stroke={2} />
+              </button>
+            )}
+            <button
+              type="submit"
+              className="h-full w-12 bg-[#BE8226] hover:bg-[#a86e1b] active:bg-[#946116] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full transition-colors"
+              aria-label="Search"
+              title="Search"
+            >
+              <IconSearch size={17} stroke={2.2} className="text-white" />
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
@@ -984,7 +1018,15 @@ export default function Header() {
               height={66}
               className="h-9 w-auto object-contain"
             />
-            <span className="text-[10px] text-gold font-semibold uppercase">Showroom Menu</span>
+            {/* Mobile Language Switcher inside Drawer */}
+            <button
+              type="button"
+              onClick={() => setLang(lang === "bn" ? "en" : "bn")}
+              className="rounded-full bg-neutral-900 text-gold hover:text-white border border-gold/50 px-3 py-1 text-xs font-bold tracking-wider uppercase flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <IconLanguage size={14} stroke={2} className="text-gold" />
+              <span>{lang === "bn" ? "English" : "বাংলা"}</span>
+            </button>
           </div>
           <form
             onSubmit={handleSearchSubmit}
@@ -1054,6 +1096,25 @@ export default function Header() {
               <IconBuildingStore size={15} stroke={1.8} />
               <span>About Showroom</span>
             </Link>
+            {/* Sample & Quotation Bag Option in Mobile Drawer */}
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsDrawerOpen(true);
+              }}
+              className="col-span-2 py-2.5 px-3 bg-amber-500/10 border border-gold/40 hover:border-gold text-gold font-bold text-xs flex items-center justify-between rounded-lg cursor-pointer transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <IconShoppingBag size={17} stroke={2} />
+                <span>Sample &amp; Quotation Bag (কোটেশন ব্যাগ)</span>
+              </span>
+              {quoteBag.length > 0 && (
+                <span className="min-w-[20px] h-[20px] px-1.5 bg-gradient-to-r from-gold to-gold-dark text-obsidian text-[11px] font-black rounded-full flex items-center justify-center">
+                  {quoteBag.length}
+                </span>
+              )}
+            </button>
             <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="col-span-2 py-2.5 px-3 bg-gold text-obsidian font-bold text-center flex items-center justify-center gap-2 rounded-lg shadow-sm">
               <IconMapPin size={16} stroke={2} />
               <span>Contact &amp; Showroom Map (যোগাযোগ)</span>
