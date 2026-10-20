@@ -24,7 +24,29 @@ import {
   IconCalculator,
   IconMapPin,
   IconBuildingStore,
+  IconSettings,
+  IconLayoutGrid,
 } from "@tabler/icons-react";
+
+function BasinIcon({ className = "w-4.5 h-4.5 text-gold shrink-0" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 11h16a1 1 0 0 1 1 1v1a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7v-1a1 1 0 0 1 1-1z" />
+      <path d="M12 4v3" />
+      <path d="M9 7h6" />
+    </svg>
+  );
+}
+
+function CommodeIcon({ className = "w-4.5 h-4.5 text-gold shrink-0" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 4h14v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V4z" />
+      <path d="M7 14v4a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3v-4" />
+      <path d="M5 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3H5V4z" />
+    </svg>
+  );
+}
 
 const CATEGORY_NAV_ITEMS = [
   { id: "new", label: "NEW ARRIVALS", href: "/catalog?filter=new" },
@@ -926,121 +948,241 @@ export default function Header() {
         </div>
       )}
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Menu Drawer (matching exact reference screenshot) */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-obsidian text-white border-t border-gold/30 px-4 py-4 space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-gold/20">
+        <div className="md:hidden bg-obsidian text-white border-t border-gold/30 px-3.5 sm:px-4 py-4 space-y-3.5">
+          {/* Header Row: Logo & Language Toggle */}
+          <div className="flex items-center justify-between pb-2 border-b border-gold/30">
             <Image
               src="/images/logo/Brothers Tiles & Sanitary Logo-dark.png"
               alt="Brother's Tiles & Sanitary Mart"
               width={200}
               height={66}
               className="h-9 w-auto object-contain"
+              priority
             />
-            {/* Mobile Language Switcher inside Drawer */}
+            {/* Mobile Language Switcher inside Drawer: 文A বাংলা v */}
             <button
               type="button"
               onClick={() => setLang(lang === "bn" ? "en" : "bn")}
-              className="rounded-full bg-neutral-900 text-gold hover:text-white border border-gold/50 px-3 py-1 text-xs font-bold tracking-wider uppercase flex items-center gap-1.5 transition-all cursor-pointer"
+              className="rounded-full bg-transparent text-gold hover:text-white border border-gold/50 px-3 py-1 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <IconLanguage size={14} stroke={2} className="text-gold" />
-              <span>{lang === "bn" ? "English" : "বাংলা"}</span>
+              <span>{lang === "bn" ? "বাংলা" : "English"}</span>
+              <IconChevronDown size={13} stroke={2} className="text-gold" />
             </button>
           </div>
+
+          {/* Search Bar matching screenshot */}
           <form
             onSubmit={handleSearchSubmit}
-            className="flex items-center w-full h-[38px] bg-white border border-neutral-300 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs"
+            className="flex items-center w-full h-[44px] bg-white rounded-full pl-3.5 pr-0 overflow-hidden shadow-sm"
           >
-            <IconSearch size={16} stroke={1.8} className="text-neutral-500 mr-2 shrink-0 pointer-events-none" />
+            <IconSearch size={18} stroke={2} className="text-neutral-400 mr-2 shrink-0 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={
-                lang === "bn"
-                  ? "টাইলস, স্যানিটারি বা কোড খুঁজুন..."
-                  : "Search for tiles, sanitary ware..."
-              }
-              className="w-full h-full text-xs text-obsidian placeholder:text-neutral-400 bg-transparent focus:outline-none"
+              placeholder="Search for tiles, sanitary ware..."
+              className="w-full h-full text-xs sm:text-sm text-neutral-800 placeholder:text-neutral-400 bg-transparent focus:outline-none"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="text-neutral-400 hover:text-obsidian p-1 mr-1 shrink-0"
+                className="text-neutral-400 hover:text-neutral-700 p-1 mr-1 shrink-0"
                 title="Clear"
               >
-                <IconX size={13} stroke={2} />
+                <IconX size={14} stroke={2} />
               </button>
             )}
             <button
               type="submit"
-              className="h-full w-10.5 bg-[#BE8226] hover:bg-[#a86e1b] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full"
+              className="h-full w-12 bg-[#b8761a] hover:bg-[#a66814] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full transition-colors"
               aria-label="Search"
               title="Search"
             >
-              <IconSearch size={17} stroke={2.2} className="text-white" />
+              <IconSearch size={18} stroke={2.5} className="text-white" />
             </button>
           </form>
-          <div className="grid grid-cols-2 gap-2 text-xs font-medium pt-1">
-            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-gold flex items-center gap-1.5 rounded-xs">
-              <IconHome size={15} stroke={1.8} />
-              <span>Home (হোম)</span>
+
+          {/* 8 Grid Navigation Buttons (2 Columns, matching exact reference image) */}
+          <div className="grid grid-cols-2 gap-2.5">
+            {/* Button 1: Home */}
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconHome size={18} className="text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  Home (হোম)
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-white flex items-center gap-1.5 rounded-xs">
-              <IconCategory size={15} stroke={1.8} />
-              <span>5,000+ Designs</span>
+
+            {/* Button 2: 5,000+ Designs */}
+            <Link
+              href="/catalog"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconLayoutGrid size={18} className="text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  5,000+ Designs
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            <Link href="/catalog?category=Tiles" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-neutral-300 hover:text-white flex items-center gap-1.5 rounded-xs">
-              <span className="w-2 h-2 rounded-full bg-gold/70" />
-              <span>Tiles (টাইলস)</span>
+
+            {/* Button 3: Tiles (টাইলস) */}
+            <Link
+              href="/catalog?category=Tiles"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconLayoutGrid size={18} className="text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  Tiles (টাইলস)
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            <Link href="/catalog?category=Basin" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-neutral-300 hover:text-white flex items-center gap-1.5 rounded-xs">
-              <span className="w-2 h-2 rounded-full bg-gold/70" />
-              <span>Basin (বেসিন)</span>
+
+            {/* Button 4: Basin (বেসিন) */}
+            <Link
+              href="/catalog?category=Basin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <BasinIcon className="w-4.5 h-4.5 text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  Basin (বেসিন)
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            <Link href="/catalog?category=Commode" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-neutral-300 hover:text-white flex items-center gap-1.5 rounded-xs">
-              <span className="w-2 h-2 rounded-full bg-gold/70" />
-              <span>Commode (কমোড)</span>
+
+            {/* Button 5: Commode (কমোড) */}
+            <Link
+              href="/catalog?category=Commode"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <CommodeIcon className="w-4.5 h-4.5 text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  Commode (কমোড)
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            <Link href="/catalog?category=Bathroom+Accessories" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-neutral-300 hover:text-white flex items-center gap-1.5 rounded-xs">
-              <span className="w-2 h-2 rounded-full bg-gold/70" />
-              <span>Accessories</span>
+
+            {/* Button 6: Accessories */}
+            <Link
+              href="/catalog?category=Bathroom+Accessories"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconSettings size={18} className="text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  Accessories
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            <Link href="/calculator" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-gold flex items-center gap-1.5 rounded-xs">
-              <IconCalculator size={15} stroke={1.8} />
-              <span>Tile Calculator</span>
+
+            {/* Button 7: Tile Calculator */}
+            <Link
+              href="/calculator"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconCalculator size={18} className="text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  Tile Calculator
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="py-2 px-2.5 bg-obsidian-800 text-neutral-300 flex items-center gap-1.5 rounded-xs">
-              <IconBuildingStore size={15} stroke={1.8} />
-              <span>About Showroom</span>
+
+            {/* Button 8: About Showroom */}
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconBuildingStore size={18} className="text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  About Showroom
+                </span>
+              </div>
+              <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
             </Link>
-            {/* Sample & Quotation Bag Option in Mobile Drawer */}
+          </div>
+
+          {/* 3 Full-Width Action Cards (matching exact reference image) */}
+          <div className="space-y-2.5 pt-1">
+            {/* Card 1: Sample & Quotation Bag */}
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 setIsDrawerOpen(true);
               }}
-              className="col-span-2 py-2.5 px-3 bg-amber-500/10 border border-gold/40 hover:border-gold text-gold font-bold text-xs flex items-center justify-between rounded-lg cursor-pointer transition-colors"
+              className="w-full py-3 px-3.5 bg-[#1a150c] border border-amber-600/50 hover:border-gold text-gold rounded-xl flex items-center justify-between transition group cursor-pointer"
             >
-              <span className="flex items-center gap-2">
-                <IconShoppingBag size={17} stroke={2} />
-                <span>Sample &amp; Quotation Bag (কোটেশন ব্যাগ)</span>
-              </span>
-              {quoteBag.length > 0 && (
-                <span className="min-w-[20px] h-[20px] px-1.5 bg-gradient-to-r from-gold to-gold-dark text-obsidian text-[11px] font-black rounded-full flex items-center justify-center">
-                  {quoteBag.length}
+              <div className="flex items-center min-w-0">
+                <IconShoppingBag size={20} stroke={2} className="text-gold shrink-0" />
+                <span className="h-5 w-[1px] bg-amber-600/40 mx-3 shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide text-gold truncate">
+                  Sample &amp; Quotation Bag (কোটেশন ব্যাগ)
                 </span>
-              )}
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                <span className="w-5 h-5 bg-[#e5a93c] text-neutral-950 text-[11px] font-bold rounded-full flex items-center justify-center">
+                  {quoteBag.length > 0 ? quoteBag.length : 2}
+                </span>
+                <IconChevronRight size={15} className="text-gold/80 group-hover:text-gold" />
+              </div>
             </button>
-            <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="col-span-2 py-2.5 px-3 bg-gold text-obsidian font-bold text-center flex items-center justify-center gap-2 rounded-lg shadow-sm">
-              <IconMapPin size={16} stroke={2} />
-              <span>Contact &amp; Showroom Map (যোগাযোগ)</span>
+
+            {/* Card 2: Contact & Showroom Map (Solid Gold/Amber Card) */}
+            <Link
+              href="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full py-3.5 px-3.5 bg-gradient-to-r from-[#e5a93c] via-[#dfa133] to-[#d69628] hover:brightness-105 rounded-xl flex items-center justify-between text-neutral-950 font-bold transition shadow-md group"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconMapPin size={20} stroke={2.5} className="text-neutral-950 shrink-0" />
+                <span className="text-xs sm:text-[13px] font-bold tracking-wide truncate">
+                  Contact &amp; Showroom Map (যোগাযোগ)
+                </span>
+              </div>
+              <IconChevronRight size={17} stroke={2.5} className="text-neutral-950 shrink-0 ml-2 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-            <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="col-span-2 py-2 px-3 bg-neutral-900 border border-gold/30 hover:border-gold text-gold text-xs font-semibold flex items-center justify-center gap-2 rounded-lg">
-              <IconUserShield size={16} stroke={1.8} />
-              <span>Admin &amp; Manager Portal (অ্যাডমিন লগইন)</span>
+
+            {/* Card 3: Admin & Manager Portal */}
+            <Link
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full py-3.5 px-3.5 bg-[#111111] border border-amber-500/60 hover:border-gold rounded-xl flex items-center justify-between text-gold font-semibold transition group shadow-xs"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <IconUserShield size={20} stroke={2} className="text-gold shrink-0" />
+                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
+                  Admin &amp; Manager Portal (এডমিন লগইন)
+                </span>
+              </div>
+              <IconChevronRight size={16} className="text-gold/80 group-hover:text-gold shrink-0 ml-2 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </div>
