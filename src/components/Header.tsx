@@ -525,6 +525,8 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
+  const [isCategoryBarExpanded, setIsCategoryBarExpanded] = useState(false);
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const router = useRouter();
@@ -564,6 +566,68 @@ export default function Header() {
     };
   }, []);
 
+  // Monitor scroll to collapse category bar when user scrolls down
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentY = window.scrollY;
+          if (currentY > 80) {
+            setIsScrolledDown(true);
+          } else if (currentY <= 40) {
+            setIsScrolledDown(false);
+            setIsCategoryBarExpanded(false);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close expanded category bar when clicking outside header
+  useEffect(() => {
+    if (!isCategoryBarExpanded) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setIsCategoryBarExpanded(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isCategoryBarExpanded]);
+
+  // Close expanded category bar on pathname change
+  useEffect(() => {
+    if (isScrolledDown) {
+      setIsCategoryBarExpanded(false);
+    }
+  }, [pathname]);
+
+  // Recalculate --header-height CSS variable after expand/collapse animation completes
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (navRef.current) {
+        const height = navRef.current.getBoundingClientRect().height;
+        document.documentElement.style.setProperty(
+          "--header-height",
+          `${Math.ceil(height)}px`
+        );
+      }
+    };
+
+    updateHeaderHeight();
+    const timeout = setTimeout(updateHeaderHeight, 320);
+    return () => clearTimeout(timeout);
+  }, [isScrolledDown, isCategoryBarExpanded]);
+
   // Auto-play announcement carousel every 4 seconds
   useEffect(() => {
     if (isCarouselPaused) return;
@@ -602,6 +666,9 @@ export default function Header() {
       menuTimeoutRef.current = null;
     }
     setActiveMegaMenu(null);
+    if (isScrolledDown) {
+      setIsCategoryBarExpanded(false);
+    }
   };
 
   const handlePrevAnnouncement = () => {
@@ -795,6 +862,38 @@ export default function Header() {
               />
             </Link>
 
+            {/* Scrolled Down: Category Dropdown Toggle Button (Exact Image 2 marked position) */}
+            {isScrolledDown && (
+              <button
+                type="button"
+                onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs animate-in fade-in zoom-in-95 ${
+                  isCategoryBarExpanded
+                    ? "bg-obsidian text-gold border-gold ring-1 ring-gold/40 shadow-sm"
+                    : "bg-white hover:bg-neutral-50 text-obsidian border-gold/70 hover:border-gold hover:text-gold-dark"
+                }`}
+                title={
+                  lang === "bn"
+                    ? (isCategoryBarExpanded ? "ক্যাটাগরি বন্ধ করুন" : "সকল ক্যাটাগরি দেখুন")
+                    : (isCategoryBarExpanded ? "Close Categories" : "Browse Categories")
+                }
+                aria-expanded={isCategoryBarExpanded}
+                aria-label="Toggle category navigation"
+              >
+                <IconCategory size={15} stroke={2} className="text-gold shrink-0" />
+                <span className="hidden sm:inline uppercase tracking-wider text-[10.5px] sm:text-[11px] whitespace-nowrap">
+                  {lang === "bn" ? "ক্যাটাগরি" : "Categories"}
+                </span>
+                <IconChevronDown
+                  size={14}
+                  stroke={2.5}
+                  className={`transition-transform duration-200 text-gold-dark shrink-0 ${
+                    isCategoryBarExpanded ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            )}
+
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -943,9 +1042,13 @@ export default function Header() {
         </div>
       )}
 
-        {/* Tier 2: Category Navigation Bar with Mega Menu */}
+        {/* Tier 2: Category Navigation Bar with Mega Menu (Collapses when scrolled, expands via dropdown toggle) */}
         <nav
-          className="border-t border-neutral-200/80"
+          className={`border-t border-neutral-200/80 transition-all duration-300 ease-in-out ${
+            isScrolledDown && !isCategoryBarExpanded
+              ? "max-h-0 opacity-0 overflow-hidden pointer-events-none"
+              : "max-h-[600px] opacity-100 overflow-visible"
+          }`}
           onMouseLeave={handleMenuLeave}
         >
           <CategoryNavLinks
