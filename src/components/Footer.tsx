@@ -17,8 +17,6 @@ import {
   IconChevronDown,
   IconClock,
   IconMail,
-  IconShieldCheck,
-  IconBuildingStore,
   IconTruckDelivery,
   IconSparkles,
 } from "@tabler/icons-react";
@@ -32,74 +30,6 @@ export default function Footer() {
   }
   return (
     <footer className="bg-obsidian text-white border-t-4 border-gold">
-      {/* =========================================================================
-          TOP LUXURY TRUST & SERVICE STRIP
-          ========================================================================= */}
-      <div className="border-b border-gold/20 bg-neutral-950/80 backdrop-blur-sm">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-5">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-            {/* Trust Item 1 */}
-            <div className="flex items-center gap-3.5 p-2 rounded-lg group">
-              <div className="w-10 h-10 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-obsidian transition-colors shrink-0">
-                <IconShieldCheck size={22} stroke={2} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-gold transition-colors">
-                  ১০০% অথেনটিক ব্র্যান্ড
-                </h4>
-                <p className="text-[11px] text-neutral-400">
-                  RAK, আকিজ, ডিবিএল, ফু-ওয়াং
-                </p>
-              </div>
-            </div>
-
-            {/* Trust Item 2 */}
-            <div className="flex items-center gap-3.5 p-2 rounded-lg group">
-              <div className="w-10 h-10 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-obsidian transition-colors shrink-0">
-                <IconBuildingStore size={22} stroke={2} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-gold transition-colors">
-                  ৫,০০০+ এক্সক্লুসিভ ডিজাইন
-                </h4>
-                <p className="text-[11px] text-neutral-400">
-                  স্ল্যাব, ফ্লোর, ওয়াল ও স্যানিটারি
-                </p>
-              </div>
-            </div>
-
-            {/* Trust Item 3 */}
-            <div className="flex items-center gap-3.5 p-2 rounded-lg group">
-              <div className="w-10 h-10 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-obsidian transition-colors shrink-0">
-                <IconTruckDelivery size={22} stroke={2} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-gold transition-colors">
-                  প্রজেক্টে হোম ডেলিভারি
-                </h4>
-                <p className="text-[11px] text-neutral-400">
-                  গাজীপুর, ঢাকা, ময়মনসিংহ ও আশেপাশের জেলা
-                </p>
-              </div>
-            </div>
-
-            {/* Trust Item 4 */}
-            <div className="flex items-center gap-3.5 p-2 rounded-lg group">
-              <div className="w-10 h-10 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-obsidian transition-colors shrink-0">
-                <IconCalculator size={22} stroke={2} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-gold transition-colors">
-                  ফ্রি টাইলস ক্যালকুলেটর
-                </h4>
-                <p className="text-[11px] text-neutral-400">
-                  ঘরের মাপ দিন, নিখুঁত হিসাব নিন
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* =========================================================================
           MAIN FOOTER 4-COLUMN LUXURY GRID - RESPONSIVE ACROSS ALL DEVICES
