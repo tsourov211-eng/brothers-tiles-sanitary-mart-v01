@@ -880,7 +880,7 @@ export default function Header() {
                 className="text-neutral-700 group-hover:text-gold-dark group-hover:scale-110 transition-all duration-200"
               />
               {quoteBag.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-gold via-gold-light to-gold-dark text-obsidian text-[9.5px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-0.5 min-w-auto h-auto px-0.5 bg-transparent text-gold-dark text-[11px] font-black rounded-none flex items-center justify-center shadow-none ring-0 leading-none pointer-events-none select-none">
                   {quoteBag.length}
                 </span>
               )}
