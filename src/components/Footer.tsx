@@ -10,7 +10,9 @@ import {
   IconRosette,
   IconBrandWhatsapp,
   IconBrandFacebook,
+  IconBrandFacebookFilled,
   IconBrandYoutube,
+  IconBrandYoutubeFilled,
   IconBrandInstagram,
   IconLink,
   IconChevronRight,
@@ -52,6 +54,25 @@ function SanitaryIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
       <path d="M8 14l1 3" />
       <path d="M12 15l1 3" />
       <path d="M16 16l1 3" />
+    </svg>
+  );
+}
+
+function InstagramGradientIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <defs>
+        <linearGradient id="igSunsetGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#f09433" />
+          <stop offset="25%" stopColor="#e6683c" />
+          <stop offset="50%" stopColor="#dc2743" />
+          <stop offset="75%" stopColor="#cc2366" />
+          <stop offset="100%" stopColor="#bc1888" />
+        </linearGradient>
+      </defs>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="url(#igSunsetGrad)" strokeWidth="2.2" />
+      <circle cx="12" cy="12" r="4.2" stroke="url(#igSunsetGrad)" strokeWidth="2.2" />
+      <circle cx="17.2" cy="6.8" r="1.3" fill="url(#igSunsetGrad)" />
     </svg>
   );
 }
@@ -144,50 +165,59 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Social / Quick Contact Circle Icons */}
-            <div className="flex items-center justify-center gap-2.5 pt-3">
+            {/* Social / Quick Contact Modern Icons (matching exact user style) */}
+            <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-3">
+              {/* WhatsApp */}
               <a
                 href={BUSINESS_INFO.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 text-emerald-400 hover:border-emerald-500 hover:bg-emerald-500/10 flex items-center justify-center transition"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-black border border-amber-500/60 hover:border-[#25D366] hover:shadow-[0_0_12px_rgba(37,211,102,0.35)] flex items-center justify-center transition-all duration-300 hover:scale-105 group"
               >
-                <IconBrandWhatsapp size={16} stroke={2} />
+                <IconBrandWhatsapp size={22} stroke={2.2} className="text-[#25D366] group-hover:scale-110 transition-transform" />
               </a>
+
+              {/* Facebook */}
               <a
                 href={BUSINESS_INFO.facebookLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 text-blue-400 hover:border-blue-500 hover:bg-blue-500/10 flex items-center justify-center transition"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-black border border-amber-500/60 hover:border-[#1877F2] hover:shadow-[0_0_12px_rgba(24,119,242,0.35)] flex items-center justify-center transition-all duration-300 hover:scale-105 group"
               >
-                <IconBrandFacebook size={16} stroke={2} />
+                <IconBrandFacebookFilled size={21} className="text-[#1877F2] group-hover:scale-110 transition-transform" />
               </a>
+
+              {/* YouTube */}
               <a
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube"
-                className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 text-red-500 hover:border-red-500 hover:bg-red-500/10 flex items-center justify-center transition"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-black border border-red-500/70 hover:border-red-400 hover:shadow-[0_0_12px_rgba(255,0,0,0.4)] flex items-center justify-center transition-all duration-300 hover:scale-105 group"
               >
-                <IconBrandYoutube size={16} stroke={2} />
+                <IconBrandYoutubeFilled size={24} className="text-[#FF0000] group-hover:scale-110 transition-transform" />
               </a>
+
+              {/* Instagram */}
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 text-pink-400 hover:border-pink-500 hover:bg-pink-500/10 flex items-center justify-center transition"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-black border border-amber-500/60 hover:border-[#E1306C] hover:shadow-[0_0_12px_rgba(225,48,108,0.35)] flex items-center justify-center transition-all duration-300 hover:scale-105 group"
               >
-                <IconBrandInstagram size={16} stroke={2} />
+                <InstagramGradientIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
+
+              {/* Website Link */}
               <a
                 href="/"
-                aria-label="Website"
-                className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-gold hover:text-gold flex items-center justify-center transition"
+                aria-label="Website Link"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-black border border-amber-500/60 hover:border-gold hover:shadow-[0_0_12px_rgba(212,175,55,0.35)] flex items-center justify-center transition-all duration-300 hover:scale-105 group"
               >
-                <IconLink size={16} stroke={2} />
+                <IconLink size={20} stroke={2.4} className="text-white group-hover:scale-110 transition-transform" />
               </a>
             </div>
           </div>
