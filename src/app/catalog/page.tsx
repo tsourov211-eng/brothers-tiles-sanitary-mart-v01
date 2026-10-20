@@ -794,40 +794,51 @@ function CatalogContent() {
           setActivePdfPage(CATALOG_BOOK_PAGES[nextIdx]);
         };
 
+        // Compact visible pages window (5 pages) so it never scrolls and Next button is always adjacent
+        const visiblePages = (() => {
+          const total = CATALOG_BOOK_PAGES.length;
+          const count = 5;
+          let start = currentPdfIndex - 2;
+          let end = currentPdfIndex + 3;
+          if (start < 0) {
+            start = 0;
+            end = Math.min(total, count);
+          } else if (end > total) {
+            end = total;
+            start = Math.max(0, total - count);
+          }
+          return CATALOG_BOOK_PAGES.slice(start, end);
+        })();
+
         return (
           <section className="bg-obsidian text-white border-t-2 border-gold py-4 sm:py-5 px-3 sm:px-6 lg:px-8 mt-6">
             <div className="max-w-[1400px] mx-auto space-y-3 sm:space-y-4">
               {/* Compact Header with Integrated Page Selector */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 border-b border-gold/30 pb-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9.5px] font-bold uppercase tracking-widest text-gold bg-gold/10 px-2 py-0.5 border border-gold/30 rounded-xs">
-                      DIGITAL TILES BOOK
-                    </span>
-                    <span className="text-[11px] text-neutral-400 font-mono">
-                      Page {activePdfPage} of 116 ({currentPdfIndex + 1}/{CATALOG_BOOK_PAGES.length})
-                    </span>
-                  </div>
-                  <h2 className="text-base sm:text-lg font-serif font-bold text-white mt-0.5 leading-tight">
-                    RAK Ceramics Official Tiles Book Preview
-                  </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-gold/30 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-[9.5px] font-bold uppercase tracking-widest text-gold bg-gold/10 px-2 py-0.5 border border-gold/30 rounded-xs">
+                    DIGITAL TILES BOOK
+                  </span>
+                  <span className="text-[11px] text-neutral-400 font-mono">
+                    Page {activePdfPage} of 116 ({currentPdfIndex + 1}/{CATALOG_BOOK_PAGES.length})
+                  </span>
                 </div>
 
-                {/* Single-Row Page Nav Strip with Prev/Next buttons */}
-                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+                {/* Single-Row Page Nav Strip with Prev/Next buttons (No Scroll, Next button always visible) */}
+                <div className="flex items-center gap-1 shrink-0 py-0.5">
                   <button
                     onClick={handlePrevPdfPage}
-                    className="px-2 py-1 text-xs font-bold border border-gold/40 bg-obsidian-800 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition shrink-0 flex items-center gap-0.5 cursor-pointer shadow-2xs"
+                    className="px-2.5 py-1 text-xs font-bold border border-gold/40 bg-obsidian-800 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition shrink-0 flex items-center gap-0.5 cursor-pointer shadow-2xs"
                     title="Previous Page (পূর্ববর্তী পৃষ্ঠা)"
                   >
                     <IconChevronLeft size={14} stroke={2.5} />
                     <span>Prev</span>
                   </button>
-                  {CATALOG_BOOK_PAGES.map((pg) => (
+                  {visiblePages.map((pg) => (
                     <button
                       key={pg}
                       onClick={() => setActivePdfPage(pg)}
-                      className={`px-1.5 sm:px-2 py-1 text-[11px] font-bold border rounded-xs transition shrink-0 cursor-pointer ${
+                      className={`min-w-[34px] px-1.5 sm:px-2 py-1 text-[11px] font-bold border rounded-xs transition shrink-0 cursor-pointer text-center ${
                         activePdfPage === pg
                           ? "bg-gold text-obsidian border-gold shadow-xs font-black scale-105"
                           : "bg-obsidian-800 text-neutral-300 border-gold/30 hover:border-gold hover:text-white"
@@ -839,7 +850,7 @@ function CatalogContent() {
                   ))}
                   <button
                     onClick={handleNextPdfPage}
-                    className="px-2 py-1 text-xs font-bold border border-gold/40 bg-obsidian-800 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition shrink-0 flex items-center gap-0.5 cursor-pointer shadow-2xs"
+                    className="px-2.5 py-1 text-xs font-bold border border-gold/40 bg-obsidian-800 text-gold hover:bg-gold hover:text-obsidian rounded-xs transition shrink-0 flex items-center gap-0.5 cursor-pointer shadow-2xs"
                     title="Next Page (পরবর্তী পৃষ্ঠা)"
                   >
                     <span>Next</span>
