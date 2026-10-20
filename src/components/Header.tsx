@@ -34,6 +34,16 @@ const CATEGORY_NAV_ITEMS = [
   { id: "accessories", label: "BATHROOM ACCESSORIES", href: "/catalog?category=Bathroom+Accessories" },
 ];
 
+const MOBILE_CATEGORY_NAV_ITEMS = [
+  { id: "new", label: "NEW ARRIVALS", href: "/catalog?filter=new" },
+  { id: "tiles", label: "WALL & FLOOR TILES", href: "/catalog?category=Tiles" },
+  { id: "basin", label: "BASIN", href: "/catalog?category=Basin" },
+  { id: "commode", label: "COMMODE", href: "/catalog?category=Commode" },
+  { id: "all", label: "VIEW ALL", href: "/catalog" },
+  { id: "sanitary", label: "SANITARY", href: "/catalog?category=Sanitary" },
+  { id: "accessories", label: "BATHROOM ACCESSORIES", href: "/catalog?category=Bathroom+Accessories" },
+];
+
 function isItemActive(
   itemId: string,
   pathname: string,
@@ -43,6 +53,8 @@ function isItemActive(
   if (pathname !== "/catalog") return false;
 
   switch (itemId) {
+    case "all":
+      return !currentCategory && !currentFilter;
     case "new":
       return currentFilter === "new";
     case "tiles":
@@ -222,8 +234,8 @@ function CategoryNavLinksContent({
       </div>
 
       {/* Mobile Horizontal Category Rail - Keeps Same Design Across Devices */}
-      <div className="md:hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar px-3 py-1 bg-white border-t border-neutral-100 text-[10.5px] font-bold tracking-tight uppercase whitespace-nowrap">
-        {CATEGORY_NAV_ITEMS.map((item) => {
+      <div className="md:hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar px-2.5 py-1 bg-white border-t border-neutral-100 text-[10.5px] font-bold tracking-tight uppercase whitespace-nowrap">
+        {MOBILE_CATEGORY_NAV_ITEMS.map((item) => {
           const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
           return (
             <Link
@@ -469,7 +481,7 @@ export default function Header() {
             )}
             <button
               type="submit"
-              className="h-full w-11 sm:w-12 bg-[#BE8226] hover:bg-[#a86e1b] active:bg-[#946116] flex items-center justify-center shrink-0 transition-colors duration-150 cursor-pointer rounded-r-full"
+              className="h-full w-12 sm:w-13 md:w-14 bg-[#BE8226] hover:bg-[#a86e1b] active:bg-[#946116] flex items-center justify-center shrink-0 transition-colors duration-150 cursor-pointer rounded-r-full"
               aria-label="Search"
               title="Search"
             >
@@ -508,7 +520,7 @@ export default function Header() {
                 />
               )}
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-rose-600 to-red-600 text-white text-[9.5px] font-bold rounded-full flex items-center justify-center shadow-md ring-2 ring-white leading-none pointer-events-none select-none">
+                <span className="absolute -top-1 -right-0.5 sm:-top-1 sm:-right-1 min-w-auto sm:min-w-[18px] h-auto sm:h-[18px] px-0.5 sm:px-1 bg-transparent sm:bg-gradient-to-r sm:from-rose-600 sm:to-red-600 text-rose-600 sm:text-white text-[11px] sm:text-[9.5px] font-black sm:font-bold rounded-none sm:rounded-full flex items-center justify-center shadow-none sm:shadow-md ring-0 sm:ring-2 sm:ring-white leading-none pointer-events-none select-none">
                   {wishlist.length}
                 </span>
               )}
@@ -563,7 +575,7 @@ export default function Header() {
       </div>
 
       {/* Mobile Quick Search Bar (visible only on small screens) */}
-      <div className="sm:hidden px-3.5 pb-2">
+      <div className="sm:hidden px-2.5 sm:px-3.5 pb-2">
         <form
           onSubmit={handleSearchSubmit}
           className="flex items-center w-full h-[37px] bg-white border border-neutral-300 focus-within:border-[#BE8226] focus-within:ring-1 focus-within:ring-[#BE8226]/30 rounded-full pl-3 pr-0 overflow-hidden shadow-2xs"
@@ -592,7 +604,7 @@ export default function Header() {
           )}
           <button
             type="submit"
-            className="h-full w-10.5 bg-[#BE8226] hover:bg-[#a86e1b] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full"
+            className="h-full w-14 bg-[#BE8226] hover:bg-[#a86e1b] active:bg-[#946116] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full transition-colors"
             aria-label="Search"
             title="Search"
           >
