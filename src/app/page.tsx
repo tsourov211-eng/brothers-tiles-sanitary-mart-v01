@@ -23,6 +23,8 @@ import {
   IconBath,
   IconShieldCheck,
   IconSparkles,
+  IconTruck,
+  IconHeadset,
   Icon,
 } from "@tabler/icons-react";
 
@@ -33,6 +35,29 @@ const DEPARTMENT_ICONS: Record<string, Icon> = {
   Sanitary: IconShieldCheck,
   "Bathroom Accessories": IconSparkles,
 };
+
+const VALUE_PROPOSITIONS = [
+  {
+    icon: IconSparkles,
+    title: "EXPERT CURATION",
+    description: "৫০০০+ এক্সক্লুসিভ ডিজাইন — RAK, Akij, DBL, Fu-Wang ও Abul Khair ব্র্যান্ডের সেরা কালেকশন।",
+  },
+  {
+    icon: IconShieldCheck,
+    title: "PREMIUM QUALITY",
+    description: "ISO 9001:2015, BDS ISO 13006:2021 ও BSTI অনুমোদিত ১০০% এ-গ্রেড টাইলস ও স্যানিটারি পণ্য।",
+  },
+  {
+    icon: IconTruck,
+    title: "FAST HOME DELIVERY",
+    description: "গাজীপুর, টঙ্গী, উত্তরা, ঢাকা, ময়মনসিংহ, টাঙ্গাইল ও আশেপাশে দ্রুত ও নিরাপদ হোম ডেলিভারি।",
+  },
+  {
+    icon: IconHeadset,
+    title: "PERSONALIZED SUPPORT",
+    description: "বাসার মাপ ও বাজেট অনুযায়ী ফ্রি ডিজাইন, সঠিক হিসাব এবং পাইকারি দামে খুচরা ক্রয়ের সুবিধা।",
+  },
+];
 
 export default function HomePage() {
   const [heroIndex, setHeroIndex] = useState(0);
@@ -789,46 +814,32 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          SECTION 8: 4-COLUMN BOTTOM VALUE PROPOSITION BAR
-          (Exact replica of bottom bar in tilebarLandingPage.jpg:
-           EXPERT CURATION | PREMIUM QUALITY | LOW COST SHIPPING | PERSONALIZED SUPPORT)
+          SECTION 8: BOTTOM VALUE PROPOSITIONS (HORIZONTAL SCROLL RAIL ON MOBILE, 4-COL GRID ON DESKTOP)
          ===================================================================== */}
-      <section className="bg-stonebg border-t border-neutral-300 py-10 px-4 sm:px-8 mt-6">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-          <div className="space-y-1.5">
-            <h4 className="text-obsidian font-bold text-xs tracking-widest uppercase">
-              EXPERT CURATION
-            </h4>
-            <p className="text-[11px] text-neutral-700 leading-relaxed">
-              ৫০০০+ এক্সক্লুসিভ ডিজাইন — RAK, Akij, DBL, Fu-Wang ও Abul Khair ব্র্যান্ডের সেরা কালেকশন।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h4 className="text-obsidian font-bold text-xs tracking-widest uppercase">
-              PREMIUM QUALITY
-            </h4>
-            <p className="text-[11px] text-neutral-700 leading-relaxed">
-              ISO 9001:2015, BDS ISO 13006:2021 ও BSTI অনুমোদিত ১০০% এ-গ্রেড টাইলস ও স্যানিটারি পণ্য।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h4 className="text-obsidian font-bold text-xs tracking-widest uppercase">
-              FAST HOME DELIVERY
-            </h4>
-            <p className="text-[11px] text-neutral-700 leading-relaxed">
-              গাজীপুর, টঙ্গী, উত্তরা, ঢাকা, ময়মনসিংহ, টাঙ্গাইল ও আশেপাশে দ্রুত ও নিরাপদ হোম ডেলিভারি।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h4 className="text-obsidian font-bold text-xs tracking-widest uppercase">
-              PERSONALIZED SUPPORT
-            </h4>
-            <p className="text-[11px] text-neutral-700 leading-relaxed">
-              বাসার মাপ ও বাজেট অনুযায়ী ফ্রি ডিজাইন, সঠিক হিসাব এবং পাইকারি দামে খুচরা ক্রয়ের সুবিধা।
-            </p>
+      <section className="bg-stonebg border-t border-neutral-300 py-6 sm:py-8 lg:py-10 px-4 sm:px-8 mt-6">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex lg:grid lg:grid-cols-4 overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 sm:gap-4 lg:gap-8 pb-1 lg:pb-0">
+            {VALUE_PROPOSITIONS.map((item, index) => {
+              const IconComp = item.icon;
+              return (
+                <div
+                  key={index}
+                  className="min-w-[270px] xs:min-w-[290px] sm:min-w-[320px] lg:min-w-0 flex-1 snap-start bg-white/70 lg:bg-transparent border border-neutral-300/80 lg:border-none rounded-xl lg:rounded-none p-4 lg:p-0 shadow-2xs lg:shadow-none flex flex-col justify-start text-left lg:text-center transition-all hover:border-gold/60"
+                >
+                  <div className="flex items-center gap-2.5 lg:flex-col lg:items-center lg:gap-1.5 mb-2">
+                    <div className="w-7 h-7 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0">
+                      <IconComp className="w-4 h-4" stroke={1.8} />
+                    </div>
+                    <h4 className="text-obsidian font-bold text-xs tracking-wider uppercase">
+                      {item.title}
+                    </h4>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-neutral-700 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
