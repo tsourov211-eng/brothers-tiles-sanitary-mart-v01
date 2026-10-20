@@ -876,7 +876,7 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
-                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer z-50 group/tab"
+                  className="absolute top-full mt-[14px] left-1/2 -translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer z-50 group/tab"
                   title={
                     lang === "bn"
                       ? (isCategoryBarExpanded ? "মেনু ও ফিল্টার বন্ধ করুন" : "মেনু ও ফিল্টার খুলুন")
@@ -915,7 +915,7 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
-                  className="sm:hidden absolute top-full mt-1.5 left-1/2 -translate-x-1/2 w-7.5 h-4.5 bg-white hover:bg-amber-50/80 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-all duration-200 cursor-pointer z-50 group/tab"
+                  className="sm:hidden absolute top-full mt-2 left-1/2 -translate-x-1/2 w-7.5 h-4.5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-all duration-200 cursor-pointer z-50 group/tab"
                   title={isCategoryBarExpanded ? "Close" : "Open"}
                   aria-expanded={isCategoryBarExpanded}
                   aria-label="Toggle category and filter navigation"
