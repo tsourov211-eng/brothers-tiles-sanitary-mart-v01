@@ -623,8 +623,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="relative bg-white z-30">
-        {/* Tier 0: Top Announcement Bar Carousel (Auto rotates every 4s, left-to-right slide) */}
+      {/* Tier 0: Top Announcement Bar Carousel (Auto rotates every 4s, left-to-right slide, scrolls naturally) */}
       <div
         className="bg-obsidian text-gold border-b border-gold/20 text-[10px] sm:text-[11px] py-1 px-3 sm:px-4"
         onMouseEnter={() => setIsCarouselPaused(true)}
@@ -661,8 +660,13 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Tier 1: Brand Logo + Wide Search Bar + User/Wishlist/Bag Icons (Exact Tilebar Tier 1) */}
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 md:px-8 py-1.5 sm:py-2 flex items-center justify-between gap-2.5 sm:gap-4">
+      {/* Sticky Main Header Container: Tier 1 (Logo, Search, Icons) + Tier 2 (Category Nav & Mega Menu) */}
+      <header
+        ref={navRef}
+        className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-2 border-gold shadow-sm transition-shadow duration-200"
+      >
+        {/* Tier 1: Brand Logo + Wide Search Bar + User/Wishlist/Bag Icons (Exact Tilebar Tier 1) */}
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-6 md:px-8 py-1.5 sm:py-2 flex items-center justify-between gap-2.5 sm:gap-4">
         {/* Left: Brother's Tiles & Sanitary Mart Official Logo (Homepage Link) */}
         <Link
           href="/"
@@ -938,20 +942,18 @@ export default function Header() {
           </div>
         </div>
       )}
-    </header>
 
-    {/* Tier 2: Sticky Category Navigation Bar with Mega Menu (Sticks to top of screen as you scroll down) */}
-    <nav
-      ref={navRef}
-      className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200/80 border-b-2 border-gold shadow-sm"
-      onMouseLeave={handleMenuLeave}
-    >
-      <CategoryNavLinks
-        activeMegaMenu={activeMegaMenu}
-        handleMenuEnter={handleMenuEnter}
-        handleCloseMegaMenu={handleCloseMegaMenu}
-        pathname={pathname}
-      />
+        {/* Tier 2: Category Navigation Bar with Mega Menu */}
+        <nav
+          className="border-t border-neutral-200/80"
+          onMouseLeave={handleMenuLeave}
+        >
+          <CategoryNavLinks
+            activeMegaMenu={activeMegaMenu}
+            handleMenuEnter={handleMenuEnter}
+            handleCloseMegaMenu={handleCloseMegaMenu}
+            pathname={pathname}
+          />
 
       {/* Mega Menu Dropdown Container */}
       {activeMegaMenu && MEGA_MENU_DATA[activeMegaMenu] && (
@@ -1031,15 +1033,16 @@ export default function Header() {
           </div>
         </div>
       )}
-    </nav>
+        </nav>
+      </header>
 
-    {/* Backdrop overlay for focus when Mega Menu is open */}
-    {activeMegaMenu && (
-      <div
-        className="fixed inset-0 top-[38px] bg-black/20 backdrop-blur-[0.5px] z-30 pointer-events-none transition-opacity duration-200"
-        aria-hidden="true"
-      />
-    )}
-  </>
+      {/* Backdrop overlay for focus when Mega Menu is open */}
+      {activeMegaMenu && (
+        <div
+          className="fixed inset-0 top-[var(--header-height,96px)] bg-black/20 backdrop-blur-[0.5px] z-30 pointer-events-none transition-opacity duration-200"
+          aria-hidden="true"
+        />
+      )}
+    </>
   );
 }
