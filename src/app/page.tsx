@@ -639,82 +639,76 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          SECTION 6: SPLIT 50/50 CHECKERBOARD FEATURE BLOCKS
-          (Exact replica of "GET 5 SAMPLES FOR $5" + "DESIGN SERVICES" in tilebarLandingPage.jpg)
+          SECTION 6: 2-COLUMN SINGLE ROW FEATURE CARDS (Wholesale & Tile Calculation)
          ===================================================================== */}
-      <section className="w-full my-6">
-        {/* Row 1: Left Image Collage | Right Warm Stone Text Block */}
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          <div className="relative min-h-[320px] sm:min-h-[400px] bg-stonebg">
-            <Image
-              src="/images/projects/sample-flatlay.jpg"
-              alt="5,000+ Tile Designs Wholesale & Retail"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="bg-stonebg px-8 sm:px-16 py-12 sm:py-16 flex flex-col justify-center">
-            <div className="max-w-md space-y-3">
-              <span className="text-[10px] font-bold tracking-widest uppercase text-gold-dark">
-                WHOLESALE &amp; RETAIL • 5,000+ DESIGNS
-              </span>
-              <h2 className="text-xl sm:text-2xl lg:text-[28px] font-semibold tracking-wide uppercase text-obsidian">
-                পাইকারি দামে খুচরা বিক্রয় — ৫০০০+ ডিজাইন
-              </h2>
-              <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed">
-                আর-এ-কে সিরামিকস (RAK Ceramics), ফু-ওয়াং, ফ্রেশ, মীর, আকিজ, ডিবিএল ও আবুল খায়েরসহ সেরা ব্র্যান্ডের ওয়াল টাইলস, ফ্লোর টাইলস, বেসিন, কমোড ও বাথরুম এক্সেসরিজ সরাসরি পাইকারি ও খুচরা মূল্যে নিন। গাজীপুর, টঙ্গী, উত্তরা, ঢাকা, ময়মনসিংহ ও টাঙ্গাইলে দ্রুত হোম ডেলিভারি সুবিধা।
-              </p>
-              <div className="pt-2">
-                <Link
-                  href="/catalog"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-obsidian border-b border-obsidian hover:text-gold-dark hover:border-gold-dark pb-0.5 transition"
-                >
-                  <span>EXPLORE ALL 5,000+ DESIGNS</span>
-                  <span>&#8250;</span>
-                </Link>
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-6 sm:py-10">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-8">
+          {/* Card 1: 5,000+ Designs Wholesale & Retail */}
+          <div className="group flex flex-col justify-between">
+            <div>
+              <Link href="/catalog" className="block overflow-hidden bg-stonebg border border-neutral-200 group-hover:border-gold transition">
+                <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full overflow-hidden">
+                  <Image
+                    src="/images/projects/sample-flatlay.jpg"
+                    alt="5,000+ Tile Designs Wholesale & Retail"
+                    fill
+                    className="object-cover group-hover:scale-105 transition duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
+                </div>
+              </Link>
+              <div className="pt-2 sm:pt-3.5 space-y-0.5 sm:space-y-1">
+                <span className="text-[9px] sm:text-[11px] font-bold tracking-widest uppercase text-gold-dark block">
+                  WHOLESALE &amp; RETAIL
+                </span>
+                <h3 className="text-xs sm:text-base lg:text-lg font-bold text-obsidian leading-snug tracking-tight">
+                  পাইকারি দামে ৫,০০০+ ডিজাইন
+                </h3>
               </div>
             </div>
+            <div className="pt-2 sm:pt-3">
+              <Link
+                href="/catalog"
+                className="inline-flex items-center gap-1 sm:gap-2 text-[10.5px] sm:text-sm font-bold tracking-wider sm:tracking-widest uppercase text-obsidian border-b-2 border-obsidian hover:text-gold-dark hover:border-gold-dark pb-0.5 sm:pb-1 transition group/btn"
+              >
+                <span>EXPLORE ALL</span>
+                <span className="text-xs sm:text-sm font-bold transition-transform group-hover/btn:translate-x-1 sm:group-hover/btn:translate-x-1.5">&rarr;</span>
+              </Link>
+            </div>
           </div>
-        </div>
 
-        {/* Row 2: Left Warm Stone Text Block | Right Architectural Flat-Lay Image */}
-        <div className="grid grid-cols-1 md:grid-cols-2 mt-4 md:mt-0">
-          <div className="bg-stonebg px-8 sm:px-16 py-12 sm:py-16 flex flex-col justify-center order-2 md:order-1">
-            <div className="max-w-md space-y-3">
-              <span className="text-[10px] font-bold tracking-widest uppercase text-gold-dark">
-                FREE PLANNING &amp; MEASUREMENT SUPPORT
-              </span>
-              <h2 className="text-xl sm:text-2xl lg:text-[28px] font-semibold tracking-wide uppercase text-obsidian">
-                DESIGN &amp; TILE CALCULATION SERVICES
-              </h2>
-              <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed">
-                একটা সুন্দর ঘর শুধু সুন্দর টাইলস দিয়ে তৈরি হয় না—প্রয়োজন হয় সঠিক পরিকল্পনা, সঠিক মাপ আর সঠিক টাইলস নির্বাচনের। আপনার বাসার মাপ বা ফ্লোর প্ল্যান নিয়ে চলে আসুন আমাদের শোরুমে, অথবা আমাদের অনলাইন ফ্রি টাইলস ক্যালকুলেটরে হিসাব করে নিন।
-              </p>
-              <div className="pt-2 flex flex-wrap gap-5">
-                <Link
-                  href="/calculator"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-obsidian border-b border-obsidian hover:text-gold-dark hover:border-gold-dark pb-0.5 transition"
-                >
-                  <span>OPEN FREE TILE CALCULATOR</span>
-                  <span>&#8250;</span>
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-gold-dark border-b border-gold-dark pb-0.5 transition"
-                >
-                  <span>BOOK SHOWROOM CONSULTATION</span>
-                  <span>&#8250;</span>
-                </Link>
+          {/* Card 2: Free Tile Calculation & Design Services */}
+          <div className="group flex flex-col justify-between">
+            <div>
+              <Link href="/calculator" className="block overflow-hidden bg-stonebg border border-neutral-200 group-hover:border-gold transition">
+                <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full overflow-hidden">
+                  <Image
+                    src="/images/projects/design-service-flatlay.jpg"
+                    alt="Design & Tile Calculation Services"
+                    fill
+                    className="object-cover group-hover:scale-105 transition duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
+                </div>
+              </Link>
+              <div className="pt-2 sm:pt-3.5 space-y-0.5 sm:space-y-1">
+                <span className="text-[9px] sm:text-[11px] font-bold tracking-widest uppercase text-gold-dark block">
+                  FREE CALCULATION &amp; DESIGN
+                </span>
+                <h3 className="text-xs sm:text-base lg:text-lg font-bold text-obsidian leading-snug tracking-tight">
+                  ফ্রি টাইলস মাপ ও হিসাব
+                </h3>
               </div>
             </div>
-          </div>
-          <div className="relative min-h-[320px] sm:min-h-[400px] bg-stonebg order-1 md:order-2">
-            <Image
-              src="/images/projects/design-service-flatlay.jpg"
-              alt="Design & Tile Calculation Services"
-              fill
-              className="object-cover"
-            />
+            <div className="pt-2 sm:pt-3">
+              <Link
+                href="/calculator"
+                className="inline-flex items-center gap-1 sm:gap-2 text-[10.5px] sm:text-sm font-bold tracking-wider sm:tracking-widest uppercase text-obsidian border-b-2 border-obsidian hover:text-gold-dark hover:border-gold-dark pb-0.5 sm:pb-1 transition group/btn"
+              >
+                <span>CALCULATOR</span>
+                <span className="text-xs sm:text-sm font-bold transition-transform group-hover/btn:translate-x-1 sm:group-hover/btn:translate-x-1.5">&rarr;</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
