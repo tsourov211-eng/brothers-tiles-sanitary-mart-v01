@@ -71,20 +71,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-neutral-800/80">
           
           {/* Column 1: Brand & Categories */}
-          <div className="space-y-3.5 lg:pr-8">
-            <Link href="/" className="inline-block">
+          <div className="space-y-3.5 lg:pr-8 text-center flex flex-col items-center">
+            <Link href="/" className="inline-block mx-auto">
               <Image
                 src="/images/logo/Brothers Tiles & Sanitary Logo-dark.png"
                 alt="Brother's Tiles & Sanitary Mart"
                 width={260}
                 height={80}
-                className="h-12 sm:h-14 w-auto object-contain"
+                className="h-12 sm:h-14 w-auto object-contain mx-auto"
                 priority
               />
             </Link>
 
             {/* Pill with decorative horizontal lines */}
-            <div className="flex items-center gap-2.5 my-3">
+            <div className="flex items-center gap-2.5 my-3 w-full justify-center">
               <div className="h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-gold/70 flex-1" />
               <span className="border border-gold/60 bg-gold/10 px-3.5 py-0.5 rounded-full text-gold text-[11px] font-semibold tracking-wide whitespace-nowrap shadow-xs">
                 সজ্জিত ঘর, সুন্দর আগামী
@@ -92,17 +92,17 @@ export default function Footer() {
               <div className="h-[1px] bg-gradient-to-l from-transparent via-gold/40 to-gold/70 flex-1" />
             </div>
 
-            <h3 className="text-sm sm:text-[15px] font-bold text-white leading-snug">
+            <h3 className="text-sm sm:text-[15px] font-bold text-white leading-snug text-center">
               টাইলস ও স্যানিটারি পণ্যের <span className="text-gold">নির্ভরযোগ্য শোরুম</span>
             </h3>
 
-            <p className="text-xs text-neutral-400 leading-relaxed">
+            <p className="text-xs text-neutral-400 leading-relaxed text-center">
               আধুনিক ডিজাইনের টাইলস, বেসিন, কমোড, স্যানিটারি পণ্য ও বাথরুম অ্যাকসেসরিজ এখন এক ছাদের নিচে।
             </p>
 
             {/* Category Buttons Row 1 & Row 2 */}
-            <div className="space-y-2 pt-1">
-              <div className="flex flex-wrap items-center gap-2">
+            <div className="space-y-2 pt-1 w-full flex flex-col items-center">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <Link
                   href="/catalog?category=Tiles"
                   className="border border-gold/50 bg-neutral-900/50 hover:bg-gold hover:text-black text-gold px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1.5 transition"
@@ -126,7 +126,7 @@ export default function Footer() {
                 </Link>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <Link
                   href="/catalog?category=Sanitary"
                   className="border border-gold/50 bg-neutral-900/50 hover:bg-gold hover:text-black text-gold px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1.5 transition"
@@ -145,7 +145,7 @@ export default function Footer() {
             </div>
 
             {/* Social / Quick Contact Circle Icons */}
-            <div className="flex items-center gap-2.5 pt-3">
+            <div className="flex items-center justify-center gap-2.5 pt-3">
               <a
                 href={BUSINESS_INFO.whatsappUrl}
                 target="_blank"
