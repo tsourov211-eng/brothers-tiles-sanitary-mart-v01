@@ -421,16 +421,10 @@ export default function HomePage() {
                     </div>
                   </div>
                 </Link>
-                <div className="pt-2 sm:pt-3.5 space-y-1 sm:space-y-1.5">
+                <div className="pt-2 sm:pt-3">
                   <h3 className="text-xs sm:text-base font-bold text-obsidian leading-snug sm:leading-normal">
                     {cat.title}
                   </h3>
-                  <p className="text-[10px] sm:text-xs text-neutral-600 line-clamp-1 sm:line-clamp-none">
-                    {cat.titleBn}
-                  </p>
-                  <p className="text-[9.5px] sm:text-[11px] text-neutral-500 line-clamp-2 sm:line-clamp-none leading-tight sm:leading-relaxed">
-                    {cat.subtitle}
-                  </p>
                 </div>
               </div>
               <div className="pt-2 sm:pt-2.5">
