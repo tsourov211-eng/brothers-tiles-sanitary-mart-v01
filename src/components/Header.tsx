@@ -926,7 +926,7 @@ export default function Header() {
               )}
             </div>
 
-            {/* Mobile Hamburger Button with Dropdown Tab on Yellow Line */}
+            {/* Mobile Hamburger Button */}
             <div className="relative md:hidden flex items-center justify-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -939,26 +939,6 @@ export default function Header() {
                   <IconMenu2 size={20} stroke={2} />
                 )}
               </button>
-
-              {/* Mobile Scrolled Dropdown Tab on Yellow Line (Visible when screen is < sm) */}
-              {isScrolledDown && (
-                <button
-                  type="button"
-                  onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
-                  className="sm:hidden absolute top-full mt-1.5 left-1/2 -translate-x-1/2 w-7.5 h-4.5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-all duration-200 cursor-pointer z-50 group/tab"
-                  title={isCategoryBarExpanded ? "Close" : "Open"}
-                  aria-expanded={isCategoryBarExpanded}
-                  aria-label="Toggle category and filter navigation"
-                >
-                  <IconChevronDown
-                    size={13}
-                    stroke={3}
-                    className={`text-gold-dark transition-transform duration-200 ${
-                      isCategoryBarExpanded ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-              )}
             </div>
           </div>
         </div>
@@ -1129,10 +1109,10 @@ export default function Header() {
 
         {/* Tier 2: Category Navigation Bar with Mega Menu (Collapses when scrolled, expands via dropdown toggle) */}
         <nav
-          className={`border-t border-neutral-200/80 transition-all duration-300 ease-in-out ${
+          className={`transition-all duration-300 ease-in-out ${
             isScrolledDown && !isCategoryBarExpanded
-              ? "max-h-0 opacity-0 overflow-hidden pointer-events-none"
-              : "max-h-[600px] opacity-100 overflow-visible"
+              ? "max-h-0 opacity-0 overflow-hidden pointer-events-none border-t-0"
+              : "max-h-[600px] opacity-100 overflow-visible border-t border-neutral-200/80"
           }`}
           onMouseLeave={handleMenuLeave}
         >
@@ -1222,6 +1202,29 @@ export default function Header() {
         </div>
       )}
         </nav>
+        {/* Scrolled Down: Dropdown Toggle Tab on Golden Line for Mobile View */}
+        {isScrolledDown && !mobileMenuOpen && (
+          <button
+            type="button"
+            onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
+            className="sm:hidden absolute top-full right-[31px] translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-colors duration-150 cursor-pointer z-50 group/tab"
+            title={
+              lang === "bn"
+                ? (isCategoryBarExpanded ? "মেনু ও ফিল্টার বন্ধ করুন" : "মেনু ও ফিল্টার খুলুন")
+                : (isCategoryBarExpanded ? "Close Menu & Filters" : "Open Menu & Filters")
+            }
+            aria-expanded={isCategoryBarExpanded}
+            aria-label="Toggle category and filter navigation"
+          >
+            <IconChevronDown
+              size={14}
+              stroke={3}
+              className={`text-gold-dark group-hover/tab:scale-115 transition-transform duration-200 ${
+                isCategoryBarExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        )}
       </header>
 
       {/* Backdrop overlay for focus when Mega Menu is open */}
