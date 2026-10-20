@@ -190,6 +190,8 @@ interface CategoryNavLinksProps {
   handleMenuEnter: (menuId: string) => void;
   handleCloseMegaMenu: () => void;
   pathname: string;
+  isScrolledDown?: boolean;
+  isCategoryBarExpanded?: boolean;
 }
 
 function CategoryNavLinks({
@@ -197,6 +199,8 @@ function CategoryNavLinks({
   handleMenuEnter,
   handleCloseMegaMenu,
   pathname,
+  isScrolledDown,
+  isCategoryBarExpanded,
 }: CategoryNavLinksProps) {
   return (
     <Suspense
@@ -206,6 +210,8 @@ function CategoryNavLinks({
           handleMenuEnter={handleMenuEnter}
           handleCloseMegaMenu={handleCloseMegaMenu}
           pathname={pathname}
+          isScrolledDown={isScrolledDown}
+          isCategoryBarExpanded={isCategoryBarExpanded}
           currentCategory={null}
           currentFilter={null}
           currentBrand={null}
@@ -217,6 +223,8 @@ function CategoryNavLinks({
         handleMenuEnter={handleMenuEnter}
         handleCloseMegaMenu={handleCloseMegaMenu}
         pathname={pathname}
+        isScrolledDown={isScrolledDown}
+        isCategoryBarExpanded={isCategoryBarExpanded}
       />
     </Suspense>
   );
@@ -243,6 +251,8 @@ function CategoryNavLinksContent({
   handleMenuEnter,
   handleCloseMegaMenu,
   pathname,
+  isScrolledDown,
+  isCategoryBarExpanded,
   currentCategory,
   currentFilter,
   currentBrand,
@@ -358,6 +368,19 @@ function CategoryNavLinksContent({
               }`}
             />
           </Link>
+
+          {/* Quick Close Button when category bar was expanded while scrolled down */}
+          {isScrolledDown && isCategoryBarExpanded && (
+            <button
+              type="button"
+              onClick={handleCloseMegaMenu}
+              className="p-1 rounded-full text-neutral-400 hover:text-obsidian hover:bg-neutral-100 transition shrink-0 ml-1 cursor-pointer"
+              title="Close Menu & Filters"
+              aria-label="Close menu"
+            >
+              <IconX size={14} stroke={2.5} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -905,26 +928,20 @@ export default function Header() {
                 />
               </Link>
 
-              {/* Scrolled Down: Dropdown Toggle Tab on Yellow Line directly below Admin Icon (Desktop) */}
-              {isScrolledDown && (
+              {/* Scrolled Down: Dropdown Toggle Tab on Yellow Line directly below Admin Icon (Desktop) - Hides when opened */}
+              {isScrolledDown && !isCategoryBarExpanded && (
                 <button
                   type="button"
-                  onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
+                  onClick={() => setIsCategoryBarExpanded(true)}
                   className="hidden sm:flex absolute top-full mt-[14px] left-1/2 -translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer z-50 group/tab"
-                  title={
-                    lang === "bn"
-                      ? (isCategoryBarExpanded ? "মেনু ও ফিল্টার বন্ধ করুন" : "মেনু ও ফিল্টার খুলুন")
-                      : (isCategoryBarExpanded ? "Close Menu & Filters" : "Open Menu & Filters")
-                  }
-                  aria-expanded={isCategoryBarExpanded}
-                  aria-label="Toggle category and filter navigation"
+                  title={lang === "bn" ? "মেনু ও ফিল্টার খুলুন" : "Open Menu & Filters"}
+                  aria-expanded={false}
+                  aria-label="Open category and filter navigation"
                 >
                   <IconChevronDown
                     size={14}
                     stroke={3}
-                    className={`text-gold-dark group-hover/tab:scale-115 transition-transform duration-200 ${
-                      isCategoryBarExpanded ? "rotate-180" : ""
-                    }`}
+                    className="text-gold-dark group-hover/tab:scale-115 transition-transform duration-200"
                   />
                 </button>
               )}
@@ -1147,6 +1164,8 @@ export default function Header() {
             handleMenuEnter={handleMenuEnter}
             handleCloseMegaMenu={handleCloseMegaMenu}
             pathname={pathname}
+            isScrolledDown={isScrolledDown}
+            isCategoryBarExpanded={isCategoryBarExpanded}
           />
 
       {/* Mega Menu Dropdown Container */}
@@ -1228,26 +1247,20 @@ export default function Header() {
         </div>
       )}
         </nav>
-        {/* Scrolled Down: Dropdown Toggle Tab on Golden Line for Mobile View */}
-        {isScrolledDown && !mobileMenuOpen && (
+        {/* Scrolled Down: Dropdown Toggle Tab on Golden Line for Mobile View - Hides when opened */}
+        {isScrolledDown && !mobileMenuOpen && !isCategoryBarExpanded && (
           <button
             type="button"
-            onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
+            onClick={() => setIsCategoryBarExpanded(true)}
             className="sm:hidden absolute top-full right-[31px] translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-t-0 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-colors duration-150 cursor-pointer z-50 group/tab"
-            title={
-              lang === "bn"
-                ? (isCategoryBarExpanded ? "মেনু ও ফিল্টার বন্ধ করুন" : "মেনু ও ফিল্টার খুলুন")
-                : (isCategoryBarExpanded ? "Close Menu & Filters" : "Open Menu & Filters")
-            }
-            aria-expanded={isCategoryBarExpanded}
-            aria-label="Toggle category and filter navigation"
+            title={lang === "bn" ? "মেনু ও ফিল্টার খুলুন" : "Open Menu & Filters"}
+            aria-expanded={false}
+            aria-label="Open category and filter navigation"
           >
             <IconChevronDown
               size={14}
               stroke={3}
-              className={`text-gold-dark group-hover/tab:scale-115 transition-transform duration-200 ${
-                isCategoryBarExpanded ? "rotate-180" : ""
-              }`}
+              className="text-gold-dark group-hover/tab:scale-115 transition-transform duration-200"
             />
           </button>
         )}
