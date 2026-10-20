@@ -41,8 +41,6 @@ const MOBILE_CATEGORY_NAV_ITEMS = [
   { id: "basin", label: "BASIN", href: "/catalog?category=Basin" },
   { id: "commode", label: "COMMODE", href: "/catalog?category=Commode" },
   { id: "all", label: "VIEW ALL", href: "/catalog" },
-  { id: "sanitary", label: "SANITARY", href: "/catalog?category=Sanitary" },
-  { id: "accessories", label: "BATHROOM ACCESSORIES", href: "/catalog?category=Bathroom+Accessories" },
 ];
 
 const VIEW_ALL_DROPDOWN_CATEGORIES = [
@@ -341,8 +339,8 @@ function CategoryNavLinksContent({
         </div>
       </div>
 
-      {/* Mobile Horizontal Category Rail - Keeps Same Design Across Devices */}
-      <div className="md:hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar px-2.5 py-1 bg-white border-t border-neutral-100 text-[10.5px] font-bold tracking-tight uppercase whitespace-nowrap">
+      {/* Mobile Category Rail - Fixed single row without scrolling, VIEW ALL is the final option */}
+      <div className="md:hidden flex items-center justify-between gap-1 px-2 min-[375px]:px-2.5 py-1 bg-white border-t border-neutral-100 text-[9.5px] min-[375px]:text-[10px] sm:text-[10.5px] font-bold tracking-tight uppercase whitespace-nowrap">
         {MOBILE_CATEGORY_NAV_ITEMS.map((item) => {
           const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
 
@@ -352,7 +350,7 @@ function CategoryNavLinksContent({
                 key={item.id}
                 type="button"
                 onClick={() => setIsViewAllOpen((prev) => !prev)}
-                className={`px-2 py-0.5 rounded-full transition-all shrink-0 inline-flex items-center gap-1 cursor-pointer ${
+                className={`px-1.5 min-[375px]:px-2 py-0.5 rounded-full transition-all shrink-0 inline-flex items-center gap-1 cursor-pointer ${
                   isViewAllOpen || isActive
                     ? "bg-obsidian text-gold shadow-xs ring-1 ring-gold/40"
                     : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
@@ -376,7 +374,7 @@ function CategoryNavLinksContent({
             <Link
               key={item.id}
               href={item.href}
-              className={`px-2 py-0.5 rounded-full transition-colors shrink-0 ${
+              className={`px-1.5 min-[375px]:px-2 py-0.5 rounded-full transition-colors shrink-0 ${
                 isActive
                   ? "bg-obsidian text-gold shadow-xs"
                   : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
@@ -386,36 +384,6 @@ function CategoryNavLinksContent({
             </Link>
           );
         })}
-        <Link
-          href="/calculator"
-          className={`px-2 py-0.5 rounded-full transition-colors shrink-0 ${
-            pathname === "/calculator"
-              ? "bg-obsidian text-gold shadow-xs"
-              : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
-          }`}
-        >
-          CALCULATOR
-        </Link>
-        <Link
-          href="/about"
-          className={`px-2 py-0.5 rounded-full transition-colors shrink-0 ${
-            pathname === "/about"
-              ? "bg-obsidian text-gold shadow-xs"
-              : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
-          }`}
-        >
-          SHOWROOM
-        </Link>
-        <Link
-          href="/contact"
-          className={`px-2 py-0.5 rounded-full transition-colors shrink-0 ${
-            pathname === "/contact"
-              ? "bg-gold text-obsidian font-black shadow-xs"
-              : "bg-gold/15 text-gold-dark hover:bg-gold hover:text-obsidian"
-          }`}
-        >
-          CONTACT
-        </Link>
       </div>
 
       {/* Mobile "VIEW ALL" Dropdown Sheet */}
