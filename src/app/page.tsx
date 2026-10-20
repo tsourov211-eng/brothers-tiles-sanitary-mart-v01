@@ -449,9 +449,6 @@ export default function HomePage() {
             <h2 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-obsidian tracking-tight">
               Explore by Category
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-              Tiles • Basin • Commode • Sanitary • Bathroom Accessories
-            </p>
           </div>
           <Link
             href="/catalog"

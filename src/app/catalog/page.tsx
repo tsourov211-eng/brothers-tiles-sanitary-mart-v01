@@ -523,9 +523,6 @@ function CatalogContent() {
                 ({BUSINESS_INFO.subLine})
               </span>
             </h1>
-            <p className="text-xs text-neutral-300 mt-1">
-              Tiles • Basin • Commode • Sanitary • Bathroom Accessories — RAK Ceramics, Akij, DBL, Fu-Wang &amp; Abul Khair
-            </p>
           </div>
           <a
             href={BUSINESS_INFO.whatsappUrl}

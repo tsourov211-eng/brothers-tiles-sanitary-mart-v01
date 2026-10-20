@@ -351,7 +351,7 @@ function CategoryNavLinksContent({
                 : "text-gold-dark font-bold hover:text-gold"
             }`}
           >
-            <span className="whitespace-nowrap">CONTACT &amp; MAP</span>
+            <span className="whitespace-nowrap">CONTACT</span>
             <span
               className={`absolute bottom-0 left-1 right-1 h-[2px] bg-gold-dark transition-all duration-200 ${
                 pathname === "/contact" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
