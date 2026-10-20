@@ -525,13 +525,21 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
-  const [isScrolledDown, setIsScrolledDown] = useState(false);
-  const [isCategoryBarExpanded, setIsCategoryBarExpanded] = useState(false);
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const { wishlist, quoteBag, setIsDrawerOpen, lang, setLang } = useShop();
+  const {
+    wishlist,
+    quoteBag,
+    setIsDrawerOpen,
+    lang,
+    setLang,
+    isScrolledDown,
+    setIsScrolledDown,
+    isCategoryBarExpanded,
+    setIsCategoryBarExpanded,
+  } = useShop();
 
   // Dynamically set --header-height CSS variable so sticky sub-bars lock right underneath the sticky navbar
   useEffect(() => {
@@ -874,15 +882,21 @@ export default function Header() {
                 }`}
                 title={
                   lang === "bn"
-                    ? (isCategoryBarExpanded ? "ক্যাটাগরি বন্ধ করুন" : "সকল ক্যাটাগরি দেখুন")
-                    : (isCategoryBarExpanded ? "Close Categories" : "Browse Categories")
+                    ? (isCategoryBarExpanded
+                        ? (pathname === "/catalog" ? "ফিল্টার ও ক্যাটাগরি বন্ধ করুন" : "ক্যাটাগরি বন্ধ করুন")
+                        : (pathname === "/catalog" ? "ফিল্টার ও ক্যাটাগরি দেখুন" : "সকল ক্যাটাগরি দেখুন"))
+                    : (isCategoryBarExpanded
+                        ? (pathname === "/catalog" ? "Close Filters & Categories" : "Close Categories")
+                        : (pathname === "/catalog" ? "Browse Filters & Categories" : "Browse Categories"))
                 }
                 aria-expanded={isCategoryBarExpanded}
-                aria-label="Toggle category navigation"
+                aria-label="Toggle category and filter navigation"
               >
                 <IconCategory size={15} stroke={2} className="text-gold shrink-0" />
                 <span className="hidden sm:inline uppercase tracking-wider text-[10.5px] sm:text-[11px] whitespace-nowrap">
-                  {lang === "bn" ? "ক্যাটাগরি" : "Categories"}
+                  {lang === "bn"
+                    ? (pathname === "/catalog" ? "ফিল্টার ও ক্যাটাগরি" : "ক্যাটাগরি")
+                    : (pathname === "/catalog" ? "Filters & Categories" : "Categories")}
                 </span>
                 <IconChevronDown
                   size={14}

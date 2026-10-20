@@ -69,6 +69,10 @@ interface ShopContextType {
   setSelectedProduct: (product: ProductItem | null) => void;
   lang: "bn" | "en";
   setLang: (lang: "bn" | "en") => void;
+  isScrolledDown: boolean;
+  setIsScrolledDown: (val: boolean) => void;
+  isCategoryBarExpanded: boolean;
+  setIsCategoryBarExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -133,6 +137,8 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [lang, setLang] = useState<"bn" | "en">("bn");
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
+  const [isCategoryBarExpanded, setIsCategoryBarExpanded] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -515,6 +521,10 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         setSelectedProduct,
         lang,
         setLang,
+        isScrolledDown,
+        setIsScrolledDown,
+        isCategoryBarExpanded,
+        setIsCategoryBarExpanded,
       }}
     >
       {children}

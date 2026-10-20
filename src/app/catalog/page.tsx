@@ -199,7 +199,15 @@ function CatalogContent() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isPdfZoomOpen, activePdfPage]);
 
-  const { products, wishlist, toggleWishlist, addToQuoteBag, setSelectedProduct } = useShop();
+  const {
+    products,
+    wishlist,
+    toggleWishlist,
+    addToQuoteBag,
+    setSelectedProduct,
+    isScrolledDown,
+    isCategoryBarExpanded,
+  } = useShop();
 
   // Sync state when URL search parameters change (e.g. clicking links in Header or MegaMenu)
   useEffect(() => {
@@ -521,8 +529,14 @@ function CatalogContent() {
         </div>
       </div>
 
-      {/* Sticky Filter Bar (Single Horizontal Line on Mobile, Responsive Bar on Desktop) */}
-      <div className="sticky top-[var(--header-height,96px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs py-2 sm:py-3 transition-all">
+      {/* Sticky Filter Bar (Collapses together with Category Bar on scroll down) */}
+      <div
+        className={`sticky top-[var(--header-height,56px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs transition-all duration-300 ease-in-out ${
+          isScrolledDown && !isCategoryBarExpanded
+            ? "max-h-0 opacity-0 overflow-hidden pointer-events-none py-0 border-transparent shadow-none"
+            : "max-h-28 opacity-100 overflow-visible py-2 sm:py-3"
+        }`}
+      >
         <div className="max-w-[1400px] mx-auto px-2.5 sm:px-8">
           {/* Unified bar: single horizontal scrolling line on mobile, justified two-sided on desktop */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 flex-nowrap lg:justify-between lg:overflow-visible">
