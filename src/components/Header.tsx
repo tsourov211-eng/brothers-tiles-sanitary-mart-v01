@@ -991,19 +991,11 @@ export default function Header() {
         </div>
       )}
 
-      {/* Mobile Menu Drawer (matching exact reference screenshot) */}
+      {/* Mobile Menu Drawer (clean navigation grid) */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-obsidian text-white border-t border-gold/30 px-3.5 sm:px-4 py-4 space-y-3.5">
-          {/* Header Row: Logo & Language Toggle */}
-          <div className="flex items-center justify-between pb-2 border-b border-gold/30">
-            <Image
-              src="/images/logo/Brothers Tiles & Sanitary Logo-dark.png"
-              alt="Brother's Tiles & Sanitary Mart"
-              width={200}
-              height={66}
-              className="h-9 w-auto object-contain"
-              priority
-            />
+        <div className="md:hidden bg-obsidian text-white border-t border-gold/30 px-3.5 sm:px-4 py-3.5 space-y-3">
+          {/* Header Row: Language Toggle */}
+          <div className="flex items-center justify-end pb-2 border-b border-gold/30">
             {/* Mobile Language Switcher inside Drawer: 文A বাংলা v */}
             <button
               type="button"
@@ -1016,40 +1008,7 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Search Bar matching screenshot */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="flex items-center w-full h-[44px] bg-white rounded-full pl-3.5 pr-0 overflow-hidden shadow-sm"
-          >
-            <IconSearch size={18} stroke={2} className="text-neutral-400 mr-2 shrink-0 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for tiles, sanitary ware..."
-              className="w-full h-full text-xs sm:text-sm text-neutral-800 placeholder:text-neutral-400 bg-transparent focus:outline-none"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="text-neutral-400 hover:text-neutral-700 p-1 mr-1 shrink-0"
-                title="Clear"
-              >
-                <IconX size={14} stroke={2} />
-              </button>
-            )}
-            <button
-              type="submit"
-              className="h-full w-12 bg-[#b8761a] hover:bg-[#a66814] flex items-center justify-center shrink-0 cursor-pointer rounded-r-full transition-colors"
-              aria-label="Search"
-              title="Search"
-            >
-              <IconSearch size={18} stroke={2.5} className="text-white" />
-            </button>
-          </form>
-
-          {/* 8 Grid Navigation Buttons (2 Columns, matching exact reference image) */}
+          {/* 8 Grid Navigation Buttons (2 Columns) */}
           <div className="grid grid-cols-2 gap-2.5">
             {/* Button 1: Home */}
             <Link
@@ -1169,63 +1128,6 @@ export default function Header() {
                 </span>
               </div>
               <IconChevronRight size={15} className="text-gold/70 group-hover:text-gold shrink-0 ml-1" />
-            </Link>
-          </div>
-
-          {/* 3 Full-Width Action Cards (matching exact reference image) */}
-          <div className="space-y-2.5 pt-1">
-            {/* Card 1: Sample & Quotation Bag */}
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setIsDrawerOpen(true);
-              }}
-              className="w-full py-3 px-3.5 bg-[#1a150c] border border-amber-600/50 hover:border-gold text-gold rounded-xl flex items-center justify-between transition group cursor-pointer"
-            >
-              <div className="flex items-center min-w-0">
-                <IconShoppingBag size={20} stroke={2} className="text-gold shrink-0" />
-                <span className="h-5 w-[1px] bg-amber-600/40 mx-3 shrink-0" />
-                <span className="text-xs sm:text-[13px] font-semibold tracking-wide text-gold truncate">
-                  Sample &amp; Quotation Bag (কোটেশন ব্যাগ)
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                <span className="w-5 h-5 bg-[#e5a93c] text-neutral-950 text-[11px] font-bold rounded-full flex items-center justify-center">
-                  {quoteBag.length > 0 ? quoteBag.length : 2}
-                </span>
-                <IconChevronRight size={15} className="text-gold/80 group-hover:text-gold" />
-              </div>
-            </button>
-
-            {/* Card 2: Contact & Showroom Map (Solid Gold/Amber Card) */}
-            <Link
-              href="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 px-3.5 bg-gradient-to-r from-[#e5a93c] via-[#dfa133] to-[#d69628] hover:brightness-105 rounded-xl flex items-center justify-between text-neutral-950 font-bold transition shadow-md group"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <IconMapPin size={20} stroke={2.5} className="text-neutral-950 shrink-0" />
-                <span className="text-xs sm:text-[13px] font-bold tracking-wide truncate">
-                  Contact &amp; Showroom Map (যোগাযোগ)
-                </span>
-              </div>
-              <IconChevronRight size={17} stroke={2.5} className="text-neutral-950 shrink-0 ml-2 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
-
-            {/* Card 3: Admin & Manager Portal */}
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 px-3.5 bg-[#111111] border border-amber-500/60 hover:border-gold rounded-xl flex items-center justify-between text-gold font-semibold transition group shadow-xs"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <IconUserShield size={20} stroke={2} className="text-gold shrink-0" />
-                <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
-                  Admin &amp; Manager Portal (এডমিন লগইন)
-                </span>
-              </div>
-              <IconChevronRight size={16} className="text-gold/80 group-hover:text-gold shrink-0 ml-2 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </div>
