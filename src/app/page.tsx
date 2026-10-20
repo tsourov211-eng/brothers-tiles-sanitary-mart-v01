@@ -103,6 +103,33 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [isHeroHovered, heroIndex]);
 
+  // Mobile auto-changing carousel for bottom value propositions (changes every 3.5s automatically, no buttons needed)
+  const [valuePropIndex, setValuePropIndex] = useState(0);
+  const [valPropTouchStart, setValPropTouchStart] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setValuePropIndex((prev) => (prev + 1) % VALUE_PROPOSITIONS.length);
+    }, 3500);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleValPropTouchStart = (e: React.TouchEvent) => {
+    setValPropTouchStart(e.touches[0].clientX);
+  };
+
+  const handleValPropTouchEnd = (e: React.TouchEvent) => {
+    if (valPropTouchStart === null) return;
+    const diff = valPropTouchStart - e.changedTouches[0].clientX;
+    if (diff > 45) {
+      setValuePropIndex((prev) => (prev + 1) % VALUE_PROPOSITIONS.length);
+    } else if (diff < -45) {
+      setValuePropIndex((prev) => (prev === 0 ? VALUE_PROPOSITIONS.length - 1 : prev - 1));
+    }
+    setValPropTouchStart(null);
+  };
+
   // Train Carousel for "Shop by Color" (continuous fluid ping-pong train movement: left-to-right then right-to-left)
   const trainRef = useRef<HTMLDivElement>(null);
   const [isTrainHovered, setIsTrainHovered] = useState(false);
@@ -814,27 +841,60 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          SECTION 8: BOTTOM VALUE PROPOSITIONS (HORIZONTAL SCROLL RAIL ON MOBILE, 4-COL GRID ON DESKTOP)
+          SECTION 8: BOTTOM VALUE PROPOSITIONS
+          - Mobile: Auto-changing smooth carousel (no buttons/controls, auto-rotates every 3.5s)
+          - Desktop: 4-column static grid layout
          ===================================================================== */}
       <section className="bg-stonebg border-t border-neutral-300 py-6 sm:py-8 lg:py-10 px-4 sm:px-8 mt-6">
         <div className="max-w-[1200px] mx-auto">
-          <div className="flex lg:grid lg:grid-cols-4 overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 sm:gap-4 lg:gap-8 pb-1 lg:pb-0">
+          {/* Mobile: Auto-changing carousel (1 item at a time, sliding smoothly) */}
+          <div
+            className="lg:hidden overflow-hidden"
+            onTouchStart={handleValPropTouchStart}
+            onTouchEnd={handleValPropTouchEnd}
+          >
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${valuePropIndex * 100}%)` }}
+            >
+              {VALUE_PROPOSITIONS.map((item, index) => {
+                const IconComp = item.icon;
+                return (
+                  <div key={index} className="w-full shrink-0 px-0.5">
+                    <div className="bg-white/90 border border-neutral-300/80 rounded-xl p-4 shadow-2xs text-left">
+                      <div className="flex items-center gap-2.5 mb-1.5">
+                        <div className="w-7 h-7 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0">
+                          <IconComp className="w-4 h-4" stroke={1.8} />
+                        </div>
+                        <h4 className="text-obsidian font-bold text-xs tracking-wider uppercase">
+                          {item.title}
+                        </h4>
+                      </div>
+                      <p className="text-[11.5px] text-neutral-700 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Desktop: 4-column static grid */}
+          <div className="hidden lg:grid lg:grid-cols-4 gap-8 text-center">
             {VALUE_PROPOSITIONS.map((item, index) => {
               const IconComp = item.icon;
               return (
-                <div
-                  key={index}
-                  className="min-w-[270px] xs:min-w-[290px] sm:min-w-[320px] lg:min-w-0 flex-1 snap-start bg-white/70 lg:bg-transparent border border-neutral-300/80 lg:border-none rounded-xl lg:rounded-none p-4 lg:p-0 shadow-2xs lg:shadow-none flex flex-col justify-start text-left lg:text-center transition-all hover:border-gold/60"
-                >
-                  <div className="flex items-center gap-2.5 lg:flex-col lg:items-center lg:gap-1.5 mb-2">
+                <div key={index} className="space-y-1.5">
+                  <div className="flex flex-col items-center gap-1.5 mb-1.5">
                     <div className="w-7 h-7 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0">
                       <IconComp className="w-4 h-4" stroke={1.8} />
                     </div>
-                    <h4 className="text-obsidian font-bold text-xs tracking-wider uppercase">
+                    <h4 className="text-obsidian font-bold text-xs tracking-widest uppercase">
                       {item.title}
                     </h4>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-neutral-700 leading-relaxed">
+                  <p className="text-[11px] text-neutral-700 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
