@@ -466,29 +466,29 @@ export default function HomePage() {
               হোম ডেলিভারি: {BUSINESS_INFO.homeDeliveryBn}
             </span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3.5 pt-3.5">
             {SHOWROOM_DEPARTMENTS.map((dept) => (
               <Link
                 key={dept.id}
                 href={`/catalog?category=${encodeURIComponent(dept.id)}`}
-                className="group bg-obsidian-800 hover:bg-obsidian-700 border border-gold/25 hover:border-gold p-3.5 flex flex-col justify-between transition"
+                className="group bg-obsidian-800 hover:bg-obsidian-700 active:bg-neutral-900 border border-gold/25 hover:border-gold px-3.5 py-2.5 sm:py-3 flex flex-col justify-center transition rounded-xs"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-gold group-hover:underline">
-                      {dept.name}
-                    </span>
-                    <span className="text-[10px] bg-gold/15 text-gold px-1.5 py-0.5">
-                      {dept.count}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-neutral-300 leading-relaxed">
-                    {dept.descriptionBn}
-                  </p>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs sm:text-[13px] font-bold text-gold group-hover:text-amber-300 transition-colors truncate">
+                    {dept.name}
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] bg-gold/15 text-gold px-1.5 py-0.5 rounded-2xs font-semibold shrink-0">
+                    {dept.count}
+                  </span>
                 </div>
-                <p className="text-[10px] text-gold/80 font-medium mt-3 pt-2 border-t border-neutral-800">
-                  Sizes/Types: {dept.sizes}
-                </p>
+                <div className="flex items-center justify-between gap-1.5 mt-1">
+                  <p className="text-[10.5px] sm:text-[11px] text-neutral-300 group-hover:text-white transition-colors truncate">
+                    {(dept as any).mainPoints || dept.sizes}
+                  </p>
+                  <span className="text-gold/50 group-hover:text-gold text-xs transition-transform group-hover:translate-x-0.5 shrink-0">
+                    &rarr;
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
