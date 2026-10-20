@@ -52,8 +52,8 @@ export default function QuoteDrawer() {
 
   return (
     <>
-      {/* Exact Right-Edge Sticky Floating Action Buttons (matching the 2 circular icons on the right edge of tilebarLandingPage.jpg) */}
-      <div className="fixed right-3 top-1/3 z-30 flex flex-col gap-2.5">
+      {/* Exact Right-Edge Sticky Floating Action Buttons (Desktop only, hidden on mobile) */}
+      <div className="hidden sm:flex fixed right-3 top-1/3 z-30 flex-col gap-2.5">
         <a
           href={BUSINESS_INFO.whatsappUrl}
           target="_blank"

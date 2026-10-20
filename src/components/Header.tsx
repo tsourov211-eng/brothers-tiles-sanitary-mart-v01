@@ -868,11 +868,11 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Sample & Wholesale Quote Bag Button (Desktop/Tablet Only) */}
+            {/* Sample & Wholesale Quote / Cart Bag Button (Placed to the right of Love icon) */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="hidden sm:flex relative w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
-              title="Sample & Quotation List (কোটেশন ব্যাগ)"
+              className="relative w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-amber-50/80 border border-neutral-200/90 hover:border-gold/60 text-obsidian hover:text-gold-dark transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group cursor-pointer"
+              title="Cart & Quotation List (কার্ট ও কোটেশন ব্যাগ)"
             >
               <IconShoppingBag
                 size={20}
