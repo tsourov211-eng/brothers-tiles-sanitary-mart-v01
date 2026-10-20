@@ -28,22 +28,65 @@ import {
   IconLayoutGrid,
 } from "@tabler/icons-react";
 
-function BasinIcon({ className = "w-4.5 h-4.5 text-gold shrink-0" }: { className?: string }) {
+function BasinIcon({
+  size = 18,
+  className = "text-gold shrink-0",
+}: {
+  size?: number;
+  className?: string;
+}) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 11h16a1 1 0 0 1 1 1v1a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7v-1a1 1 0 0 1 1-1z" />
-      <path d="M12 4v3" />
-      <path d="M9 7h6" />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      style={{ width: size, height: size, minWidth: size, minHeight: size }}
+    >
+      {/* Faucet arching over the bowl */}
+      <path d="M8 11V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1" />
+      {/* Basin rim & bowl */}
+      <path d="M4 11h16" />
+      <path d="M5 11c0 4 3.1 7 7 7s7-3 7-7" />
+      {/* Basin pedestal base */}
+      <path d="M12 18v3" />
+      <path d="M9 21h6" />
     </svg>
   );
 }
 
-function CommodeIcon({ className = "w-4.5 h-4.5 text-gold shrink-0" }: { className?: string }) {
+function CommodeIcon({
+  size = 18,
+  className = "text-gold shrink-0",
+}: {
+  size?: number;
+  className?: string;
+}) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 4h14v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V4z" />
-      <path d="M7 14v4a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3v-4" />
-      <path d="M5 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3H5V4z" />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      style={{ width: size, height: size, minWidth: size, minHeight: size }}
+    >
+      {/* Water tank / cistern */}
+      <rect x="6" y="3" width="12" height="6" rx="1.5" />
+      {/* Toilet bowl & seat */}
+      <path d="M5 9h14v2.5a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5V9z" />
+      {/* Pedestal base */}
+      <path d="M9 16.5v3.5a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-3.5" />
+      <path d="M8 21h8" />
     </svg>
   );
 }
@@ -1060,7 +1103,7 @@ export default function Header() {
               className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <BasinIcon className="w-4.5 h-4.5 text-gold shrink-0" />
+                <BasinIcon size={18} className="text-gold shrink-0" />
                 <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
                   Basin (বেসিন)
                 </span>
@@ -1075,7 +1118,7 @@ export default function Header() {
               className="py-3 px-3 bg-[#161616] hover:bg-neutral-800 border border-neutral-800 hover:border-gold/50 text-white rounded-xl flex items-center justify-between transition group"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <CommodeIcon className="w-4.5 h-4.5 text-gold shrink-0" />
+                <CommodeIcon size={18} className="text-gold shrink-0" />
                 <span className="text-xs sm:text-[13px] font-semibold tracking-wide truncate">
                   Commode (কমোড)
                 </span>
