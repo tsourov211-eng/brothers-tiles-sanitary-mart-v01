@@ -856,70 +856,80 @@ export default function Header() {
               )}
             </button>
 
-            {/* Admin / Manager Portal Shortcut Button */}
-            <Link
-              href="/admin"
-              className="hidden sm:flex w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group"
-              title="Admin & Showroom Portal"
-            >
-              <span className="sr-only">Admin Portal</span>
-              <IconUserShield
-                size={20}
-                stroke={2}
-                className="group-hover:scale-110 transition-transform duration-200"
-              />
-            </Link>
-
-            {/* Scrolled Down: Category Dropdown Toggle Button (Exact Image 2 marked position) */}
-            {isScrolledDown && (
-              <button
-                type="button"
-                onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs animate-in fade-in zoom-in-95 ${
-                  isCategoryBarExpanded
-                    ? "bg-obsidian text-gold border-gold ring-1 ring-gold/40 shadow-sm"
-                    : "bg-white hover:bg-neutral-50 text-obsidian border-gold/70 hover:border-gold hover:text-gold-dark"
-                }`}
-                title={
-                  lang === "bn"
-                    ? (isCategoryBarExpanded
-                        ? (pathname === "/catalog" ? "ফিল্টার ও ক্যাটাগরি বন্ধ করুন" : "ক্যাটাগরি বন্ধ করুন")
-                        : (pathname === "/catalog" ? "ফিল্টার ও ক্যাটাগরি দেখুন" : "সকল ক্যাটাগরি দেখুন"))
-                    : (isCategoryBarExpanded
-                        ? (pathname === "/catalog" ? "Close Filters & Categories" : "Close Categories")
-                        : (pathname === "/catalog" ? "Browse Filters & Categories" : "Browse Categories"))
-                }
-                aria-expanded={isCategoryBarExpanded}
-                aria-label="Toggle category and filter navigation"
+            {/* Admin / Manager Portal Shortcut Button with Dropdown Tab on Yellow Line */}
+            <div className="relative hidden sm:flex items-center justify-center">
+              <Link
+                href="/admin"
+                className="w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-[#F7F6F2] hover:bg-obsidian border border-neutral-200/90 hover:border-obsidian text-neutral-700 hover:text-gold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group flex"
+                title="Admin & Showroom Portal"
               >
-                <IconCategory size={15} stroke={2} className="text-gold shrink-0" />
-                <span className="hidden sm:inline uppercase tracking-wider text-[10.5px] sm:text-[11px] whitespace-nowrap">
-                  {lang === "bn"
-                    ? (pathname === "/catalog" ? "ফিল্টার ও ক্যাটাগরি" : "ক্যাটাগরি")
-                    : (pathname === "/catalog" ? "Filters & Categories" : "Categories")}
-                </span>
-                <IconChevronDown
-                  size={14}
-                  stroke={2.5}
-                  className={`transition-transform duration-200 text-gold-dark shrink-0 ${
-                    isCategoryBarExpanded ? "rotate-180" : ""
-                  }`}
+                <span className="sr-only">Admin Portal</span>
+                <IconUserShield
+                  size={20}
+                  stroke={2}
+                  className="group-hover:scale-110 transition-transform duration-200"
                 />
-              </button>
-            )}
+              </Link>
 
-            {/* Mobile Hamburger Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
-              aria-label="Toggle Menu"
-            >
-              {mobileMenuOpen ? (
-                <IconX size={20} stroke={2} />
-              ) : (
-                <IconMenu2 size={20} stroke={2} />
+              {/* Scrolled Down: Dropdown Toggle Tab on Yellow Line directly below Admin Icon (Image match) */}
+              {isScrolledDown && (
+                <button
+                  type="button"
+                  onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
+                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-8 h-5 bg-white hover:bg-amber-50/80 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer z-50 group/tab"
+                  title={
+                    lang === "bn"
+                      ? (isCategoryBarExpanded ? "মেনু ও ফিল্টার বন্ধ করুন" : "মেনু ও ফিল্টার খুলুন")
+                      : (isCategoryBarExpanded ? "Close Menu & Filters" : "Open Menu & Filters")
+                  }
+                  aria-expanded={isCategoryBarExpanded}
+                  aria-label="Toggle category and filter navigation"
+                >
+                  <IconChevronDown
+                    size={14}
+                    stroke={3}
+                    className={`text-gold-dark group-hover/tab:scale-115 transition-transform duration-200 ${
+                      isCategoryBarExpanded ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
               )}
-            </button>
+            </div>
+
+            {/* Mobile Hamburger Button with Dropdown Tab on Yellow Line */}
+            <div className="relative md:hidden flex items-center justify-center">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#F7F6F2] hover:bg-neutral-200 text-obsidian border border-neutral-200 cursor-pointer transition-all duration-200"
+                aria-label="Toggle Menu"
+              >
+                {mobileMenuOpen ? (
+                  <IconX size={20} stroke={2} />
+                ) : (
+                  <IconMenu2 size={20} stroke={2} />
+                )}
+              </button>
+
+              {/* Mobile Scrolled Dropdown Tab on Yellow Line (Visible when screen is < sm) */}
+              {isScrolledDown && (
+                <button
+                  type="button"
+                  onClick={() => setIsCategoryBarExpanded((prev) => !prev)}
+                  className="sm:hidden absolute top-full mt-1.5 left-1/2 -translate-x-1/2 w-7.5 h-4.5 bg-white hover:bg-amber-50/80 border-x-2 border-b-2 border-gold rounded-b-md flex items-center justify-center shadow-md transition-all duration-200 cursor-pointer z-50 group/tab"
+                  title={isCategoryBarExpanded ? "Close" : "Open"}
+                  aria-expanded={isCategoryBarExpanded}
+                  aria-label="Toggle category and filter navigation"
+                >
+                  <IconChevronDown
+                    size={13}
+                    stroke={3}
+                    className={`text-gold-dark transition-transform duration-200 ${
+                      isCategoryBarExpanded ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
