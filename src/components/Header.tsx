@@ -627,14 +627,28 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close expanded category bar when clicking outside header
+  // Close expanded category bar when clicking outside header & filter bar
   useEffect(() => {
     if (!isCategoryBarExpanded) return;
 
     const handleClickOutside = (e: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setIsCategoryBarExpanded(false);
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      // Do NOT close category bar if clicking inside the header
+      if (navRef.current && navRef.current.contains(target)) return;
+
+      // Do NOT close category bar if clicking inside catalog filter bar, dropdowns, or portal menus
+      if (
+        target.closest("[data-catalog-filter-bar]") ||
+        target.closest("[data-custom-dropdown]") ||
+        target.closest("[data-custom-dropdown-menu]") ||
+        target.closest("[role='listbox']")
+      ) {
+        return;
       }
+
+      setIsCategoryBarExpanded(false);
     };
 
     document.addEventListener("mousedown", handleClickOutside);

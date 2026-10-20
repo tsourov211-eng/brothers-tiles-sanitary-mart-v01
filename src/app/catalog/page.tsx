@@ -538,6 +538,7 @@ function CatalogContent() {
 
       {/* Sticky Filter Bar (Collapses together with Category Bar on scroll down) */}
       <div
+        data-catalog-filter-bar="true"
         className={`sticky top-[var(--header-height,56px)] z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xs transition-all duration-300 ease-in-out ${
           isScrolledDown && !isCategoryBarExpanded
             ? "max-h-0 opacity-0 overflow-hidden pointer-events-none py-0 border-transparent shadow-none"
