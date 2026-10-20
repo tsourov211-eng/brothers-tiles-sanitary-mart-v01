@@ -339,8 +339,8 @@ function CategoryNavLinksContent({
         </div>
       </div>
 
-      {/* Mobile Category Rail - Fixed single row without scrolling, VIEW ALL is the final option */}
-      <div className="md:hidden flex items-center justify-between gap-1 px-2 min-[375px]:px-2.5 py-1 bg-white border-t border-neutral-100 text-[9.5px] min-[375px]:text-[10px] sm:text-[10.5px] font-bold tracking-tight uppercase whitespace-nowrap">
+      {/* Mobile Category Rail - Fixed single row without scrolling, clean text links without gray shadow background */}
+      <div className="md:hidden flex items-center justify-between px-3 sm:px-4 py-1.5 bg-white border-t border-neutral-100 text-xs sm:text-[13px] font-bold tracking-normal uppercase whitespace-nowrap">
         {MOBILE_CATEGORY_NAV_ITEMS.map((item) => {
           const isActive = isItemActive(item.id, pathname, currentCategory, currentFilter);
 
@@ -350,20 +350,25 @@ function CategoryNavLinksContent({
                 key={item.id}
                 type="button"
                 onClick={() => setIsViewAllOpen((prev) => !prev)}
-                className={`px-1.5 min-[375px]:px-2 py-0.5 rounded-full transition-all shrink-0 inline-flex items-center gap-1 cursor-pointer ${
+                className={`py-1 px-1 transition-colors shrink-0 inline-flex items-center gap-0.5 cursor-pointer font-bold relative group ${
                   isViewAllOpen || isActive
-                    ? "bg-obsidian text-gold shadow-xs ring-1 ring-gold/40"
-                    : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
+                    ? "text-gold-dark"
+                    : "text-neutral-800 hover:text-gold-dark"
                 }`}
                 aria-expanded={isViewAllOpen}
                 aria-label="View All Categories Dropdown"
               >
                 <span>{item.label}</span>
                 <IconChevronDown
-                  size={12}
+                  size={13}
                   stroke={2.5}
                   className={`transition-transform duration-200 ${
-                    isViewAllOpen ? "rotate-180" : ""
+                    isViewAllOpen ? "rotate-180 text-gold-dark" : "text-neutral-500 group-hover:text-gold-dark"
+                  }`}
+                />
+                <span
+                  className={`absolute bottom-0 left-0 right-0 h-[2px] bg-gold-dark transition-all duration-200 ${
+                    isViewAllOpen || isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
                   }`}
                 />
               </button>
@@ -374,13 +379,18 @@ function CategoryNavLinksContent({
             <Link
               key={item.id}
               href={item.href}
-              className={`px-1.5 min-[375px]:px-2 py-0.5 rounded-full transition-colors shrink-0 ${
+              className={`py-1 px-1 transition-colors shrink-0 font-bold relative flex items-center ${
                 isActive
-                  ? "bg-obsidian text-gold shadow-xs"
-                  : "bg-neutral-100 text-neutral-700 hover:text-gold-dark"
+                  ? "text-gold-dark"
+                  : "text-neutral-800 hover:text-gold-dark"
               }`}
             >
-              {item.label}
+              <span>{item.label}</span>
+              <span
+                className={`absolute bottom-0 left-0 right-0 h-[2px] bg-gold-dark transition-all duration-200 ${
+                  isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                }`}
+              />
             </Link>
           );
         })}
